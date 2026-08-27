@@ -586,6 +586,40 @@ void llm_load_hparams(
                     default: model.type = e_model::MODEL_UNKNOWN;
                 }
             } break;
+        case LLM_ARCH_LFM2:
+            {
+                ml.get_key(LLM_KV_SHORTCONV_L_CACHE,           hparams.n_shortconv_l_cache);
+                ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+
+                if (hparams.n_shortconv_l_cache <= 1) {
+                    throw std::runtime_error("LFM2 shortconv.l_cache must be greater than 1");
+                }
+
+                // LFM2 encodes the layer type by setting KV heads to zero on
+                // short-convolution layers and a positive value on GQA layers.
+                for (uint32_t i = 0; i < hparams.n_layer; ++i) {
+                    hparams.recurrent_layer_arr[i] = hparams.n_head_kv(i) == 0;
+                }
+                hparams.n_layer_dense_lead = hparams.n_layer;
+
+                switch (hparams.n_ff()) {
+                    case 2560: model.type = e_model::MODEL_220M; break;
+                    case 4608: model.type = e_model::MODEL_350M; break;
+                    case 6912: model.type = e_model::MODEL_700M; break;
+                    case 8192: model.type = e_model::MODEL_1_2B; break;
+                    case 10752: model.type = e_model::MODEL_2_6B; break;
+                    default: model.type = e_model::MODEL_UNKNOWN;
+                }
+
+                ml.get_key(LLM_KV_ATTENTION_SLIDING_WINDOW, hparams.n_swa, false);
+                if (hparams.n_swa > 0) {
+                    hparams.rope_freq_base_train_swa = hparams.rope_freq_base_train;
+                    hparams.rope_freq_scale_train_swa = 1.0f;
+                    for (uint32_t i = 0; i < hparams.n_layer; ++i) {
+                        hparams.swa_layers[i] = hparams.recurrent_layer_arr[i] ? 0 : 1;
+                    }
+                }
+            } break;
         case LLM_ARCH_QWEN3NEXT:
             {
                 ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH,        hparams.n_ff_exp, false);

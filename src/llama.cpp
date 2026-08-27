@@ -1391,7 +1391,8 @@ static bool llama_kv_cache_init(
                 cache.v_l.push_back(nullptr);
             }
             LLAMA_LOG_DEBUG("=== Created recurrent cache %s as %ld x %ld x %ld x %ld\n", s->name, s->ne[0], s->ne[1], s->ne[2], s->ne[3]);
-            if ((split_cache || replicate_mla) && model.layers[i].ssm_out->extra) {
+            if ((split_cache || replicate_mla) && model.arch != LLM_ARCH_LFM2 &&
+                    model.layers[i].ssm_out != nullptr && model.layers[i].ssm_out->extra) {
                 auto split_ssm_out = (const ggml_split_tensor_t *)model.layers[i].ssm_out->extra;
                 GGML_ASSERT(split_ssm_out);
                 int num_v_heads = hparams.ssm_dt_rank;

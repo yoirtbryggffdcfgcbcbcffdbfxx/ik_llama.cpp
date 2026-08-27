@@ -2810,6 +2810,10 @@ ggml_cgraph * llm_build_context::llama_build_graph(
             {
                 result = llm.build_mellum();
             } break;
+        case LLM_ARCH_LFM2:
+            {
+                result = llm.build_lfm2();
+            } break;
         case LLM_ARCH_QWEN3NEXT:
             {
                 result = llm.build_qwen3next();
