@@ -9316,11 +9316,13 @@ void llama_kv_cache_clear(struct llama_context * ctx) {
 
 // Unified speculative-checkpoint
 static bool spec_ckpt_try_per_step(llama_kv_cache & kv, const llama_model & model, int max_tokens) {
-    // openPangu carries only a conv state (no SSM recurrent term), so the per-step
-    // path - which sizes itself from the ssm_* hparams (ssm_dt_rank etc, all zero
-    // here) - does not apply. Decline it so the checkpoint resolves to the whole-slot
-    // shadow (gpu-fallback), which is arch-agnostic.
-    if (model.arch == LLM_ARCH_OPENPANGU) {
+    // openPangu carries only a conv state (no SSM recurrent term), and LFM2
+    // carries short-convolution state rather than an SSM state. The per-step
+    // path sizes its buffers from the SSM hparams; these architectures have a
+    // zero ssm_dt_rank, so entering that path would divide by zero. Decline it
+    // so the checkpoint resolves to the whole-slot shadow (gpu-fallback), which
+    // is arch-agnostic.
+    if (model.arch == LLM_ARCH_OPENPANGU || model.arch == LLM_ARCH_LFM2) {
         kv.save_per_step_ssm = false;
         return false;
     }
