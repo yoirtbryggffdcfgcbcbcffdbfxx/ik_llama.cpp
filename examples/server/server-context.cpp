@@ -2408,7 +2408,6 @@ void server_context::send_error(const int id_task, const int id_multi, const std
     auto res = std::make_unique<server_task_result_error>();
     res->id = id_task;
     res->id_multi = id_multi;
-    res->stop = false;
     res->error = true;
     res->err_type = type;
     res->err_msg = error;
@@ -2435,7 +2434,6 @@ void server_context::send_partial_response(server_slot& slot, completion_token_o
     res->id_multi = slot.id_multi;
     res->index = slot.task->index;
     res->error = false;
-    res->stop = false;
     res->stream = slot.params.stream;
     res->content = tkn.text_to_send;
     res->post_sampling_probs = slot.params.post_sampling_probs;
@@ -2509,7 +2507,10 @@ void server_context::send_final_response(server_slot& slot) {
     res->id_multi = slot.id_multi;
     res->index = slot.task->index;
     res->error = false;
-    res->stop = true; // to do: set value
+    res->stop = slot.stopped_word  ? STOP_TYPE_WORD
+              : slot.stopped_eos   ? STOP_TYPE_EOS
+              : slot.stopped_limit ? STOP_TYPE_LIMIT
+                                   : STOP_TYPE_EOS;
     res->stream = slot.params.stream;
     res->include_usage = slot.params.include_usage;
     res->content = slot.generated_text;
@@ -2923,7 +2924,6 @@ void server_context::process_single_task(server_task&& task) {
         server_task_result res;
         res.id = task.id;
         res.id_multi = task.id_multi;
-        res.stop = true;
         res.error = false;
         res.data = {
             { "idle",                            n_idle_slots       },
@@ -2987,7 +2987,6 @@ void server_context::process_single_task(server_task&& task) {
 
         server_task_result result;
         result.id = task.id;
-        result.stop = true;
         result.error = false;
         result.data = json{
             { "id_slot",   id_slot },
@@ -3035,7 +3034,6 @@ void server_context::process_single_task(server_task&& task) {
 
         server_task_result result;
         result.id = task.id;
-        result.stop = true;
         result.error = false;
         result.data = json{
             { "id_slot",    id_slot },
@@ -3071,7 +3069,6 @@ void server_context::process_single_task(server_task&& task) {
         slot->server_cached_prompt.data.clear();
         server_task_result result;
         result.id = task.id;
-        result.stop = true;
         result.error = false;
         result.data = json{
             { "id_slot",  id_slot },
@@ -3084,7 +3081,6 @@ void server_context::process_single_task(server_task&& task) {
         llama_lora_adapters_apply(ctx, lora_adapters);
         server_task_result result;
         result.id = task.id;
-        result.stop = true;
         result.error = false;
         result.data = json{ { "success", true } };
         queue_results.send(result);
@@ -3292,7 +3288,6 @@ void server_context::on_finish_multitask(const server_task_multi& multitask) {
     // all subtasks done == multitask is done
     server_task_result result;
     result.id = multitask.id;
-    result.stop = true;
     result.error = false;
 
     // collect json results into one json result
