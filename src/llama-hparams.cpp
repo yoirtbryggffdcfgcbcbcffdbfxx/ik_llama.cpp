@@ -596,6 +596,12 @@ void llm_load_hparams(
                 ml.get_key(LLM_KV_ATTENTION_CAUSAL,            hparams.causal_attn, false);
                 ml.get_key(LLM_KV_POOLING_TYPE,                hparams.pooling_type, false);
 
+                // the key is absent from every published LFM2 GGUF, in which case the
+                // loader reports UNSPECIFIED: treat that as "no pooling"
+                if (hparams.pooling_type == LLAMA_POOLING_TYPE_UNSPECIFIED) {
+                    hparams.pooling_type = LLAMA_POOLING_TYPE_NONE;
+                }
+
                 if (!hparams.causal_attn || hparams.pooling_type != LLAMA_POOLING_TYPE_NONE) {
                     throw std::runtime_error("LFM2: non-causal or pooled models (ColBERT, embedding, audio) are not supported");
                 }
