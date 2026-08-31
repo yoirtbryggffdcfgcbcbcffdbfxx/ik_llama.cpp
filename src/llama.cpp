@@ -4031,6 +4031,11 @@ static std::pair<std::vector<double>, double> get_layer_sizes(const llama_model_
         if (name == "output_norm.weight") {
             continue;
         }
+        // final RMSNorm of the embedding-tied heads (LFM2 / LFM2-MoE: token_embd_norm)
+        if (name == "token_embd_norm.weight" || name == "token_embd_norm.bias") {
+            output_misc_size += size;
+            continue;
+        }
         if (name.find("output_hc_") == 0 || name.find("hc_head_") == 0) {
             ow_size += size;
             continue;
