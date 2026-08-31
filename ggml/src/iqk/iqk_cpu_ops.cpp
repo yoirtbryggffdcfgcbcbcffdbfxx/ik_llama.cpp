@@ -178,6 +178,8 @@ void iqk_grouped_top_k(ggml_tensor * dst, int ith, int nth) {
     int n_groups     = dst->op_params[0];
     int n_top_groups = dst->op_params[1];
     int nk           = dst->op_params[2];
+    int min_entries  = dst->op_params[3];
+    float thresh     = *(const float *)(dst->op_params + 4);
 
     int ne00 = src->ne[0];
     int ne0  = dst->ne[0];
@@ -221,7 +223,54 @@ void iqk_grouped_top_k(ggml_tensor * dst, int ith, int nth) {
             std::sort(aux.begin(), aux.begin() + ne0, std::greater<std::pair<float,int>>{});
         }
         for (int j = 0; j < ne0; ++j) result[j] = aux[j].second;
+        if (min_entries > 0 && min_entries < ne0 && thresh > 0) {
+            const float min_value = aux[0].first*thresh;
+            for (int j = min_entries; j < ne0; ++j) {
+                if (aux[j].first < min_value) result[j] = -1;
+            }
+        }
 
+    }
+}
+
+void iqk_argsort_thresh(ggml_tensor * dst, int ith, int nth) {
+
+    auto src = dst->src[0];
+    GGML_ASSERT(dst->type == GGML_TYPE_I32);
+    GGML_ASSERT(src->type == GGML_TYPE_F32);
+
+    auto nrows = ggml_nrows(src);
+    auto npt   = (nrows + nth - 1)/nth;
+    auto first = npt*ith;
+    auto last  = std::min(first + npt, nrows);
+    if (last <= first) return;
+
+    int   min_entries = dst->op_params[0];
+    float thresh      = *(const float *)(dst->op_params + 1);
+    int   nk          = dst->op_params[2];
+
+    int ne00 = src->ne[0];
+    if (nk <= 0 || nk > ne00) nk = ne00;
+    min_entries = std::min(min_entries, nk);
+
+    auto& aux = get_work_buffer(ne00);
+
+    for (int ir = first; ir < last; ++ir) {
+        auto data = (const float *)((const char *)src->data + ir*src->nb[1]);
+        for (int j = 0; j < ne00; ++j) aux[j] = {data[j], j};
+        if (nk < ne00) {
+            std::partial_sort(aux.begin(), aux.begin() + nk, aux.begin() + ne00, std::greater<std::pair<float,int>>{});
+        } else {
+            std::sort(aux.begin(), aux.begin() + ne00, std::greater<std::pair<float,int>>{});
+        }
+        auto y = (int32_t *)((char *)dst->data + ir*dst->nb[1]);
+        // only the first nk entries are meaningful for the consumer, but the tensor is full size,
+        // so fill the rest with the sorted (or, beyond nk, arbitrary) indices
+        for (int j = 0; j < ne00; ++j) y[j] = aux[j].second;
+        const float min_value = aux[0].first*thresh;
+        for (int j = min_entries; j < nk; ++j) {
+            if (aux[j].first < min_value) y[j] = -1;
+        }
     }
 }
 
@@ -279,6 +328,8 @@ void iqk_bailingmoev2_experts(struct ggml_tensor * dst, struct ggml_tensor * top
     int n_groups     = topk->op_params[0];
     int n_top_groups = topk->op_params[1];
     int nk           = topk->op_params[2];
+    int min_entries  = topk->op_params[3];
+    float thresh     = *(const float *)(topk->op_params + 4);
 
     int ne00 = probs->ne[0];
     int ne0  = topk->ne[0];
@@ -333,6 +384,18 @@ void iqk_bailingmoev2_experts(struct ggml_tensor * dst, struct ggml_tensor * top
             weights[j] = values[aux[j].second];
             ids[j]     = aux[j].second;
         }
+        if (min_entries > 0 && min_entries < ne0 && thresh > 0) {
+            // smart expert reduction: deactivate experts whose (biased) score is
+            // below thresh*max_score. The weight must be zeroed as well, else the
+            // subsequent normalization would be wrong.
+            const float min_value = aux[0].first*thresh;
+            for (int j = min_entries; j < ne0; ++j) {
+                if (aux[j].first < min_value) {
+                    weights[j] = 0.0f;
+                    ids[j]     = -1;
+                }
+            }
+        }
 
     }
 }
@@ -381,6 +444,19 @@ void iqk_glm45moe_experts(struct ggml_tensor * dst, struct ggml_tensor * topk_vi
         for (int j = 0; j < ne0; ++j) {
             weights[j] = 1/(1 + expf(-data[aux[j].second]));
             ids[j]     = aux[j].second;
+        }
+        if (topk->op == GGML_OP_ARGSORT_THRESH) {
+            const int   min_entries = topk->op_params[0];
+            const float thresh      = *(const float *)(topk->op_params + 1);
+            if (min_entries > 0 && min_entries < ne0 && thresh > 0) {
+                const float min_value = aux[0].first*thresh;
+                for (int j = min_entries; j < ne0; ++j) {
+                    if (aux[j].first < min_value) {
+                        weights[j] = 0.0f;
+                        ids[j]     = -1;
+                    }
+                }
+            }
         }
     }
 }

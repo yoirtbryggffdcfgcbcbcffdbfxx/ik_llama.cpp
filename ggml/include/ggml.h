@@ -2482,6 +2482,18 @@ extern "C" {
             int                   num_top_groups,
             int                   nk,
             int                   topk_experts);
+    // same as ggml_grouped_topk(), but additionally applies smart expert reduction (SER):
+    // experts beyond the first min_entries whose score is below thresh*max_score are
+    // deactivated by setting their id to -1
+    GGML_API struct ggml_tensor * ggml_grouped_topk_thresh(
+            struct ggml_context * ctx,
+            struct ggml_tensor  * a,
+            int                   num_groups,
+            int                   num_top_groups,
+            int                   nk,
+            int                   topk_experts,
+            int                   min_entries,
+            float                 thresh);
 
 #if GGML_USE_VULKAN
 #define GGML_KQ_MASK_PAD 64

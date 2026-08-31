@@ -10600,6 +10600,9 @@ struct ggml_tensor * ggml_argsort_thresh(
 
     ggml_set_op_params_i32(result, 0, (int32_t) min_entries);
     ggml_set_op_params_f32(result, 1, thresh);
+    // number of entries the consumer actually looks at. 0 means "all of them".
+    // Set by ggml_top_k_thresh() so that the CPU implementation can use a partial sort.
+    ggml_set_op_params_i32(result, 2, 0);
 
     result->op   = GGML_OP_ARGSORT_THRESH;
     result->grad = is_node ? ggml_dup_tensor(ctx, result) : NULL;
@@ -10632,10 +10635,34 @@ struct ggml_tensor * ggml_grouped_topk(
     ggml_set_op_params_i32(result, 0, num_groups);
     ggml_set_op_params_i32(result, 1, num_top_groups);
     ggml_set_op_params_i32(result, 2, nk);
+    // smart expert reduction (SER) parameters - disabled by default,
+    // see ggml_grouped_topk_thresh()
+    ggml_set_op_params_i32(result, 3, 0);
+    ggml_set_op_params_f32(result, 4, 0.0f);
 
     result->op   = GGML_OP_GROUPED_TOPK;
     result->grad = is_node ? ggml_dup_tensor(ctx, result) : NULL;
     result->src[0] = a;
+
+    return result;
+}
+
+struct ggml_tensor * ggml_grouped_topk_thresh(
+            struct ggml_context * ctx,
+            struct ggml_tensor  * a,
+            int                   num_groups,
+            int                   num_top_groups,
+            int                   nk,
+            int                   topk_experts,
+            int                   min_entries,
+            float                 thresh) {
+
+    struct ggml_tensor * result = ggml_grouped_topk(ctx, a, num_groups, num_top_groups, nk, topk_experts);
+
+    if (min_entries > 0 && min_entries < topk_experts && thresh > 0.0f) {
+        ggml_set_op_params_i32(result, 3, min_entries);
+        ggml_set_op_params_f32(result, 4, thresh);
+    }
 
     return result;
 }
@@ -10675,8 +10702,10 @@ struct ggml_tensor * ggml_top_k_thresh(
     struct ggml_tensor * result;
     if (min_entries <= 0 || thresh <= 0) {
         result = ggml_argsort(ctx, a, GGML_SORT_ORDER_DESC);
+        ggml_set_op_params_i32(result, 1, k);
     } else {
         result = ggml_argsort_thresh(ctx, a, min_entries, thresh);
+        ggml_set_op_params_i32(result, 2, k);
     }
 
     result = ggml_view_4d(ctx, result,
@@ -22950,7 +22979,8 @@ static void ggml_compute_forward_argsort_thresh(
     switch (src0->type) {
         case GGML_TYPE_F32:
             {
-                ggml_compute_forward_argsort_thresh_f32(params, dst);
+                iqk_argsort_thresh(dst, params->ith, params->nth);
+                //ggml_compute_forward_argsort_thresh_f32(params, dst);
             } break;
         default:
             {
@@ -26940,7 +26970,7 @@ static int ggml_compute_forward(struct ggml_compute_params * params, struct ggml
                 if (fusion && unary_op == GGML_UNARY_OP_SIGMOID && i + 5 < cgraph->n_nodes &&
                     cgraph->nodes[i+1]->op == GGML_OP_RESHAPE &&
                     cgraph->nodes[i+2]->op == GGML_OP_ADD &&
-                    cgraph->nodes[i+3]->op == GGML_OP_ARGSORT &&
+                    (cgraph->nodes[i+3]->op == GGML_OP_ARGSORT || cgraph->nodes[i+3]->op == GGML_OP_ARGSORT_THRESH) &&
                     cgraph->nodes[i+4]->op == GGML_OP_VIEW &&
                     cgraph->nodes[i+5]->op == GGML_OP_GET_ROWS) {
                     iqk_glm45moe_experts(cgraph->nodes[i+5], cgraph->nodes[i+4], params->ith, params->nth);

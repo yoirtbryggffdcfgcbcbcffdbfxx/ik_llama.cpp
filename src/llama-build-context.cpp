@@ -1516,12 +1516,22 @@ llm_expert_gating_func_type   gating_op,
     if (selected_experts == nullptr) {
         const bool grouped_routing = lctx.cparams.grouped_expert_routing &&
                 (lctx.model.arch == LLM_ARCH_BAILINGMOE2 || lctx.model.arch == LLM_ARCH_BAILINGMOE3);
+        // smart expert reduction (SER): deactivate the experts whose routing score is much
+        // smaller than the score of the best expert. This reduces the amount of expert data
+        // that needs to be fetched from memory, which is what limits TG performance on the CPU.
+        const int   ser_min_experts = lctx.cparams.min_experts;
+        const float ser_thresh      = lctx.cparams.thresh_experts;
+        const bool  use_ser = ser_min_experts > 0 && ser_min_experts < n_expert_used && ser_thresh > 0.0f;
         if (grouped_routing && n_tokens > 0) {
             auto& hparams = lctx.model.hparams;
-            selected_experts = ggml_grouped_topk(ctx, selection_probs, hparams.n_expert_groups, hparams.n_group_used, 2, n_expert_used);
+            selected_experts = use_ser ?
+                ggml_grouped_topk_thresh(ctx, selection_probs, hparams.n_expert_groups, hparams.n_group_used, 2, n_expert_used,
+                        ser_min_experts, ser_thresh) :
+                ggml_grouped_topk(ctx, selection_probs, hparams.n_expert_groups, hparams.n_group_used, 2, n_expert_used);
+        } else if (use_ser) {
+            selected_experts = ggml_top_k_thresh(ctx, selection_probs, n_expert_used,
+                    ser_min_experts, ser_thresh); // [n_expert_used, n_tokens]
         } else {
-            //selected_experts = ggml_top_k_thresh(ctx, selection_probs, n_expert_used,
-            //        lctx.cparams.min_experts, lctx.cparams.thresh_experts); // [n_expert_used, n_tokens]
             selected_experts = ggml_top_k(ctx, selection_probs, n_expert_used); // [n_expert_used, n_tokens]
         }
     }
