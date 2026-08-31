@@ -1285,10 +1285,12 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     //  - qs.n_attention_wv == model.hparams.n_layer     for Transformer     models
     //  - qs.n_attention_wv == 3 * model.hparams.n_layer for Encoder-Decoder models
     //  - model.arch == LLM_ARCH_DECI                    for Deci-Nemotron   models
+    //  - hybrid architectures only have attention in a subset of their layers
     //
     GGML_ASSERT((qs.n_attention_wv == 0 ||
                  qs.n_attention_wv == (int)model.hparams.n_layer ||
                  qs.n_attention_wv == 3 * (int)model.hparams.n_layer ||
+                 llm_arch_is_hybrid(model.arch) ||
                  model.arch == LLM_ARCH_DECI ||
                  model.arch == LLM_ARCH_GEMMA4 ||
                  model.arch == LLM_ARCH_UNKNOWN) && "n_attention_wv is unexpected");

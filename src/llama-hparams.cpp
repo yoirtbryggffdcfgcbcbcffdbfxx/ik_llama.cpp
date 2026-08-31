@@ -587,7 +587,10 @@ void llm_load_hparams(
                 }
             } break;
         case LLM_ARCH_LFM2:
+        case LLM_ARCH_LFM2MOE:
             {
+                const bool is_moe = model.arch == LLM_ARCH_LFM2MOE;
+
                 ml.get_key(LLM_KV_SHORTCONV_L_CACHE,           hparams.n_shortconv_l_cache);
                 ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
                 ml.get_key(LLM_KV_ATTENTION_CAUSAL,            hparams.causal_attn, false);
@@ -605,15 +608,47 @@ void llm_load_hparams(
                 for (uint32_t i = 0; i < hparams.n_layer; ++i) {
                     hparams.recurrent_layer_arr[i] = hparams.n_head_kv(i) == 0;
                 }
-                hparams.n_layer_dense_lead = hparams.n_layer;
 
-                switch (hparams.n_ff()) {
-                    case 2560: model.type = e_model::MODEL_220M; break;
-                    case 4608: model.type = e_model::MODEL_350M; break;
-                    case 6912: model.type = e_model::MODEL_700M; break;
-                    case 8192: model.type = e_model::MODEL_1_2B; break;
-                    case 10752: model.type = e_model::MODEL_2_6B; break;
-                    default: model.type = e_model::MODEL_UNKNOWN;
+                if (is_moe) {
+                    // MoE variants (LFM2-8B-A1B, LFM2-24B-A2B, ...): the first
+                    // n_layer_dense_lead blocks keep a plain SwiGLU FFN
+                    hparams.n_layer_dense_lead = 0;
+                    ml.get_key(LLM_KV_LEADING_DENSE_BLOCK_COUNT,  hparams.n_layer_dense_lead, false);
+                    ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH, hparams.n_ff_exp);
+                    // LFM2-MoE always routes with a sigmoid gate; the key is present in
+                    // the GGUFs produced by the converter but defaulted here for safety
+                    hparams.expert_gating_func = LLM_EXPERT_GATING_FUNC_SIGMOID;
+                    ml.get_key(LLM_KV_EXPERT_GATING_FUNC,         hparams.expert_gating_func, false);
+                    // upstream GGUFs carry neither of the two; Liquid AI's reference
+                    // implementation normalizes the top-k probabilities and does not
+                    // rescale them (routed_scaling_factor == 1)
+                    hparams.expert_weights_norm = true;
+                    ml.get_key(LLM_KV_EXPERT_WEIGHTS_NORM,  hparams.expert_weights_norm,  false);
+                    ml.get_key(LLM_KV_EXPERT_WEIGHTS_SCALE, hparams.expert_weights_scale, false);
+
+                    if (hparams.n_expert == 0 || hparams.n_expert_used == 0) {
+                        throw std::runtime_error("LFM2-MoE requires a non-zero expert count");
+                    }
+                    if (hparams.n_layer_dense_lead > hparams.n_layer) {
+                        throw std::runtime_error("LFM2-MoE leading_dense_block_count exceeds the block count");
+                    }
+
+                    switch (hparams.n_layer) {
+                        case 24: model.type = e_model::MODEL_8B_A1B;  break;
+                        case 40: model.type = e_model::MODEL_24B_A2B; break;
+                        default: model.type = e_model::MODEL_UNKNOWN;
+                    }
+                } else {
+                    hparams.n_layer_dense_lead = hparams.n_layer;
+
+                    switch (hparams.n_ff()) {
+                        case 2560: model.type = e_model::MODEL_220M; break;
+                        case 4608: model.type = e_model::MODEL_350M; break;
+                        case 6912: model.type = e_model::MODEL_700M; break;
+                        case 8192: model.type = e_model::MODEL_1_2B; break;
+                        case 10752: model.type = e_model::MODEL_2_6B; break;
+                        default: model.type = e_model::MODEL_UNKNOWN;
+                    }
                 }
 
                 ml.get_key(LLM_KV_ATTENTION_SLIDING_WINDOW, hparams.n_swa, false);

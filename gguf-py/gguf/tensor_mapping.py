@@ -299,6 +299,7 @@ class TensorNameMap:
             "model.layers.{bid}.mlp.gate",                # qwen2moe
             "transformer.decoder_layer.{bid}.router",     # Grok
             "transformer.blocks.{bid}.ffn.router.layer",  # dbrx
+            "model.layers.{bid}.feed_forward.gate",       # lfm2moe
         ),
 
         MODEL_TENSOR.FFN_GATE_INP_SHEXP: (
@@ -312,6 +313,7 @@ class TensorNameMap:
             "model.layers.{bid}.block_sparse_moe.e_score_correction",   # minimax-m2
             "model.layers.{bid}.mlp.experts.e_score_correction_bias",   # laguna
             "model.layers.{bid}.mlp.experts.e_score_correction",        # laguna
+            "model.layers.{bid}.feed_forward.expert_bias",              # lfm2moe
         ),
 
         # Feed-forward up

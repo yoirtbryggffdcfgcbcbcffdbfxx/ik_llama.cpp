@@ -277,7 +277,8 @@ void server_context::init() {
     // LFM2 has no legacy llama_chat_apply_template support: enable Jinja so the
     // model metadata template and the think-tag PEG parser are used even without --jinja
     const char * model_arch = llama_model_arch_string(model);
-    if (!params_base.use_jinja && model_arch != nullptr && std::string(model_arch) == "lfm2") {
+    if (!params_base.use_jinja && model_arch != nullptr &&
+            (std::string(model_arch) == "lfm2" || std::string(model_arch) == "lfm2moe")) {
         params_base.use_jinja = true;
         SRV_WRN("%s\n", "LFM2 model detected: enabling Jinja chat templates automatically");
     }
