@@ -41777,3 +41777,4786 @@ Ce calcul doit être exact, je ne le fais pas de tête : j'appelle la calculatri
 <tool_response>
 {"result": 8688}
 </tool_response><|im_end|>
+// ============ CORPUS PART 9: modding resources (JSON assets, gradle, fabric.mod.json) ============
+
+// ===== FILE: src/main/resources/dungeonmod.mixins.json =====
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.dungeonmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AncreGrapplingMixin",
+    "NoRespawnBlockMessageMixin",
+    "HeavyPersistenceMixin",
+    "MaxAbsorptionMixin",
+    "ZombieEntityMixin",
+    "ItemStackMixin",
+    "DamageUtilMixin",
+    "ArmorAttributeCapMixin",
+    "DungeonConsumableMixin",
+    "LivingEntityDamageMixin",
+    "PlayerAttackMixin",
+    "LivingEntityPoseMixin",
+    "SnowballDamageMixin",
+    "BackstabMixin",
+    "ComboMixin",
+    "FauxDeFerMixin",
+    "SwingAirMixin",
+    "FlecheMixin",
+    "FlecheMeleeMixin",
+    "ArcHerosMixin",
+    "ArcHerosHitMixin",
+    "PersistentProjectileEntityAccessor",
+    "ItemEntityMixin",
+    "TorcheMixin",
+    "BeerStrengthMixin",
+    "AttackCooldownMixin",
+    "NoXpMixin",
+    "NoVanillaRecipeMixin",
+    "FouetMixin",
+    "FouetChargeMixin",
+    "CraftingMixin",
+    "DagueDualMixin",
+    "EpeeMixin",
+    "EpeeDamageMixin",
+    "LanceTridentMixin",
+    "VoyageurMixin",
+    "WeaponKnockbackMixin",
+    "AdvancementMixin",
+    "DagueDamageMixin",
+    "SabreComboMixin",
+    "SabreMixin",
+    "FlecheUsingMixin",
+    "BaguetteMixin",
+    "BaguetteAttackMixin",
+    "FireballDamageMixin",
+    "FireSnowballMixin",
+    "DarkBuffMixin",
+    "RuneApplyMixin",
+    "RingOfBloodMixin",
+    "GlaiveAttackMixin",
+    "GlaiveMixin",
+    "SacKeepMixin",
+    "NoHitInvulnerabilityMixin",
+    "ThrownItemChargeMixin",
+    "AncreImmunityMixin",
+    "ZombieGoblinLootMixin",
+    "IdoleBonheurMixin",
+    "TetralameHealthMixin",
+    "MaxHealthPersistMixin",
+    "SyrinxMixin",
+    "OgreEyeMixin",
+    "PlayerScreenHandlerMixin",
+    "ScreenHandlerInvoker",
+    "ScreenHandlerMixin",
+    "InteractionBlockerMixin",
+    "SlotAccessor"
+  ],
+  "client": [
+    "ArmorHudMixin",
+    "DoubleJumpMixin",
+    "LanceTridentModelMixin",
+    "ClientAttackCooldownMixin",
+    "InGameHudMixin",
+    "ZombieEntityRenderStateMixin",
+    "ZombieBaseEntityRendererMixin",
+    "AbstractZombieModelMixin",
+    "LivingEntityRendererMixin",
+    "InventoryScreenMixin",
+    "RecipeBookMixin",
+    "DialogueHudMixin",
+    "KeyboardInputMixin",
+    "PauseMenuMixin",
+    "MerchantScreenMixin"
+  ]
+}
+
+// ===== FILE: build.gradle =====
+plugins {
+	id 'fabric-loom' version '1.9.2'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    maven { url "https://maven.kosmx.dev/" }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "dev.kosmx.player-anim:player-animation-lib-fabric:2.0.5+1.21.4"
+	modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.4:4.8.5"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+	withSourcesJar()
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archives_base_name}" }
+	}
+}
+
+// ===== FILE: gradle.properties =====
+# Fabric Properties
+minecraft_version=1.21.4
+yarn_mappings=1.21.4+build.8
+loader_version=0.16.9
+
+# Mod Properties
+mod_version=1.0.0
+maven_group=com.dungeonmod
+archives_base_name=dungeonmod
+
+# Dependencies
+fabric_version=0.119.4+1.21.4
+
+// ===== FILE: src/main/resources/assets/dungeonmod/animations/cyclops.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"attack": {
+			"loop": true,
+			"animation_length": 3.75,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-21.67, 0, 0]
+						},
+						"1.5": {
+							"vector": [17.5, 0, 0]
+						},
+						"1.75": {
+							"vector": [37.5, 0, 0]
+						},
+						"3.25": {
+							"vector": [37.5, 0, 0]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 3]
+						},
+						"1.5": {
+							"vector": [0, 0, 3]
+						},
+						"1.75": {
+							"vector": [0, -1, -6]
+						},
+						"3.25": {
+							"vector": [0, -1, -6]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-17.5, 0, 0]
+						},
+						"1.5": {
+							"vector": [-17.5, 0, 0]
+						},
+						"1.75": {
+							"vector": [20, 0, 0]
+						},
+						"3.25": {
+							"vector": [20, 0, 0]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 1]
+						},
+						"1.5": {
+							"vector": [0, 0, 1]
+						},
+						"1.75": {
+							"vector": [0, 0, -2]
+						},
+						"3.25": {
+							"vector": [0, 0, -2]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, -87.5]
+						},
+						"1.5": {
+							"vector": [0, 0, -87.5]
+						},
+						"1.75": {
+							"vector": [-117.5691, 34.2234, -103.8644]
+						},
+						"3.25": {
+							"vector": [-117.5691, 34.2234, -103.8644]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 3]
+						},
+						"1.5": {
+							"vector": [0, 0, 3]
+						},
+						"1.75": {
+							"vector": [0, -1, -6]
+						},
+						"3.25": {
+							"vector": [0, -1, -6]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 87.5]
+						},
+						"1.5": {
+							"vector": [0, 0, 87.5]
+						},
+						"1.75": {
+							"vector": [-104.7081, -38.9891, 89.4295]
+						},
+						"3.25": {
+							"vector": [-104.7081, -38.9891, 89.4295]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 2]
+						},
+						"1.5": {
+							"vector": [0, 0, 2]
+						},
+						"1.75": {
+							"vector": [0, -1, -5]
+						},
+						"3.25": {
+							"vector": [0, -1, -5]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [45, 0, 0]
+						},
+						"1.5": {
+							"vector": [27, 0, 0]
+						},
+						"1.75": {
+							"vector": [-32.5, 0, 0]
+						},
+						"3.25": {
+							"vector": [-32.4753, 1.3429, 2.1089]
+						},
+						"3.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"lancer_de_pierre": {
+			"loop": true,
+			"animation_length": 1.5,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [75, 0, 0]
+						},
+						"0.9": {
+							"vector": [30, 0, 0]
+						},
+						"1.2": {
+							"vector": [7.5, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, -12, -11]
+						},
+						"0.9": {
+							"vector": [0, -7, -11]
+						},
+						"1.2": {
+							"vector": [0, -3, -4]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 7.24, 0]
+						},
+						"0.6": {
+							"vector": [87.5, 0, 0]
+						},
+						"0.9": {
+							"vector": [45, 0, 0]
+						},
+						"1.3": {
+							"vector": [0, -0.6, 0]
+						},
+						"1.4": {
+							"vector": [0, 5.525, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, -5, -3]
+						},
+						"0.9": {
+							"vector": [0, -3, -3]
+						},
+						"1.2": {
+							"vector": [0, -2, -1]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [-19.033, -6.769, 14.1361]
+						},
+						"0.9": {
+							"vector": [-123.7654, -0.541, 9.9466]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [0, -11, -9]
+						},
+						"0.9": {
+							"vector": [0, -4, -7]
+						},
+						"1.2": {
+							"vector": [0, -4, -2]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [-11, 0, -15]
+						},
+						"0.9": {
+							"vector": [-126, 0, -15]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [1, -10, -9]
+						},
+						"0.9": {
+							"vector": [0, -5, -7]
+						},
+						"1.2": {
+							"vector": [0, -4, -2]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.6": {
+							"vector": [-37.5, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_hand": {
+					"position": {
+						"0.0": {
+							"vector": [0, 1, 3]
+						},
+						"0.3": {
+							"vector": [0, -4, -3]
+						},
+						"0.6": {
+							"vector": [-1, -9, -7]
+						},
+						"0.8": {
+							"vector": [0.33, 2.67, -13]
+						},
+						"0.9": {
+							"vector": [1, 10, -10]
+						},
+						"1.2": {
+							"vector": [1, 3, -6]
+						},
+						"1.5": {
+							"vector": [1, 3, 4]
+						}
+					}
+				}
+			}
+		},
+		"attack_coup_de_tete": {
+			"loop": true,
+			"animation_length": 3,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [20, 0, 0]
+						},
+						"0.75": {
+							"vector": [175.62, 0, 0]
+						},
+						"2.25": {
+							"vector": [178.12, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -1, -6]
+						},
+						"0.75": {
+							"vector": [0, -16, -11]
+						},
+						"2.25": {
+							"vector": [0, -16, -11]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [25, 0, 0]
+						},
+						"0.75": {
+							"vector": [95, 0, 0]
+						},
+						"2.25": {
+							"vector": [95, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, -2]
+						},
+						"0.75": {
+							"vector": [0, -6, -4]
+						},
+						"2.25": {
+							"vector": [0, -6, -4]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-118.0669, -11.0687, 5.8448]
+						},
+						"0.75": {
+							"vector": [-9.1237, -14.7579, -15.3438]
+						},
+						"2.25": {
+							"vector": [-6.6237, -14.7579, -15.3438]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, -6]
+						},
+						"0.75": {
+							"vector": [0, -11, -10]
+						},
+						"2.25": {
+							"vector": [0, -11, -10]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-123.4065, 12.6084, -8.1926]
+						},
+						"0.75": {
+							"vector": [-9.7725, 13.5852, 13.8362]
+						},
+						"2.25": {
+							"vector": [-9.7725, 13.5852, 13.8362]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, -5]
+						},
+						"0.75": {
+							"vector": [0, -11, -10]
+						},
+						"2.25": {
+							"vector": [0, -11, -10]
+						},
+						"3.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-32.5, 0, 0]
+						},
+						"2.25": {
+							"vector": [-35, 0, 0]
+						},
+						"3.0": {
+							"vector": [-0.36, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						},
+						"2.25": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"walk": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"head": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [20, 0, 0]
+						},
+						"1.5": {
+							"vector": [-20, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-20, 0, 0]
+						},
+						"1.5": {
+							"vector": [20, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-32.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [-32.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"oeil_cache": {
+			"loop": true,
+			"animation_length": 2.5,
+			"bones": {
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-143, 43, 0]
+						},
+						"1.5": {
+							"vector": [-141.2088, 41.4641, 2.6645]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-147, -43, 0]
+						},
+						"1.5": {
+							"vector": [-148.204, -40.8889, 1.8008]
+						},
+						"2.2": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, -2]
+						}
+					}
+				}
+			}
+		},
+		"pose_sans_joueur": {
+			"loop": true,
+			"bones": {
+				"head": {
+					"rotation": {
+						"vector": [45, 0, 0]
+					},
+					"position": {
+						"vector": [0, -11, -6]
+					}
+				},
+				"body": {
+					"rotation": {
+						"vector": [20, 0, 0]
+					},
+					"position": {
+						"vector": [0, -10, -2]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"vector": [-17.4844, 0.7515, -10.1156]
+					},
+					"position": {
+						"vector": [0, -10, -5]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"vector": [-22.4807, 0.9565, 2.3099]
+					},
+					"position": {
+						"vector": [0, -11, -5]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"vector": [-91.5085, -29.4987, 5.7252]
+					},
+					"position": {
+						"vector": [0, -10, 0]
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"vector": [-87.9748, 17.2258, -3.1339]
+					},
+					"position": {
+						"vector": [0, -10, 0]
+					}
+				}
+			}
+		},
+		"animation_when_player_going": {
+			"animation_length": 1,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [45, 0, 0]
+						},
+						"0.25": {
+							"vector": [48.75, 0, 0]
+						},
+						"0.5": {
+							"vector": [47.5, 0, 0]
+						},
+						"0.75": {
+							"vector": [12.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -11, -6]
+						},
+						"0.25": {
+							"vector": [0, -17, -10]
+						},
+						"0.5": {
+							"vector": [0, -16, -12]
+						},
+						"0.75": {
+							"vector": [0, -7, -10]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [20, 0, 0]
+						},
+						"0.25": {
+							"vector": [67.5, 0, 0]
+						},
+						"0.5": {
+							"vector": [92.5, 0, 0]
+						},
+						"0.75": {
+							"vector": [52.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -10, -2]
+						},
+						"0.25": {
+							"vector": [0, -12, -4]
+						},
+						"0.5": {
+							"vector": [0, -9, -4]
+						},
+						"0.75": {
+							"vector": [0, -4, -4]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [-17.4844, 0.7515, -10.1156]
+						},
+						"0.75": {
+							"vector": [32.5156, 0.7515, -10.1156]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -10, -5]
+						},
+						"0.25": {
+							"vector": [0, -16, -8]
+						},
+						"0.5": {
+							"vector": [0, -14.5, -9]
+						},
+						"0.75": {
+							"vector": [0, -7, -8]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [-22.4807, 0.9565, 2.3099]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -11, -5]
+						},
+						"0.25": {
+							"vector": [0, -15, -8]
+						},
+						"0.5": {
+							"vector": [0, -15, -8]
+						},
+						"0.75": {
+							"vector": [0, -7, -8]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [-91.5085, -29.4987, 5.7252]
+						},
+						"0.5": {
+							"vector": [-51.5085, -29.4987, 5.7252]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -10, 0]
+						},
+						"0.5": {
+							"vector": [0, -5, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [-87.9748, 17.2258, -3.1339]
+						},
+						"0.25": {
+							"vector": [57.0252, 17.2258, -3.1339]
+						},
+						"0.5": {
+							"vector": [-2.9748, 17.2258, -3.1339]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -10, 0]
+						},
+						"0.25": {
+							"vector": [0, -9, 0]
+						},
+						"0.5": {
+							"vector": [0, -2, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"dead": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 1,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [12.5, 0, 0]
+						},
+						"0.5": {
+							"vector": [47.5, 0, 0]
+						},
+						"0.75": {
+							"vector": [48.75, 0, 0]
+						},
+						"1.0": {
+							"pre": {
+								"vector": [45, 0, 0]
+							},
+							"post": {
+								"vector": [45, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -7, -10]
+						},
+						"0.5": {
+							"vector": [0, -16, -12]
+						},
+						"0.75": {
+							"vector": [0, -17, -10]
+						},
+						"1.0": {
+							"vector": [0, -11, -6]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [52.5, 0, 0]
+						},
+						"0.5": {
+							"vector": [92.5, 0, 0]
+						},
+						"0.75": {
+							"vector": [67.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -4, -4]
+						},
+						"0.5": {
+							"vector": [0, -9, -4]
+						},
+						"0.75": {
+							"vector": [0, -12, -4]
+						},
+						"1.0": {
+							"vector": [0, -10, -2]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [32.5156, 0.7515, -10.1156]
+						},
+						"1.0": {
+							"vector": [-17.4844, 0.7515, -10.1156]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -7, -8]
+						},
+						"0.5": {
+							"vector": [0, -14.5, -9]
+						},
+						"0.75": {
+							"vector": [0, -16, -8]
+						},
+						"1.0": {
+							"vector": [0, -10, -5]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [-22.4807, 0.9565, 2.3099]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -7, -8]
+						},
+						"0.5": {
+							"vector": [0, -15, -8]
+						},
+						"0.75": {
+							"vector": [0, -15, -8]
+						},
+						"1.0": {
+							"vector": [0, -11, -5]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-51.5085, -29.4987, 5.7252]
+						},
+						"1.0": {
+							"vector": [-91.5085, -29.4987, 5.7252]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -5, 0]
+						},
+						"1.0": {
+							"vector": [0, -10, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-2.9748, 17.2258, -3.1339]
+						},
+						"0.75": {
+							"vector": [57.0252, 17.2258, -3.1339]
+						},
+						"1.0": {
+							"vector": [-87.9748, 17.2258, -3.1339]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -2, 0]
+						},
+						"0.75": {
+							"vector": [0, -9, 0]
+						},
+						"1.0": {
+							"vector": [0, -10, 0]
+						}
+					}
+				}
+			}
+		},
+		"charge": {
+			"animation_length": 1.75,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [27.5, 0, 0]
+						},
+						"0.5": {
+							"vector": [77.5, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -1, -6]
+						},
+						"0.5": {
+							"vector": [0, -5, -10]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [25, 0, 0]
+						},
+						"0.5": {
+							"vector": [55, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, -3]
+						},
+						"0.5": {
+							"vector": [0, -2, -3]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [35, 0, 0]
+						},
+						"0.5": {
+							"vector": [-27.5, 0, 0]
+						},
+						"0.7917": {
+							"vector": [38.92, 0, 0]
+						},
+						"1.0": {
+							"vector": [-19.54, 0, 0]
+						},
+						"1.25": {
+							"vector": [-20.53, 0, 0]
+						},
+						"1.5": {
+							"vector": [29.73, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, -5]
+						},
+						"0.5": {
+							"vector": [0, -5, -7]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [30, 0, 0]
+						},
+						"0.7917": {
+							"vector": [-37, 0, 0]
+						},
+						"1.0": {
+							"vector": [23.54, 0, 0]
+						},
+						"1.25": {
+							"vector": [58.19, 0, 0]
+						},
+						"1.5": {
+							"vector": [-35.91, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, -6]
+						},
+						"0.5": {
+							"vector": [0, -4, -7]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [27.5, 0, 0]
+						},
+						"0.75": {
+							"vector": [-25, 0, 0]
+						},
+						"1.0": {
+							"vector": [32.5, 0, 0]
+						},
+						"1.25": {
+							"vector": [-27.5, 0, 0]
+						},
+						"1.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-25, 0, 0]
+						},
+						"0.75": {
+							"vector": [30, 0, 0]
+						},
+						"1.0": {
+							"vector": [-25, 0, 0]
+						},
+						"1.25": {
+							"vector": [35, 0, 0]
+						},
+						"1.5": {
+							"vector": [-30, 0, 0]
+						},
+						"1.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/animations/miniboss_goblin.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"Marche": {
+			"animation_length": 2,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [2.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [-2.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-32.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [-32.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [20, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [-20, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-20, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [20, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"Attaque_main_1": {
+			"animation_length": 2.5,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [12.4365, 0.9762, -7.4365]
+						},
+						"1.5": {
+							"vector": [7.4924, 4.3057, 5.6087]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [0, 0, 2]
+						},
+						"1.5": {
+							"vector": [0, -3, -6]
+						},
+						"2.0": {
+							"vector": [0, -2, -5]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [-10, 0, 0]
+						},
+						"1.5": {
+							"vector": [30.2726, 7.7391, 1.6083]
+						},
+						"2.0": {
+							"vector": [20.2726, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [0, 0, 2]
+						},
+						"1.5": {
+							"vector": [0, -2, -5]
+						},
+						"2.0": {
+							"vector": [0, -1, -4]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [-200.2127, -3.7419, 6.5045]
+						},
+						"1.5": {
+							"vector": [-58.8556, 19.3334, 16.2841]
+						},
+						"2.0": {
+							"vector": [-34.4277, 4.6313, 5.3191]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, -4, -5]
+						},
+						"2.0": {
+							"vector": [0, -2, -3]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [-45.0272, 1.7709, 5.3015]
+						},
+						"1.5": {
+							"vector": [67.2562, 9.9986, -9.1959]
+						},
+						"2.0": {
+							"vector": [43.1845, 1.4999, 0.0256]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [0, -1, 1]
+						},
+						"1.5": {
+							"vector": [0, -2, -3]
+						},
+						"2.0": {
+							"vector": [0, -2, -3]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.1667": {
+							"vector": [-42.2549, 5.059, 5.544]
+						},
+						"1.5": {
+							"vector": [40, 0, 0]
+						},
+						"2.0": {
+							"vector": [27.5, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"attaque_pied": {
+			"animation_length": 1.5,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-2.4933, -2.7154, -4.8865]
+						},
+						"1.0": {
+							"vector": [14.7822, 2.576, -9.6658]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -1, -5]
+						},
+						"1.0": {
+							"vector": [0, 0, 2]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [22.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [-12.5, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -1, -4]
+						},
+						"1.0": {
+							"vector": [0, 0, 2]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-24.9387, 4.2521, 9.0593]
+						},
+						"1.0": {
+							"vector": [19.9445, 11.5685, -9.7485]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -2, -4]
+						},
+						"1.0": {
+							"vector": [0, -1, 2]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [-19.5622, -4.2453, -11.7679]
+						},
+						"1.0": {
+							"vector": [22.2875, -5.8025, 13.856]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -2, -4]
+						},
+						"1.0": {
+							"vector": [0, -1, 1]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"right_leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [49.8924, -3.8282, 3.2188]
+						},
+						"1.0": {
+							"vector": [-100.3134, -0.9234, 29.9815]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/config/ogre_throw.json =====
+{
+  "comment": "Position de la pierre par rapport au cyclope",
+  "ground_stone": {
+    "distance": 2.5,
+    "height": 0.2
+  },
+  "thrown_stone": {
+    "speed_multiplier": 1.0,
+    "vertical_multiplier": 1.0
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/equipment/cape_du_voyageur.json =====
+{
+  "layers": {
+    "wings": [
+      {
+        "texture": "dungeonmod:cape_du_voyageur"
+      }
+    ]
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/geo/cyclops.geo.json =====
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.animation_de_lancer_de_pierre_cyclop",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
+			},
+			"bones": [
+				{
+					"name": "head",
+					"pivot": [0, 25, 0],
+					"cubes": [
+						{
+							"origin": [-4, 24, -4],
+							"size": [8, 8, 8],
+							"uv": {
+								"north": {"uv": [8, 8], "uv_size": [8, 8]},
+								"east": {"uv": [0, 8], "uv_size": [8, 8]},
+								"south": {"uv": [24, 8], "uv_size": [8, 8]},
+								"west": {"uv": [16, 8], "uv_size": [8, 8]},
+								"up": {"uv": [8, 0], "uv_size": [8, 8]},
+								"down": {"uv": [16, 8], "uv_size": [8, -8]}
+							}
+						}
+					]
+				},
+				{
+					"name": "left_leg",
+					"pivot": [1.9, 12, 0],
+					"cubes": [
+						{
+							"origin": [-0.1, 0, -2],
+							"size": [4, 12, 4],
+							"uv": {
+								"north": {"uv": [20, 52], "uv_size": [4, 12]},
+								"east": {"uv": [16, 52], "uv_size": [4, 12]},
+								"south": {"uv": [28, 52], "uv_size": [4, 12]},
+								"west": {"uv": [24, 52], "uv_size": [4, 12]},
+								"up": {"uv": [20, 48], "uv_size": [4, 4]},
+								"down": {"uv": [24, 52], "uv_size": [4, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "right_leg",
+					"pivot": [-1.9, 12, 0],
+					"cubes": [
+						{
+							"origin": [-3.9, 0, -2],
+							"size": [4, 12, 4],
+							"uv": {
+								"north": {"uv": [4, 20], "uv_size": [4, 12]},
+								"east": {"uv": [0, 20], "uv_size": [4, 12]},
+								"south": {"uv": [12, 20], "uv_size": [4, 12]},
+								"west": {"uv": [8, 20], "uv_size": [4, 12]},
+								"up": {"uv": [4, 16], "uv_size": [4, 4]},
+								"down": {"uv": [8, 20], "uv_size": [4, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "left_arm",
+					"pivot": [5, 22, 0],
+					"cubes": [
+						{
+							"origin": [4, 12, -2],
+							"size": [3, 12, 4],
+							"uv": {
+								"north": {"uv": [36, 52], "uv_size": [3, 12]},
+								"east": {"uv": [32, 52], "uv_size": [4, 12]},
+								"south": {"uv": [43, 52], "uv_size": [3, 12]},
+								"west": {"uv": [39, 52], "uv_size": [4, 12]},
+								"up": {"uv": [36, 48], "uv_size": [3, 4]},
+								"down": {"uv": [39, 52], "uv_size": [3, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "body",
+					"pivot": [0, 17, 0],
+					"cubes": [
+						{
+							"origin": [-4, 12, -2],
+							"size": [8, 12, 4],
+							"uv": {
+								"north": {"uv": [20, 20], "uv_size": [8, 12]},
+								"east": {"uv": [16, 20], "uv_size": [4, 12]},
+								"south": {"uv": [32, 20], "uv_size": [8, 12]},
+								"west": {"uv": [28, 20], "uv_size": [4, 12]},
+								"up": {"uv": [20, 16], "uv_size": [8, 4]},
+								"down": {"uv": [28, 20], "uv_size": [8, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "right_arm",
+					"pivot": [-5, 22, 0],
+					"cubes": [
+						{
+							"origin": [-7, 12, -2],
+							"size": [3, 12, 4],
+							"uv": {
+								"north": {"uv": [44, 20], "uv_size": [3, 12]},
+								"east": {"uv": [40, 20], "uv_size": [4, 12]},
+								"south": {"uv": [51, 20], "uv_size": [3, 12]},
+								"west": {"uv": [47, 20], "uv_size": [4, 12]},
+								"up": {"uv": [44, 16], "uv_size": [3, 4]},
+								"down": {"uv": [47, 20], "uv_size": [3, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "left_hand",
+					"pivot": [5, 12, -4],
+					"cubes": [
+						{"origin": [4, 12, -2], "size": [2, 2, 2], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/geo/miniboss_goblin.geo.json =====
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.gobelin",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 3.5,
+				"visible_bounds_offset": [0, 1.25, 0]
+			},
+			"bones": [
+				{
+					"name": "head",
+					"pivot": [0, 24, 0],
+					"cubes": [
+						{"origin": [-4, 24, -4], "size": [8, 8, 8], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "body",
+					"pivot": [0, 24, 0],
+					"cubes": [
+						{"origin": [-4, 12, -2], "size": [8, 12, 4], "uv": [16, 16]}
+					]
+				},
+				{
+					"name": "left_arm",
+					"pivot": [5, 22, 0],
+					"cubes": [
+						{"origin": [4, 12, -2], "size": [3, 12, 4], "uv": [32, 48]}
+					]
+				},
+				{
+					"name": "right_arm",
+					"pivot": [-5, 22, 0],
+					"cubes": [
+						{"origin": [-7, 12, -2], "size": [3, 12, 4], "uv": [40, 16]}
+					]
+				},
+				{
+					"name": "left_leg",
+					"pivot": [1.9, 12, 0],
+					"cubes": [
+						{"origin": [-0.1, 0, -2], "size": [4, 12, 4], "uv": [16, 48]}
+					]
+				},
+				{
+					"name": "right_leg",
+					"pivot": [-1.9, 12, 0],
+					"cubes": [
+						{"origin": [-3.9, 0, -2], "size": [4, 12, 4], "uv": [0, 16]}
+					]
+				}
+			]
+		}
+	]
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/items/ancre.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/ancre"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/anneau_basique.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/anneau_basique"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/anneau_sang.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/anneau_sang"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/arc_heros.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/arc_heros"
+    },
+    "on_true": {
+      "type": "minecraft:range_dispatch",
+      "entries": [
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "dungeonmod:item/arc_heros_pulling_1"
+          },
+          "threshold": 0.65
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "dungeonmod:item/arc_heros_pulling_2"
+          },
+          "threshold": 0.9
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "dungeonmod:item/arc_heros_pulling_0"
+      },
+      "property": "minecraft:use_duration",
+      "scale": 0.05
+    },
+    "property": "minecraft:using_item"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/arrow_sang_1.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/arrow_sang_1"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/arrow_sang_1_using.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/arrow_sang_1_using"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/arrow_sang_2.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/arrow_sang_2"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/arrow_sang_2_using.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/arrow_sang_2_using"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/baguette_feu.json =====
+{
+  "model": { "type": "minecraft:model", "model": "dungeonmod:item/baguette_feu" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/baguette_glace.json =====
+{
+  "model": { "type": "minecraft:model", "model": "dungeonmod:item/baguette_glace" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/baguette_sombre.json =====
+{
+  "model": { "type": "minecraft:model", "model": "dungeonmod:item/baguette_sombre" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/baton.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/baton"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/baton_charging"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/biere_blonde.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/biere_blonde"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/biere_perimee.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/biere_perimee"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/black_ender_pearl.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/black_ender_pearl"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/boomerang.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/boomerang"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/bottes_lourdes.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/bottes_lourdes"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/bout_tissu.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/bout_tissu"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/caillou.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/caillou"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/caillou_charging"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/cape_du_voyageur.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/cape_du_voyageur"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/casque_chasseur.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/casque_chasseur"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/casque_lourd.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/casque_lourd"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/chair_gobelin_crue.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/chair_gobelin_crue"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/chair_gobelin_cuite.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/chair_gobelin_cuite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/chope_biere.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/chope_biere"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/coeur.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/coeur"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/compas_casse.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/compas_casse"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/compas_repare.json =====
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:compass",
+    "target": "lodestone",
+    "wobble": true,
+    "scale": 1.0,
+    "entries": [
+      {
+        "threshold": 0.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_00"
+        }
+      },
+      {
+        "threshold": 0.03125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_01"
+        }
+      },
+      {
+        "threshold": 0.0625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_02"
+        }
+      },
+      {
+        "threshold": 0.09375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_03"
+        }
+      },
+      {
+        "threshold": 0.125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_04"
+        }
+      },
+      {
+        "threshold": 0.15625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_05"
+        }
+      },
+      {
+        "threshold": 0.1875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_06"
+        }
+      },
+      {
+        "threshold": 0.21875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_07"
+        }
+      },
+      {
+        "threshold": 0.25,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_08"
+        }
+      },
+      {
+        "threshold": 0.28125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_09"
+        }
+      },
+      {
+        "threshold": 0.3125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_10"
+        }
+      },
+      {
+        "threshold": 0.34375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_11"
+        }
+      },
+      {
+        "threshold": 0.375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_12"
+        }
+      },
+      {
+        "threshold": 0.40625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_13"
+        }
+      },
+      {
+        "threshold": 0.4375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_14"
+        }
+      },
+      {
+        "threshold": 0.46875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_15"
+        }
+      },
+      {
+        "threshold": 0.5,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_16"
+        }
+      },
+      {
+        "threshold": 0.53125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_17"
+        }
+      },
+      {
+        "threshold": 0.5625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_18"
+        }
+      },
+      {
+        "threshold": 0.59375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_19"
+        }
+      },
+      {
+        "threshold": 0.625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_20"
+        }
+      },
+      {
+        "threshold": 0.65625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_21"
+        }
+      },
+      {
+        "threshold": 0.6875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_22"
+        }
+      },
+      {
+        "threshold": 0.71875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_23"
+        }
+      },
+      {
+        "threshold": 0.75,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_24"
+        }
+      },
+      {
+        "threshold": 0.78125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_25"
+        }
+      },
+      {
+        "threshold": 0.8125,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_26"
+        }
+      },
+      {
+        "threshold": 0.84375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_27"
+        }
+      },
+      {
+        "threshold": 0.875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_28"
+        }
+      },
+      {
+        "threshold": 0.90625,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_29"
+        }
+      },
+      {
+        "threshold": 0.9375,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_30"
+        }
+      },
+      {
+        "threshold": 0.96875,
+        "model": {
+          "type": "minecraft:model",
+          "model": "dungeonmod:item/compas_repare_31"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/compas_repare_00"
+    }
+  }
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/items/conseil.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/conseil"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/croix.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/croix"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/cyclops_stone.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/cyclops_stone"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/dague.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/dague"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/dague_blocking.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/dague_blocking"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/denier.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/denier"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/dent_de_loup.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/dent_de_loup"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/epee.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/epee"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/epee_blocking"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/faux_fer.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/faux_fer"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/fiole_benite.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/fiole_benite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/fleche.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/fleche"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/fleche_using.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/fleche_using"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/fouet.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/fouet"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/fragment_de_fer.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/fragment_de_fer"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/glaive.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/glaive"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/glaive_spin"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/glaive_spin.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/glaive_spin"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/hache_fer.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/hache_fer"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/idole_du_bonheur.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/idole_du_bonheur"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/jambiere_lourde.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/jambiere_lourde"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/key.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/key"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/key_white.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/key_white"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/lance.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/lance"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/lance_charging"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/leather.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/leather"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/montre.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/montre"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/ongle_cyclope.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/ongle_cyclope"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/os.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/os"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/os_charging"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/plastron_lourd.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/plastron_lourd"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/poussiere_de_pierre.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/poussiere_de_pierre"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/rune_glace.json =====
+{
+  "model": { "type": "minecraft:model", "model": "dungeonmod:item/rune_glace" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/rune_sombre.json =====
+{
+  "model": { "type": "minecraft:model", "model": "dungeonmod:item/rune_sombre" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/sablier.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/sablier"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/sabre.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/sabre"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/sabre_slash1.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/sabre_slash1"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/sabre_slash2.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/sabre_slash2"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/sac.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/sac"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/stone_projectile.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/stone"
+  }
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/items/syrinx_oublie.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/syrinx_oublie"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/syrinx_oublie_playing"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/tablette_de_pierre.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/tablette_de_pierre"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/tetralame_mort_subite.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/tetralame_mort_subite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/torche.json =====
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/torche"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "dungeonmod:item/torche_charging"
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/totem_immortalite.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/totem_immortalite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/items/web.json =====
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "dungeonmod:item/web"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/lang/en_us.json =====
+{
+  "item.dungeonmod.flask": "Flask"
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/lang/fr_fr.json =====
+{
+  "item.dungeonmod.flask": "Fiole"
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/ancre.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/ancre"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/anneau_basique.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/anneau_basique"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/anneau_sang.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/anneau_sang"
+    },
+    "display": {
+        "gui": {
+            "translation": [-2, 0, 0],
+            "scale": [1.5, 1.5, 1.5]
+        },
+        "ground": {
+            "scale": [1.5, 1.5, 1.5]
+        },
+        "fixed": {
+            "scale": [1.5, 1.5, 1.5]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arc_heros.json =====
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "dungeonmod:item/arc_heros"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arc_heros_pulling_0.json =====
+{
+  "parent": "minecraft:item/bow_pulling_0",
+  "textures": {
+    "layer0": "dungeonmod:item/arc_heros_pulling_0"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arc_heros_pulling_1.json =====
+{
+  "parent": "minecraft:item/bow_pulling_1",
+  "textures": {
+    "layer0": "dungeonmod:item/arc_heros_pulling_1"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arc_heros_pulling_2.json =====
+{
+  "parent": "minecraft:item/bow_pulling_2",
+  "textures": {
+    "layer0": "dungeonmod:item/arc_heros_pulling_2"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arrow_sang_1.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/arrow_sang_1"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arrow_sang_1_using.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/arrow_sang_1"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [0, 10, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        },
+        "firstperson_lefthand": {
+            "rotation": [0, 30, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arrow_sang_2.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/arrow_sang_2"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/arrow_sang_2_using.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/arrow_sang_2"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [0, 10, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        },
+        "firstperson_lefthand": {
+            "rotation": [0, 30, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/baguette_feu.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": { "layer0": "dungeonmod:item/baguette_feu" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/baguette_glace.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": { "layer0": "dungeonmod:item/baguette_glace" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/baguette_sombre.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": { "layer0": "dungeonmod:item/baguette_sombre" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/baton.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "minecraft:item/stick"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/baton_charging.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "minecraft:item/stick"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-30, 55, 45],
+            "translation": [5, 2, -3]
+        },
+        "firstperson_lefthand": {
+            "rotation": [-30, -55, -45],
+            "translation": [-5, 2, -3]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/biere_blonde.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/biere_blonde"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/biere_perimee.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/biere_perimee"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/black_ender_pearl.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/black_ender_pearl"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/boomerang.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/boomerang"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/bottes_lourdes.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/bottes_lourdes"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/bout_tissu.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/bout_tissu"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/caillou.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/caillou"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/caillou_charging.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/caillou"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-30, 55, 45],
+            "translation": [5, 2, -3]
+        },
+        "firstperson_lefthand": {
+            "rotation": [-30, -55, -45],
+            "translation": [-5, 2, -3]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/cape_du_voyageur.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/cape_du_voyageur"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/casque_chasseur.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/casque_chasseur"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/casque_lourd.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/casque_lourd"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/chair_gobelin_crue.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/chair_gobelin_crue"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/chair_gobelin_cuite.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/chair_gobelin_cuite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/chope_biere.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/chope_biere"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/coeur.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/coeur"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_casse.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/compas_casse"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_00.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_00"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_01.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_01"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_02.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_02"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_03.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_03"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_04.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_04"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_05.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_05"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_06.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_06"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_07.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_07"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_08.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_08"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_09.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_09"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_10.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_10"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_11.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_11"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_12.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_12"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_13.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_13"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_14.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_14"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_15.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_15"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_16.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_16"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_17.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_17"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_18.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_18"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_19.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_19"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_20.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_20"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_21.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_21"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_22.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_22"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_23.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_23"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_24.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_24"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_25.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_25"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_26.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_26"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_27.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_27"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_28.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_28"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_29.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_29"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_30.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_30"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/compas_repare_31.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/compas_repare_31"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/conseil.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/conseil"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/croix.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/croix"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/cyclops_stone.json =====
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "dungeonmod:block/rock_cyclope"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/dague.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/dague"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/dague_blocking.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/dague"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [0, -60, -10],
+            "translation": [0, 6, 1],
+            "scale": [0.85, 0.85, 0.85]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [0, 60, -10],
+            "translation": [0, 6, 1],
+            "scale": [0.85, 0.85, 0.85]
+        },
+        "firstperson_righthand": {
+            "rotation": [0, -20, 90],
+            "translation": [-3, 7, 0],
+            "scale": [0.85, 0.85, 0.85]
+        },
+        "firstperson_lefthand": {
+            "rotation": [0, -20, 0],
+            "translation": [-3, 7, 0],
+            "scale": [0.85, 0.85, 0.85]
+        }
+    }
+}
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/denier.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/denier"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/dent_de_loup.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/dent_de_loup"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/epee.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/epee"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/epee_blocking.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/epee"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -60, -10],
+      "translation": [0, 6, 1],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 60, -10],
+      "translation": [0, 6, 1],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -10, 105],
+      "translation": [-5, 5, 0],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 10, -105],
+      "translation": [5, 5, 0],
+      "scale": [0.85, 0.85, 0.85]
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/faux_fer.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/faux_fer"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/fiole_benite.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/fiole_benite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/fleche.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/fleche"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/fleche_using.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "minecraft:item/arrow"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [0, 10, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        },
+        "firstperson_lefthand": {
+            "rotation": [0, 30, 45],
+            "translation": [0, 1, -4],
+            "scale": [1.0, 1.0, 1.0]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/fouet.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/fouet"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/fragment_de_fer.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/fragment_de_fer"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/glaive.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/glaive"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/glaive_spin.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/glaive"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-80, 0, 20],
+	    "translation": [2.5, 0, -10],
+            "scale": [1.3, 1.3, 1.3]
+	},
+        "firstperson_lefthand": {
+            "rotation": [0, 0, -45]
+        },
+        "thirdperson_righthand": {
+            "rotation": [-80, 0, 20],
+	    "translation": [2.5, 0, -10],
+	    "scale": [1.3, 1.3, 1.3]
+	},
+        "thirdperson_lefthand": {
+            "rotation": [0, 0, -45]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/hache_fer.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/hache_fer"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/idole_du_bonheur.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/idole_du_bonheur"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/jambiere_lourde.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/jambiere_lourde"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/key.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/key"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/key_white.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/key_white"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/lance.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/lance"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 0, -45],
+      "scale": [1.3, 1.3, 1.3]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 0, -45],
+      "scale": [1.3, 1.3, 1.3]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 0, 45],
+      "translation": [-1, 5, -2],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 0, 45],
+      "translation": [1, 5, -2],
+      "scale": [1, 1, 1]
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/lance_charging.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/lance"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [-30, 55, 45],
+      "translation": [5, 2, -3],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-30, -55, -45],
+      "translation": [-5, 2, -3],
+      "scale": [1, 1, 1]
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/leather.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/leather"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/montre.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/montre"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/ongle_cyclope.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/ongle_cyclope"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/os.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "minecraft:item/bone"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/os_charging.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "minecraft:item/bone"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-30, 55, 45],
+            "translation": [5, 2, -3]
+        },
+        "firstperson_lefthand": {
+            "rotation": [-30, -55, -45],
+            "translation": [-5, 2, -3]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/plastron_lourd.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/plastron_lourd"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/poussiere_de_pierre.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/poussiere_de_pierre"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/rune_glace.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": { "layer0": "dungeonmod:item/rune_glace" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/rune_sombre.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": { "layer0": "dungeonmod:item/rune_sombre" }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/sablier.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/sablier"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/sabre.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/sabre"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/sabre_slash1.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/sabre"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-150, 30, 0],
+            "translation": [0, 12, -8],
+            "scale": [0.85, 0.85, 0.85]
+        },
+        "firstperson_lefthand": {
+            "rotation": [-150, -30, 0],
+            "translation": [0, 12, -8],
+            "scale": [0.85, 0.85, 0.85]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/sabre_slash2.json =====
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "dungeonmod:item/sabre"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [-45, 0, 0],
+            "translation": [0, 2, -4],
+            "scale": [0.85, 0.85, 0.85]
+        },
+        "firstperson_lefthand": {
+            "rotation": [-45, 0, 0],
+            "translation": [0, 2, -4],
+            "scale": [0.85, 0.85, 0.85]
+        }
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/sac.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/bundle"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/stone.json =====
+{
+  "parent": "minecraft:block/stone"
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/syrinx_oublie.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 0, -60],
+      "translation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.5]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 4, 0],
+      "scale": [1.0, 1.0, 1.0]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 0, -60],
+      "translation": [0, 0, 0],
+      "scale": [0.6, 0.8, 0.3]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 4, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "gui": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1.5, 1.5, 1.5]
+    },
+    "ground": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 2, 0],
+      "scale": [0.6, 0.6, 0.6]
+    },
+    "fixed": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 0, 0],
+      "scale": [1.0, 1.0, 1.0]
+    }
+  },
+  "textures": {
+    "layer0": "dungeonmod:item/syrinx_oublie"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/syrinx_oublie_playing.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [-50, -10, 0],
+      "translation": [-8, -2, 1],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 0, 80],
+      "translation": [0, 6, 0],
+      "scale": [1, 1, 1]
+    },
+    "firstperson_righthand": {
+      "rotation": [-50, -10, 0],
+      "translation": [-8, -2, 1],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 8, 1],
+      "scale": [1, 1, 1]
+    },
+    "gui": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1.5, 1.5, 1.5]
+    },
+    "ground": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 2, 0],
+      "scale": [0.6, 0.6, 0.6]
+    },
+    "fixed": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1.0, 1.0, 1.0]
+    }
+  },
+  "textures": {
+    "layer0": "dungeonmod:item/syrinx_oublie"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/tablette_de_pierre.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/tablette_de_pierre"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/tetralame_mort_subite.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/tetralame_mort_subite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/torche.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/torche"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/torche_charging.json =====
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dungeonmod:item/torche"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [-30, 55, 45],
+      "translation": [5, 2, -3]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-30, -55, -45],
+      "translation": [-5, 2, -3]
+    }
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/totem_immortalite.json =====
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dungeonmod:item/totem_immortalite"
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/models/item/web.json =====
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "dungeonmod:item/web"
+    }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/player_animations/glaive_spin.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.glaive.spin": {
+			"loop": true,
+			"animation_length": 0.4,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": [-90, -20, 5],
+						"0.2": [-80, -20, 5],
+						"0.4": [-70, -20, 5]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": [-90, 20, -5],
+						"0.2": [-80, 20, -5],
+						"0.4": [-70, 20, -5]
+					}
+				}
+			}
+		}
+	}
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/player_animations/sabre_slash.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.sabre.slash": {
+			"loop": false,
+			"animation_length": 0.3,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": [-140, 0, 0],
+						"0.1": [-100, 0, 0],
+						"0.2": [-60, 0, 0],
+						"0.3": [-20, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}
+// ===== FILE: src/main/resources/assets/dungeonmod/player_animations/syrinx_play.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.syrinx.play": {
+			"loop": true,
+			"animation_length": 0.5,
+			"bones": {
+				"right_arm": {
+					"rotation": {
+						"0.0": [-140, -12.5, -20],
+						"0.25": [-140, -12.5, -20],
+						"0.5": [-140, -12.5, -20]
+					},
+					"position": {
+						"0.0": [0, -7, 0],
+						"0.25": [0, -8, 0],
+						"0.5": [0, -7, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": [-140, 12.5, 20],
+						"0.25": [-140, 12.5, 20],
+						"0.5": [-140, 12.5, 20]
+					},
+					"position": {
+						"0.0": [0, -7, 0],
+						"0.25": [0, -8, 0],
+						"0.5": [0, -7, 0]
+					}
+				}
+			}
+		}
+	}
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/sounds.json =====
+{
+  "entity.cyclops.growl1": {
+    "sounds": ["dungeonmod:entity/cyclops/grognement_cyclops_1"]
+  },
+  "entity.cyclops.growl2": {
+    "sounds": ["dungeonmod:entity/cyclops/grognement_cyclops_2"]
+  }
+}
+
+// ===== FILE: src/main/resources/assets/dungeonmod/textures/models/animation_de_lancer_de_pierre_cyclop.animation.json =====
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"lancer": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [72.5, 0, 0],
+						"1.0": [62, 0, 0],
+						"1.5": [11, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, -12, -11],
+						"1.0": [-2, -13, -5],
+						"1.5": [0, -3, 0]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [80, 0, 0],
+						"1.0": [66, 0, 0],
+						"1.5": [25, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, -10, -10],
+						"1.0": [-2, -10, -4],
+						"1.5": [0, -3, 2]
+					},
+					"scale": {
+						"0.0": [1, 1, 1],
+						"0.5": [1, 1, 1]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-20, 10, 15],
+						"1.0": [-30, 0, 0],
+						"1.5": [-1, -1, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, -9, -9],
+						"1.0": [-2, -10, -4],
+						"1.5": [0, -2, 2]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-5, 0, -15],
+						"1.0": [5, 10, 10],
+						"1.5": [-86, 21.4371, 166.8463]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, -8, -8],
+						"1.0": [-1, -11, -5],
+						"1.5": [0, -4, 2]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-35, 0, 0],
+						"1.0": [-50, 0, 0],
+						"1.5": [-30, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, -2, 6],
+						"1.5": [0, -2, 8]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0],
+						"1.0": [0, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"right_leg": {
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [-1, 0, 0.5],
+						"1.0": [-2, 0, 5],
+						"1.5": [0, 0, 5]
+					}
+				}
+			}
+		},
+		"oeil cachÃ©": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"left_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-143, 43, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-147, -43, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, -2]
+					},
+					"cpm_visibility": {},
+					"cpm_color": {
+						"0.0": [0, 0, 0],
+						"0.5": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"lancer de pierre": {
+			"loop": true,
+			"animation_length": 1.2,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.6": [75, 0, 0],
+						"0.9": [30, 0, 0],
+						"1.2": [7.5, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.6": [0, -12, -11],
+						"0.9": [0, -7, -11],
+						"1.2": [0, -3, -4]
+					}
+				},
+				"body": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.6": [87.5, 0, 0],
+						"0.9": [45, 0, 0],
+						"1.2": [12.5, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.6": [0, -5, -3],
+						"0.9": [0, -3, -3],
+						"1.2": [0, -2, -1]
+					}
+				},
+				"left_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.6": [-19.033, -6.769, 14.1361],
+						"0.9": [-123.7654, -0.541, 9.9466]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.6": [0, -11, -9],
+						"0.9": [0, -4, -7],
+						"1.2": [0, -4, -2]
+					}
+				},
+				"right_arm": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.6": [-11, 0, -15],
+						"0.9": [-126, 0, -15]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.6": [1, -10, -9],
+						"0.9": [0, -5, -7],
+						"1.2": [0, -4, -2]
+					}
+				},
+				"left_leg": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.6": [-37.5, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}
+// ===== FILE: src/main/resources/data/minecraft/recipe/cooked_beef_from_campfire_cooking.json =====
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "tag": "dungeonmod:impossible"
+  },
+  "result": {
+    "id": "minecraft:cooked_beef"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}
+
+// ===== FILE: src/main/resources/data/minecraft/recipe/cooked_beef_from_smelting.json =====
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "ingredient": {
+    "tag": "dungeonmod:impossible"
+  },
+  "result": {
+    "id": "minecraft:cooked_beef"
+  },
+  "experience": 0.35,
+  "cookingtime": 200
+}
+
+// ===== FILE: src/main/resources/data/minecraft/recipe/cooked_beef_from_smoking.json =====
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "ingredient": {
+    "tag": "dungeonmod:impossible"
+  },
+  "result": {
+    "id": "minecraft:cooked_beef"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}
+
+// ===== FILE: src/main/resources/dungeonmod.mixins.json =====
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.dungeonmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AncreGrapplingMixin",
+    "NoRespawnBlockMessageMixin",
+    "HeavyPersistenceMixin",
+    "MaxAbsorptionMixin",
+    "ZombieEntityMixin",
+    "ItemStackMixin",
+    "DamageUtilMixin",
+    "ArmorAttributeCapMixin",
+    "DungeonConsumableMixin",
+    "LivingEntityDamageMixin",
+    "PlayerAttackMixin",
+    "LivingEntityPoseMixin",
+    "SnowballDamageMixin",
+    "BackstabMixin",
+    "ComboMixin",
+    "FauxDeFerMixin",
+    "SwingAirMixin",
+    "FlecheMixin",
+    "FlecheMeleeMixin",
+    "ArcHerosMixin",
+    "ArcHerosHitMixin",
+    "PersistentProjectileEntityAccessor",
+    "ItemEntityMixin",
+    "TorcheMixin",
+    "BeerStrengthMixin",
+    "AttackCooldownMixin",
+    "NoXpMixin",
+    "NoVanillaRecipeMixin",
+    "FouetMixin",
+    "FouetChargeMixin",
+    "CraftingMixin",
+    "DagueDualMixin",
+    "EpeeMixin",
+    "EpeeDamageMixin",
+    "LanceTridentMixin",
+    "VoyageurMixin",
+    "WeaponKnockbackMixin",
+    "AdvancementMixin",
+    "DagueDamageMixin",
+    "SabreComboMixin",
+    "SabreMixin",
+    "FlecheUsingMixin",
+    "BaguetteMixin",
+    "BaguetteAttackMixin",
+    "FireballDamageMixin",
+    "FireSnowballMixin",
+    "DarkBuffMixin",
+    "RuneApplyMixin",
+    "RingOfBloodMixin",
+    "GlaiveAttackMixin",
+    "GlaiveMixin",
+    "SacKeepMixin",
+    "NoHitInvulnerabilityMixin",
+    "ThrownItemChargeMixin",
+    "AncreImmunityMixin",
+    "ZombieGoblinLootMixin",
+    "IdoleBonheurMixin",
+    "TetralameHealthMixin",
+    "MaxHealthPersistMixin",
+    "SyrinxMixin",
+    "OgreEyeMixin",
+    "PlayerScreenHandlerMixin",
+    "ScreenHandlerInvoker",
+    "ScreenHandlerMixin",
+    "InteractionBlockerMixin",
+    "SlotAccessor"
+  ],
+  "client": [
+    "ArmorHudMixin",
+    "DoubleJumpMixin",
+    "LanceTridentModelMixin",
+    "ClientAttackCooldownMixin",
+    "InGameHudMixin",
+    "ZombieEntityRenderStateMixin",
+    "ZombieBaseEntityRendererMixin",
+    "AbstractZombieModelMixin",
+    "LivingEntityRendererMixin",
+    "InventoryScreenMixin",
+    "RecipeBookMixin",
+    "DialogueHudMixin",
+    "KeyboardInputMixin",
+    "PauseMenuMixin",
+    "MerchantScreenMixin"
+  ]
+}
+
+// ===== FILE: src/main/resources/fabric.mod.json =====
+{
+  "schemaVersion": 1,
+  "id": "dungeonmod",
+  "version": "${version}",
+  "name": "Dungeon Mod",
+  "description": "Génère des donjons avec des salles connectées via /donjon.",
+  "authors": ["You"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.dungeonmod.DungeonMod"
+    ],
+    "client": [
+      "com.dungeonmod.DungeonModClient"
+    ]
+  },
+  "mixins": [
+    "dungeonmod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": ">=1.21.4",
+    "java": ">=21",
+    "fabric-api": "*",
+    "geckolib": ">=4.8.5"
+  }
+}
+
+// ============ CORPUS PART 10: French technical dialogue (interaction style) ============
+<|im_start|>user
+pourquoi mon mixin ne s'applique pas ? j'ai bien mis @Inject mais rien ne se passe en jeu
+<|im_end|>
+<|im_start|>assistant
+<think>
+Causes classiques d'un mixin silencieux : 1) la classe n'est pas déclarée dans dungeonmod.mixins.json (section mixins ou client), 2) le nom de méthode cible est un nom yarn alors que le runtime attend l'intermediary — mais loom remappe normalement, donc plutôt une faute de frappe dans method=, 3) mauvais environnement : mixin client déclaré côté serveur. Je demande le fichier avant de deviner — règle du projet.
+</think>
+Trois causes probables : la classe absente de `dungeonmod.mixins.json`, une cible `method=` erronée, ou un mixin client déclaré dans la mauvaise section. Montre-moi ta classe mixin et ton mixins.json, je te dis lequel.
+<|im_end|>
+<|im_start|>user
+c'est quoi la différence entre @Redirect et @WrapOperation ?
+<|im_end|>
+<|im_start|>assistant
+<think>
+@Redirect remplace l'appel ciblé et est exclusif : deux mods qui redirigent le même appel sont incompatibles. @WrapOperation (MixinExtras) enveloppe l'appel et permet de le laisser passer via operation.call(), donc chaînable entre mods. Fabric recommande WrapOperation pour la compatibilité.
+</think>
+`@Redirect` remplace l'appel — un seul mod peut le faire, conflit sinon. `@WrapOperation` (MixinExtras) l'enveloppe : tu peux modifier ou laisser passer avec `operation.call()`, et plusieurs mods peuvent s'empiler. Préfère toujours `@WrapOperation` sauf besoin absolu.
+<|im_end|>
+<|im_start|>user
+le build gradle est lent, c'est normal que loom remappe à chaque fois ?
+<|im_end|>
+<|im_start|>assistant
+Non, le remapping est mis en cache dans `.gradle/loom-cache`. S'il retourne à chaque build, c'est que quelque chose invalide le cache — souvent un changement de `gradle.properties` ou un daemon Gradle qui redémarre. Vérifie avec `./gradlew build --info | grep -i remap`.
+<|im_end|>

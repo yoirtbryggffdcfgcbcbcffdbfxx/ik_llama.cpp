@@ -59,3 +59,25 @@ Besoins : ~19 GB de disque temporaire (12,8 GB de Q8_0 supprimable ensuite),
 - Ta config Mellum n'utilise pas `--smart-expert-reduction` : essaie `6,0.05`
   (8→6 experts actifs) pour +15-25 % de decode, ça se cumule.
 - L'imatrix `mellum-java.imatrix` est réutilisable pour toute future recette.
+
+## Extra local recommandé (non commitable) : les sources Minecraft yarn
+
+Le corpus couvre ton code, Fabric API, les mixins et les tool calls — mais pas
+`net.minecraft.*` lui-même (sources décompilées non redistribuables sur GitHub).
+Or c'est l'API que Mellum doit générer sans se tromper. À faire chez toi :
+
+```bash
+cd ~/donjonmod/dungeonmod && ./gradlew genSources
+JAR=$(find ~/.gradle/caches/fabric-loom -name "*1.21.4*sources*.jar" | head -1)
+mkdir -p /tmp/mcsrc && cd /tmp/mcsrc && unzip -oq "$JAR"
+# sélection ciblée (~500 Ko) : les packages que donjonmod utilise vraiment
+for pkg in entity/mob entity/ai/goal util/math structure world/gen/structure \
+           registry network/packet item block server/world; do
+  find net/minecraft/$pkg -name "*.java" 2>/dev/null | head -12
+done | while read f; do echo "// ===== MC-YARN: $f ====="; cat "$f"; done \
+  > ~/mellum-java-quant/corpus_extra_local.txt
+wc -c ~/mellum-java-quant/corpus_extra_local.txt
+```
+
+Le script le fusionne automatiquement s'il existe. C'est l'ajout au meilleur
+rapport valeur/octet possible : les signatures exactes de l'API 1.21.4 que tu codes.

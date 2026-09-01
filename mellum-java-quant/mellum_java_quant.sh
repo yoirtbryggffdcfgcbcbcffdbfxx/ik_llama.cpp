@@ -32,6 +32,14 @@ fi
 # ---------- ETAPE 2 : imatrix sur ton corpus Java/Fabric ----------
 # ~350-450k tokens ; compte 1-2 h sur ton CPU. Le fichier de sortie est
 # reutilisable a vie (nouvelles recettes, nouveaux essais).
+# Extra local optionnel (sources Minecraft yarn-mappées : ./gradlew genSources)
+# Non redistribuable -> jamais commite, mais fusionne automatiquement si present.
+if [ -f corpus_extra_local.txt ]; then
+    echo "=== Fusion de corpus_extra_local.txt ($(du -h corpus_extra_local.txt | cut -f1)) ==="
+    cat "${CORPUS}" corpus_extra_local.txt > corpus_merged.txt
+    CORPUS="${WORK}/corpus_merged.txt"
+fi
+
 if [ ! -f mellum-java.imatrix ]; then
     echo "=== Calcul de l'imatrix Java/Fabric (long : ~1-2 h) ==="
     taskset ${CPUMASK} "${IK_BIN}/llama-imatrix" \
