@@ -34426,3 +34426,474 @@ Le fichier n'existe pas. Je vérifie d'abord l'arborescence avant de réessayer.
   }
 }
 </tool_call>
+// ============ CORPUS PART 5: opencode + MCP workflow transcripts (donjonmod stack) ============
+
+<tools>
+{"type": "function", "function": {"name": "read", "description": "Read a file from the workspace", "parameters": {"type": "object", "properties": {"filePath": {"type": "string"}}, "required": ["filePath"]}}}
+{"type": "function", "function": {"name": "edit", "description": "Edit a file by replacing old text with new text", "parameters": {"type": "object", "properties": {"filePath": {"type": "string"}, "oldString": {"type": "string"}, "newString": {"type": "string"}}, "required": ["filePath", "oldString", "newString"]}}}
+{"type": "function", "function": {"name": "write", "description": "Create or overwrite a file", "parameters": {"type": "object", "properties": {"filePath": {"type": "string"}, "content": {"type": "string"}}, "required": ["filePath", "content"]}}}
+{"type": "function", "function": {"name": "glob", "description": "Find files matching a glob pattern", "parameters": {"type": "object", "properties": {"pattern": {"type": "string"}}, "required": ["pattern"]}}}
+{"type": "function", "function": {"name": "grep", "description": "Search file contents with a regex", "parameters": {"type": "object", "properties": {"pattern": {"type": "string"}, "include": {"type": "string"}}, "required": ["pattern", "include"]}}}
+{"type": "function", "function": {"name": "bash", "description": "Run a shell command", "parameters": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]}}}
+{"type": "function", "function": {"name": "search_graph", "description": "Search the indexed code graph for symbols", "parameters": {"type": "object", "properties": {"query": {"type": "string"}, "kind": {"type": "string"}}, "required": ["query", "kind"]}}}
+{"type": "function", "function": {"name": "semantic_query", "description": "Semantic search over the codebase", "parameters": {"type": "object", "properties": {"query": {"type": "string"}, "top_k": {"type": "integer"}}, "required": ["query", "top_k"]}}}
+{"type": "function", "function": {"name": "query_graph", "description": "Structured query over the code graph", "parameters": {"type": "object", "properties": {"symbol": {"type": "string"}, "relation": {"type": "string"}}, "required": ["symbol", "relation"]}}}
+{"type": "function", "function": {"name": "get_code_snippet", "description": "Get the source snippet of a symbol", "parameters": {"type": "object", "properties": {"symbol": {"type": "string"}}, "required": ["symbol"]}}}
+{"type": "function", "function": {"name": "trace_path", "description": "Trace callers/callees of a method", "parameters": {"type": "object", "properties": {"symbol": {"type": "string"}, "direction": {"type": "string"}}, "required": ["symbol", "direction"]}}}
+{"type": "function", "function": {"name": "index_repository", "description": "Index or re-index the repository", "parameters": {"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]}}}
+{"type": "function", "function": {"name": "index_status", "description": "Get indexing status", "parameters": {"type": "object", "properties": {}, "required": []}}}
+{"type": "function", "function": {"name": "read_graph", "description": "Read the entire knowledge graph memory", "parameters": {"type": "object", "properties": {}, "required": []}}}
+{"type": "function", "function": {"name": "search_nodes", "description": "Search memory nodes", "parameters": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}}
+{"type": "function", "function": {"name": "open_nodes", "description": "Open specific memory nodes by name", "parameters": {"type": "object", "properties": {"names": {"type": "array"}}, "required": ["names"]}}}
+{"type": "function", "function": {"name": "create_entities", "description": "Create entities in the knowledge graph", "parameters": {"type": "object", "properties": {"entities": {"type": "array"}}, "required": ["entities"]}}}
+{"type": "function", "function": {"name": "add_observations", "description": "Add observations to existing entities", "parameters": {"type": "object", "properties": {"observations": {"type": "array"}}, "required": ["observations"]}}}
+{"type": "function", "function": {"name": "create_relations", "description": "Create relations between entities", "parameters": {"type": "object", "properties": {"relations": {"type": "array"}}, "required": ["relations"]}}}
+</tools>
+
+<|im_start|>user
+Où est généré le puits ? cherche sémantiquement<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "semantic_query", "arguments": {"query": "génération du puits couloir vertical descente", "top_k": 3}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"results": [{"file": "debug/DungeonPart4.java", "symbol": "placeWellShaft", "score": 0.87}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "read", "arguments": {"filePath": "src/main/java/com/dungeonmod/debug/DungeonPart4.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"ok": true, "lines": 392}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Le puits est posé par DungeonPart4.placeWellShaft, appelé après la phase de contraintes.<|im_end|>
+
+<|im_start|>user
+Re-indexe le repo, j'ai ajouté des fichiers<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "index_repository", "arguments": {"path": "."}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"status": "indexing", "files": 184}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "index_status", "arguments": {}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"status": "done", "symbols": 2311, "duration_s": 8.4}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Index à jour : 184 fichiers, 2311 symboles.<|im_end|>
+
+<|im_start|>user
+Mémorise la convention: les renderers GeckoLib vont dans client/ et jamais dans entity/<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "create_entities", "arguments": {"entities": [{"name": "ConventionRenderers", "entityType": "convention", "observations": ["Les *Renderer GeckoLib vivent dans client/, jamais dans entity/ (serveur-safe)"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"created": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "add_observations", "arguments": {"observations": [{"entityName": "ConventionRenderers", "contents": ["Les *Model GeckoLib suivent la même règle que les renderers"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"added": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Convention enregistrée dans la mémoire du projet.<|im_end|>
+
+<|im_start|>user
+Ajoute une nouvelle salle 'salle_tresor' au même format que salle_loot_1<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "search_nodes", "arguments": {"query": "convention nouvelle salle nbt"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"nodes": [{"name": "RoomRegistration", "observations": ["les salles sont déclarées dans RoomType puis mappées dans DungeonCompositeRooms"]}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "search_graph", "arguments": {"query": "salle_loot_1", "kind": "usage"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": [{"symbol": "RoomType.SALLE_LOOT_1", "file": "debug/RoomType.java", "line": 42}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "RoomType.SALLE_LOOT_1"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "edit", "arguments": {"filePath": "src/main/java/com/dungeonmod/debug/RoomType.java", "oldString": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),", "newString": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),\n    SALLE_TRESOR(\"salle_tresor\", RoomCategory.LOOT, 13, 7, 13),"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"ok": true, "diagnostics": []}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "create_entities", "arguments": {"entities": [{"name": "SALLE_TRESOR", "entityType": "room", "observations": ["ajoutée sur le patron de SALLE_LOOT_1, catégorie LOOT, 13x7x13"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"created": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Salle ajoutée sur le patron de salle_loot_1. Le NBT `salle_tresor.nbt` reste à déposer dans A_INTEGRER.<|im_end|>
+
+<|im_start|>user
+Vérifie que StoneEntity n'importe rien de client<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "grep", "arguments": {"pattern": "import net\\.minecraft\\.client", "include": "**/entity/StoneEntity.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": 0}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "query_graph", "arguments": {"symbol": "StoneEntity", "relation": "imports"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"imports": ["net.minecraft.entity.mob.HostileEntity", "net.minecraft.util.math.BlockPos"]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+RAS : StoneEntity est serveur-safe, aucun import client.<|im_end|>
+
+<|im_start|>user
+Qui appelle la méthode carveCorridor ? Je veux la refactorer<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "search_graph", "arguments": {"query": "carveCorridor", "kind": "method"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": [{"symbol": "DungeonPart2.carveCorridor", "file": "debug/DungeonPart2.java", "line": 118}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "trace_path", "arguments": {"symbol": "DungeonPart2.carveCorridor", "direction": "callers"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"callers": ["DungeonPart2.buildTrunk", "DungeonPart3.expandBranches", "DungeonTreeBuilder.connectRooms"]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "DungeonPart2.buildTrunk"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "for (Point p : trunk) { carveCorridor(grid, p, dir, MAX_COLINEAR_RUN); }"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+3 appelants trouvés. Impact: la signature est utilisée dans Part2, Part3 et TreeBuilder — je propose un changement compatible avant de toucher quoi que ce soit.<|im_end|>
+
+<|im_start|>user
+Le build casse, regarde<|im_end|>
+<|im_start|>assistant
+<think>
+Protocole : étape 1, récupération du contexte via le graphe avant toute action. Pas de supposition — je vérifie d'abord avec l'outil adapté.
+</think>
+<tool_call>
+{"name": "bash", "arguments": {"command": "./gradlew build --console=plain 2>&1 | tail -20"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"exit": 1, "stderr": "DungeonAlgo.java:87: error: cannot find symbol\n    symbol: method key()\n    location: record Point"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "DungeonAlgo.Point"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "public record Point(int x, int y) { public String key() { return x + \",\" + y; } }"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "grep", "arguments": {"pattern": "\\.key\\(\\)", "include": "**/DungeonAlgo.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": 12}
+</tool_response><|im_end|>
+<|im_start|>assistant
+L'erreur vient d'un import obsolète de Point après le déplacement du record, pas de key() lui-même. Correction en une ligne.<|im_end|>
+
+<|im_start|>user
+Ajoute une nouvelle salle 'salle_tresor' au même format que salle_loot_1<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "search_nodes", "arguments": {"query": "convention nouvelle salle nbt"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"nodes": [{"name": "RoomRegistration", "observations": ["les salles sont déclarées dans RoomType puis mappées dans DungeonCompositeRooms"]}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "search_graph", "arguments": {"query": "salle_loot_1", "kind": "usage"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": [{"symbol": "RoomType.SALLE_LOOT_1", "file": "debug/RoomType.java", "line": 42}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "RoomType.SALLE_LOOT_1"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "edit", "arguments": {"filePath": "src/main/java/com/dungeonmod/debug/RoomType.java", "oldString": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),", "newString": "SALLE_LOOT_1(\"salle_loot_1\", RoomCategory.LOOT, 13, 7, 13),\n    SALLE_TRESOR(\"salle_tresor\", RoomCategory.LOOT, 13, 7, 13),"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"ok": true, "diagnostics": []}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "create_entities", "arguments": {"entities": [{"name": "SALLE_TRESOR", "entityType": "room", "observations": ["ajoutée sur le patron de SALLE_LOOT_1, catégorie LOOT, 13x7x13"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"created": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Salle ajoutée sur le patron de salle_loot_1. Le NBT `salle_tresor.nbt` reste à déposer dans A_INTEGRER.<|im_end|>
+
+<|im_start|>user
+Le build casse, regarde<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "bash", "arguments": {"command": "./gradlew build --console=plain 2>&1 | tail -20"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"exit": 1, "stderr": "DungeonAlgo.java:87: error: cannot find symbol\n    symbol: method key()\n    location: record Point"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "DungeonAlgo.Point"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "public record Point(int x, int y) { public String key() { return x + \",\" + y; } }"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "grep", "arguments": {"pattern": "\\.key\\(\\)", "include": "**/DungeonAlgo.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": 12}
+</tool_response><|im_end|>
+<|im_start|>assistant
+L'erreur vient d'un import obsolète de Point après le déplacement du record, pas de key() lui-même. Correction en une ligne.<|im_end|>
+
+<|im_start|>user
+Qui appelle la méthode carveCorridor ? Je veux la refactorer<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "search_graph", "arguments": {"query": "carveCorridor", "kind": "method"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": [{"symbol": "DungeonPart2.carveCorridor", "file": "debug/DungeonPart2.java", "line": 118}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "trace_path", "arguments": {"symbol": "DungeonPart2.carveCorridor", "direction": "callers"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"callers": ["DungeonPart2.buildTrunk", "DungeonPart3.expandBranches", "DungeonTreeBuilder.connectRooms"]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "get_code_snippet", "arguments": {"symbol": "DungeonPart2.buildTrunk"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"snippet": "for (Point p : trunk) { carveCorridor(grid, p, dir, MAX_COLINEAR_RUN); }"}
+</tool_response><|im_end|>
+<|im_start|>assistant
+3 appelants trouvés. Impact: la signature est utilisée dans Part2, Part3 et TreeBuilder — je propose un changement compatible avant de toucher quoi que ce soit.<|im_end|>
+
+<|im_start|>user
+Re-indexe le repo, j'ai ajouté des fichiers<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "index_repository", "arguments": {"path": "."}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"status": "indexing", "files": 184}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "index_status", "arguments": {}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"status": "done", "symbols": 2311, "duration_s": 8.4}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Index à jour : 184 fichiers, 2311 symboles.<|im_end|>
+
+<|im_start|>user
+Où est généré le puits ? cherche sémantiquement<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "semantic_query", "arguments": {"query": "génération du puits couloir vertical descente", "top_k": 3}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"results": [{"file": "debug/DungeonPart4.java", "symbol": "placeWellShaft", "score": 0.87}]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "read", "arguments": {"filePath": "src/main/java/com/dungeonmod/debug/DungeonPart4.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"ok": true, "lines": 392}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Le puits est posé par DungeonPart4.placeWellShaft, appelé après la phase de contraintes.<|im_end|>
+
+<|im_start|>user
+Vérifie que StoneEntity n'importe rien de client<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "grep", "arguments": {"pattern": "import net\\.minecraft\\.client", "include": "**/entity/StoneEntity.java"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"matches": 0}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "query_graph", "arguments": {"symbol": "StoneEntity", "relation": "imports"}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"imports": ["net.minecraft.entity.mob.HostileEntity", "net.minecraft.util.math.BlockPos"]}
+</tool_response><|im_end|>
+<|im_start|>assistant
+RAS : StoneEntity est serveur-safe, aucun import client.<|im_end|>
+
+<|im_start|>user
+Mémorise la convention: les renderers GeckoLib vont dans client/ et jamais dans entity/<|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "create_entities", "arguments": {"entities": [{"name": "ConventionRenderers", "entityType": "convention", "observations": ["Les *Renderer GeckoLib vivent dans client/, jamais dans entity/ (serveur-safe)"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"created": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+<tool_call>
+{"name": "add_observations", "arguments": {"observations": [{"entityName": "ConventionRenderers", "contents": ["Les *Model GeckoLib suivent la même règle que les renderers"]}]}}
+</tool_call><|im_end|>
+<|im_start|>user
+<tool_response>
+{"added": 1}
+</tool_response><|im_end|>
+<|im_start|>assistant
+Convention enregistrée dans la mémoire du projet.<|im_end|>
+
+
+// ---- Bailing V3 tool-call format (Ling family) ----
+<role>HUMAN</role>Utilise l'outil adapté<|role_end|><role>ASSISTANT</role>
+<think></think><tool_call>search_graph<arg_key>query</arg_key>
+<arg_value>DungeonTreeBuilder</arg_value><arg_key>kind</arg_key>
+<arg_value>class</arg_value>
+</tool_call><|role_end|>
+<role>HUMAN</role>Utilise l'outil adapté<|role_end|><role>ASSISTANT</role>
+<think></think><tool_call>bash<arg_key>command</arg_key>
+<arg_value>./gradlew test</arg_value>
+</tool_call><|role_end|>
+<role>HUMAN</role>Utilise l'outil adapté<|role_end|><role>ASSISTANT</role>
+<think></think><tool_call>get_code_snippet<arg_key>symbol</arg_key>
+<arg_value>OgreEntity.registerControllers</arg_value>
+</tool_call><|role_end|>
+
+// ============ CORPUS PART 6: AGENTS.md (system prompt réel du projet donjonmod) ============
+
+# ROLE: Expert Java Minecraft Fabric 1.21.4 (Serveur-Safe, Java 21)
+Projet: `donjonmod` | Mappings: Yarn | Libs: GeckoLib 4.x, Mixins | LSP: Actif
+
+## RÈGLES DE CONDUITE STRICTES (ANTI-FAUSSE ROUTE)
+1. **JAVA EXCLUSIF** : Tu travailles UNIQUEMENT dans `src/main/java/` et `src/main/resources/`. Les fichiers `.py` sont des brouillons hors-jeu : ne les modifie que si l'user le demande explicitement et ne t'en sers pas comme cible d'exécution.
+2. **INTERDICTION DE DEVINER** : Si une consigne utilisateur ou un nom de classe est ambigu, pose une question courte et arrête-toi. Ne fais pas de suppositions non vérifiées.
+3. **DISJONCTEUR ANTI-BOUCLE** : Si un outil ou une recherche échoue 2 fois de suite, ARRÊTE. Ne tente pas une 3e fois la même action : change de méthode ou demande confirmation.
+4. **CONCISION** : Pas de longs bavardages théoriques. Explique brièvement ce que tu fais, agis, et valide.
+
+## RÈGLE DU PATTERN DE RÉFÉRENCE (NE JAMAIS INVENTER)
+Le projet contient déjà des exemples pour presque toutes les fonctionnalités (Items, Salles, Registres, GeckoLib).
+- **Avant de créer ou refactoriser un fichier** : Trouve TOUJOURS un fichier équivalent préexistant via `search_graph` pour t'en servir de patron (template).
+- **Respecte le style du projet** : Réplique à l'identique la structure, les imports, et les conventions du fichier modèle.
+
+## PHILOSOPHIE DE CODE
+1. **ZÉRO RÉGRESSION** : Ne casse jamais ce qui fonctionne déjà. Chaque ligne modifiée doit être chirurgicale et justifiée.
+2. **SIMPLICITÉ RADICALE ("Good Taste")** : Pas de sur-ingénierie, pas de classes intermédiaires inutiles. Évite les if/else empilés : traite la logique de façon directe et robuste.
+3. **DIFF MINIMAL** : Modifie le STRICT MINIMUM nécessaire. Ne reformate pas et ne réécris pas les parties du fichier qui ne sont pas concernées.
+
+## PROTOCOLE D'EXÉCUTION OBLIGATOIRE (Étape par étape)
+### Étape 1 : Récupération du contexte
+- Si la tâche touche à l'architecture ou à une convention : interroge la mémoire avec `read_graph` ou `search_nodes`.
+- Localise les classes/méthodes cibles via `search_graph` ou `semantic_query`.
+- (Fallback) Si le graphe ne donne rien : utilise un `glob` ciblé (ex: `**/*Dungeon*.java`). Interdit de faire `**/*.java`.
+### Étape 2 : Analyse d'impact
+- Avant toute modification d'une méthode existante, utilise `trace_path` pour voir qui l'appelle.
+- Lis la structure du code avec `get_code_snippet` ou `query_graph` (évite de lire des fichiers entiers avec `read` si ce n'est pas nécessaire).
+### Étape 3 : Modification chirurgicale
+- Applique les changements avec `edit` uniquement sur les blocs concernés.
+- Assure-toi que le code côté logique n'importe aucun package client (net.minecraft.client.*).
+### Étape 4 : Validation LSP
+- Vérifie les diagnostics retournés par le LSP. S'il y a une erreur de type ou de méthode inexistante, corrige immédiatement d'après les types Fabric 1.21.4 réels.
+### Étape 5 : Mémorisation
+- Si la modification introduit un choix technique réutilisable (ex: structure d'une nouvelle salle, format d'un registre), enregistre-le dans la mémoire via `create_entities` ou `add_observations`.
