@@ -8,7 +8,7 @@ génération procédurale** (corpus basé sur ton projet donjonmod).
 
 | Fichier | Rôle |
 |---|---|
-| `corpus_java_fabric.txt` (1,4 Mo) | Corpus imatrix : 864 Ko de ton code donjonmod (182 fichiers) + 528 Ko de testmods officiels Fabric API 1.21.4 + 40 Ko de tes docs |
+| `corpus_java_fabric.txt` (1,4 Mo) | Corpus imatrix : 864 Ko de ton code donjonmod (182 fichiers) + 528 Ko de testmods officiels Fabric API 1.21.4 + 40 Ko de tes docs + 21 Ko de transcriptions tool-call (protection du function calling) |
 | `mellum_java_quant.sh` | Script complet : téléchargement Q8_0 → imatrix → quantification → vérif perplexité |
 
 ## Pourquoi ça marche
