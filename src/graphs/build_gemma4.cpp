@@ -575,10 +575,11 @@ ggml_cgraph * llm_build_context::build_gemma4_mtp() {
     const llama_kv_cache & target_kv     = lctx.mtp_target_ctx->kv_self;
 
     GGML_ASSERT(n_tokens <= target_kv.n);
-    // llama_new_context_with_model() refuses MTP together with --swa-compress for every arch
-    // except deepseek4, so the target cache here is never compacted and this builder addresses
-    // it by absolute cell index (target_kv.head / target_kv.n) throughout.
-    GGML_ASSERT(!target_kv.any_compacted());
+    // The MTP head reads the *target* cache directly, which may be compacted by
+    // --swa-compress. The sliding-window mask and the K/V view offsets are then derived
+    // from the target's compacted window view (lctx.swa_window_view below), mirroring
+    // what build_swa_mask_for_graph() does for the non-MTP Gemma 4 graph but using the
+    // target cache state instead of the assistant context's own kv_self.
 
     ggml_tensor * inp_pos = build_inp_pos();
 
@@ -605,10 +606,45 @@ ggml_cgraph * llm_build_context::build_gemma4_mtp() {
         KQ_mask = lctx.inp_KQ_mask;
 
         if (target_hparams.n_swa > 0) {
-            lctx.inp_KQ_mask_swa = ggml_new_tensor_2d(ctx0, flash_attn ? GGML_TYPE_F16 : GGML_TYPE_F32, target_n_kv, n_mask_tokens);
-            cb(lctx.inp_KQ_mask_swa, "KQ_mask_swa", -1);
-            ggml_set_input(lctx.inp_KQ_mask_swa);
-            KQ_mask_swa = lctx.inp_KQ_mask_swa;
+            if (target_kv.any_compacted()) {
+                // --swa-compress: the sliding-window target layers are compacted, so their
+                // KQ mask lives on the compacted window (sinks + window) rather than the dense
+                // row range. Compute the target's window view and record it in lctx.swa_window_view
+                // so llm_build_kv()/llm_build_kqv() slice the K/V cache over that window as well,
+                // and so the mask fill step in llama.cpp uses the target's live SWA state.
+                const uint32_t pad = llama_kv_cache::get_padding(flash_attn);
+                const int64_t live = (int64_t) target_kv.live_swa() + n_tokens;
+                const llama_swa_window_view view = llama_swa_calc_window_view_compact(
+                        live, target_kv.sink_rows, n_tokens, target_hparams.n_swa, pad);
+                lctx.swa_window_view = {
+                    /*active    =*/ true,
+                    /*compacted =*/ true,
+                    /*n_kv      =*/ (int32_t) target_n_kv,
+                    /*n_tokens  =*/ (int32_t) n_tokens,
+                    /*window    =*/ target_hparams.n_swa,
+                    /*pad       =*/ pad,
+                    /*w_view    =*/ view.w_view,
+                    /*win_off   =*/ view.win_off,
+                };
+                GGML_ASSERT(view.engaged && view.w_view > 0 &&
+                        "SWA window mask must be engaged for a compacted target cache");
+                // build_swa_mask_for_graph() derives the view from the member kv_self (the
+                // assistant context's own cache), so build the windowed mask directly from the
+                // target-derived view computed above. Create the tensor the same way the
+                // non-MTP Gemma 4 graph does (see build_inp_KQ_mask_swa_win()), but keyed on
+                // the compacted window width w_view and gated on the target's n_swa.
+                const int64_t n_mask_tokens_win = GGML_PAD(n_tokens, GGML_KQ_MASK_PAD);
+                lctx.inp_KQ_mask_swa_win = ggml_new_tensor_2d(ctx0,
+                        flash_attn ? GGML_TYPE_F16 : GGML_TYPE_F32, view.w_view, n_mask_tokens_win);
+                cb(lctx.inp_KQ_mask_swa_win, "KQ_mask_swa_win", -1);
+                ggml_set_input(lctx.inp_KQ_mask_swa_win);
+                KQ_mask_swa = lctx.inp_KQ_mask_swa_win;
+            } else {
+                lctx.inp_KQ_mask_swa = ggml_new_tensor_2d(ctx0, flash_attn ? GGML_TYPE_F16 : GGML_TYPE_F32, target_n_kv, n_mask_tokens);
+                cb(lctx.inp_KQ_mask_swa, "KQ_mask_swa", -1);
+                ggml_set_input(lctx.inp_KQ_mask_swa);
+                KQ_mask_swa = lctx.inp_KQ_mask_swa;
+            }
         }
     }
 

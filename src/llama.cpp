@@ -8994,7 +8994,11 @@ struct llama_context * llama_init_from_model(
             }
         }
 
-        if (ctx->kv_self.any_compacted() && cparams.mtp && model->arch != LLM_ARCH_DEEPSEEK4) {
+        if (ctx->kv_self.any_compacted() && cparams.mtp &&
+                model->arch != LLM_ARCH_DEEPSEEK4 &&
+                model->arch != LLM_ARCH_GEMMA4 &&
+                model->arch != LLM_ARCH_GEMMA4_MTP &&
+                model->arch != LLM_ARCH_GEMMA4_ASSISTANT) {
             LLAMA_LOG_ERROR("%s: --swa-compress is not supported together with MTP speculative decoding for this model\n", __func__);
             llama_free(ctx);
             return nullptr;

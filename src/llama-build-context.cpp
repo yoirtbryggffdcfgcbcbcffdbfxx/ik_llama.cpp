@@ -2288,7 +2288,10 @@ ggml_tensor * llm_build_context::llm_build_kv(
         ggml_build_forward_expand(graph, v_cur);
     }
 
-    const bool compacted = kv.is_compacted(il);
+    // In MTP graphs the cache being read is the *target* cache and il is the assistant
+    // layer index, so the compacted check must address the target cache layer (kv_il).
+    const int kv_layer = kv_il >= 0 ? kv_il : il;
+    const bool compacted = kv.is_compacted(kv_layer);
     const bool use_swa_window = compacted && lctx.swa_window_view.active;
     const int32_t store_head = compacted ? swa_head : kv_head;
     const int32_t n_kv_view = use_swa_window ? (int32_t) lctx.swa_window_view.w_view : n_kv;
