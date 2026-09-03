@@ -1,0 +1,1631 @@
+entre ce raisonnement et celui ci, la barre est totalement distinct Reviewing Initial Data
+I'm currently focused on the user's input, specifically the exposed "Thinking Process" snippet. My analysis centers on understanding the origin of this data—whether it originates from a reasoning-enabled model like Gemma or a similar AI architecture. I am trying to understand the nuances of this specific AI, and also gain a feel for how the "thinking process" is exposed.
+Analyzing the Response's Logic
+I'm now diving deeper into the "Thinking Process" block. I'm dissecting its breakdown of the user request and how it defines the role. I'm keying in on its internal constraints and the pragmatic engineering perspective. I'm particularly interested in how it formulates a critique that balances subjectivity with technical objectivity, avoiding empty praise in favor of a clear, grounded assessment.
+Unveiling Inner Monologue
+Now I've grasped the user's insight—they've noticed the AI's internal "method acting." It's hilarious; the model internalized its system prompt and is literally coaching itself! I'm seeing it explicitly outline its assigned role and then apply the constraints. It's like watching an AI perform an internal monologue to ensure its responses align with the persona. This demonstrates how "thinking" models truly operate.Thinking Process:
+Analyze the Request: The user is asking for an opinion on the quality/goodness of the previously provided SVG code ("pense tu que ton image svg est bonne ?").
+Determine My Role/Persona: I am an expert technical, pragmatic, and uncompromising senior engineer. I must resist subjective praise/complimenting and provide a technically grounded assessment based on constraints and standards.
+Evaluate the Previous Output (The SVG):
+It was simple, well-structured (using basic shapes).
+It is technically correct SVG syntax.
+It produced a flower, but it is not a masterpiece.
+Apply the Persona's Constraints:
+Intellectually honest: Avoid blind praise.
+No jargon/over-engineering: Keep the critique pragmatic.
+Realistic: Performance and adherence to constraints matter more than aesthetic perfection.
+If it's good, validate it firmly. If it's flawed, destroy the argument directly.
+Formulate the Critique (Pragmatic Engineering View):
+Acknowledge that "good" is subjective, but frame "goodness" in engineering terms: efficiency, maintainability, and fidelity to the requested specification.
+State clearly what it achieves (it meets the basic requirement).
+Identify potential technical limitations (e.g., artistic fidelity vs. geometric simplicity).
+Give a definitive, objective statement.
+Draft the Response (Self-Correction during drafting): Do not say "It's beautiful." Say "It is technically sound for a basic representation." This aligns with the required tone. (Translate to French).
+Model 18:13
+ThinkingThoughts
+Analyzing Input Snippet
+I'm currently focused on the user's input, specifically the "Thinking Process" snippet. My analysis centers on the distinct nature of the described reasoning and how they differ from each other, which may shed some light on the user's perspective.
+Clarifying User Intent
+I'm now zeroing in on the user's ultimate goal. The mixture of French and English, coupled with the comparison of different thought processes, has me leaning towards an evaluation of reasoning styles. I'm trying to deduce what they want me to dissect: the comparison itself, the individual thought processes, or a critique of both.
+Collapse to hide model thoughtsmais dans la logique interne de raisonnmeent, est il un peu pareil ou pas ?
+Model 18:14
+ThinkingThoughts
+Considering Internal Logic
+I'm currently dissecting the user's query about internal reasoning logic, comparing the meta-analytical narrative with the bullet-point operational approach. The core is how similar or different these processes truly are within the user's internal framework. I need to pinpoint the essential differences and similarities in their core reasoning mechanisms.
+Analyzing Underlying Similarity
+I'm now focusing on whether the user's two reasoning styles are fundamentally similar despite their surface differences. I'm leaning toward the idea that, at a core algorithmic level, they're essentially the same process. My next step will be clarifying the essential differences, perhaps considering if the variance is related to how the algorithms are used.
+Collapse to hide model thoughtsmais au niveau du raisnnoemet, quand est il, je vais faire un test concret pour demander à ces 2 ia de produire du code python quelconque, après, on pourrais faire l'analyse, le premier raisonnement seras celui d'une ia locale de la meme famille que le 2ème raisonnement qui lui seras de l'ia plus élévé de cet entreprise, la plus haute!
+Model 18:16
+ThinkingThoughts
+Initiating Test Strategy
+Okay, I'm starting to formulate a testing strategy. The goal is to set up a test with two distinct models. One will be a smaller, local variant from the same family, the other a higher-end, top-tier model. I intend to ask the two models the same question to test performance.
+Refining Code Generation Test
+I'm now focusing on a more concrete test scenario involving code generation. I'll prompt two models, one local and one top-tier, to write arbitrary Python code. This will serve as a practical benchmark for comparing their reasoning capabilities, which is a great starting point, though more data may be necessary. I'll be looking at their approaches.
+Collapse to hide model thoughtsaisnomment du l'ia de pointe Defining the Objective
+I've got the request down: It's in French, and the goal is just any Python code, as long as it's not the usual yawn-inducing "Hello, World!" I'm aiming for something helpful and, ideally, engaging. Need to make it fun, but clear, and self-contained.
+Choosing the Game
+I've decided on "Devine le nombre," a guess-the-number game. It's interactive, simple to explain in French, and offers room for difficulty settings and scoring. I'm going to start drafting the Python code now! I'm planning to make it user-friendly, with clear prompts and well-structured functions.
+Model 18:17
+ThinkingThoughts
+Defining the Objective
+I'm currently breaking down the user's request. It seems they presented the reasoning trace of a flagship AI for a Python coding task. I'm focusing on the "Defining the Objective" phase of the trace, analyzing how the AI understood the initial prompt. This initial analysis will give the basis for understanding the following phases.
+Interpreting the Scenario
+I've moved on to understanding the broader context of this coding task. Specifically, I'm examining how the AI chose a "Devine le nombre" (guess the number) game. I'm also considering the implications of analyzing a piece of the user's experiment and verifying the safety of my continued analysis. I am now confirming there is no request for my internal CoT. It's an analysis of an external CoT.
+Collapse to hide model thoughtsfais moi un code python quelconque
+Model 18:17
+ThinkingThoughts
+Defining the Objective
+I've got the request down: It's in French, and the goal is just any Python code, as long as it's not the usual yawn-inducing "Hello, World!" I'm aiming for something helpful and, ideally, engaging. Need to make it fun, but clear, and self-contained.
+Choosing the Game
+I've decided on "Devine le nombre," a guess-the-number game. It's interactive, simple to explain in French, and offers room for difficulty settings and scoring. I'm going to start drafting the Python code now! I'm planning to make it user-friendly, with clear prompts and well-structured functions.
+Collapse to hide model thoughts
+ThinkingThoughts
+Analyzing AI Response
+Okay, I'm currently delving into the implications of quantizing the KV cache during the prefill phase, comparing options like iq4_nl against F16. I'm also grappling with the mathematical formulation of attention splitting, specifically exploring online softmax decomposition, considering the history component.
+Verifying Attention Decomposition
+I've confirmed the mathematical validity of attention decomposition across key blocks, specifically exploring the online softmax decomposition and FlashAttention formula. The initial analysis looked promising, and I've verified the formula from the references. Now, I'm focusing on dissecting the claims about the practical implementation and claims in ggml and llama.cpp. I'm keen to evaluate these technical claims with the same level of scrutiny.
+Analyzing Quantization Trade-offs
+I'm digging into the nuances of quantization techniques within llama.cpp, especially how they impact the prefill phase. The iq4_nl format and the decision to either keep F16 during prefill or quantize immediately are front of mind. I'm also examining the implications of online softmax with FlashAttention in this context. It seems, according to this AI response, this has significant impact on overall performance.
+Exploring Online Softmax
+I'm now fully immersed in the implications of online softmax, trying to model its impact mathematically. The ability to break down attention into history (quantized) and current sub-batch (F16) using online softmax seems key. I'm exploring the exact mathematical decomposition, noting that FlashAttention already adopts a block-by-block approach. Understanding the impact on quantization accuracy is the immediate next step.
+Calculating KQ Ratio
+I've just finished verifying the algebraic correctness of the 
+2
+U
+/
+T
+2U/T
+ ratio, calculating the computational cost of the KQ matrix multiplication. It precisely represents the ratio of F16 KQ work to total KQ work across all steps of the prefill phase. The results I obtained are consistent with the known theory. I'm now transitioning into an assessment of how the engine, specifically llama.cpp, aligns with the theoretical understanding, as well as accounting for hardware realities in this calculation.
+Investigating Discrepancies in Claims
+I'm now carefully examining potential inconsistencies and ambiguities. Specifically, I'm questioning whether ggml_flash_attn_ext actually supports using two key/value tensors of different precisions within a single fused kernel, given the conflicting statements. I'm focusing on the tensor structure and its single-type limitation. The documentation seems to contradict itself, and that needs clarification. I'm focusing on the implications of this for the implementation plan.
+Evaluating Quantization Strategies
+I've just finished a rigorous analysis of two quantization variants. Keeping only the current ubatch in F16 during attention offers negligible FLOPs benefit, especially at larger sequence lengths. However, deferring quantization until the end of the prefill phase has substantial memory costs, requiring a large F16 transient buffer. Quantization FLOPs remain relatively constant, which is interesting.
+Clarifying ggml_flash_attn_ext
+I'm now wrestling with the ggml_flash_attn_ext function in llama.cpp. The AI's claims about its ability to handle two different K tensors (one quantized, one F16) seem incorrect. This creates a critical question: how does the implementation actually handle online softmax continuation? Furthermore, in Variant B, I'm examining the handling of past token history when the entire prefill is F16. This is essential for multi-turn conversations and impacts how we handle the transient buffer.mais il y a le swa!
+Model 14:30
+ThinkingThoughts
+Analyzing Sliding Window
+I've hit a key element: "mais il y a le swa!" The sliding window attention mechanism, or SWA, is the crux. Models like Mistral, Gemma, and Qwen leverage this. The user is asking about a mathematical remedy, but cautions against modifying the build process.
+Examining SWA's Impact
+I'm now diving deep into Sliding Window Attention (SWA). It seems the core question revolves around how SWA fundamentally alters the transient F16 buffer size during prefill, particularly in models like Gemma and Mistral. Breaking it down, SWA restricts a query at position 
+t
+t
+ to attend only to a window 
+W
+W
+ of keys/values. This crucial constraint impacts the buffer requirements.
+Clarifying SWA Buffer
+I'm zeroing in on the implications of a sliding window of size W. A token's attention is limited to the preceding W tokens. The transient buffer for F16 during prefill doesn't need to be size T, the entire prompt length (e.g., 40k), but only min(T,W)! For SWA-only layers, tokens older than W are evicted. For alternating architectures, global layers still require size T attention. Now I must analyze the causal prefill with ubatches under SWA.
+Investigating Cache Management
+I'm now clarifying the implications of SWA on cache management. In pure SWA scenarios (like Mistral 7B), tokens older than the window size W are discarded, strictly capping the KV cache at W. However, hybrid architectures like Gemma 2 introduce complexity; global layers necessitate full token history. The architecture of the model determines the buffer size, not only the SWA layers.
+Calculating FLOPs in SWA
+I've got a grasp on the FLOPs impact. With SWA, the attention span is limited to W. For large T, the number of keys considered is capped at W. 100% of the attention of SWA layers happens within the window W and reads from F16. No evicted tokens are ever needed, thanks to the attention mask. SWA layers only attend to keys within the 
+[
+t
+−
+W
+,
+t
+]
+[t−W,t]
+ window.
+Understanding Decode Phase
+I am now focusing on the decode phase under Sliding Window Attention (SWA). It is clear to me that the new token generated at step T+1 only attends to the last W tokens, within the window [T+1-W, T+1]. SWA maintains its memory-saving benefits in the decode phase. The key insight is the windowed attention, which ensures any token older than W is never read again. This is independent of the overall prompt length.
+Investigating Implementations
+I'm now investigating how the sliding window attention (SWA) is actually implemented, especially in models like Mistral and Qwen. It's becoming clearer that many implementations, including some versions of llama.cpp, either disabled SWA or maintained a full cache, often due to performance issues or because the models shifted to full attention. I'm focusing on the specific mechanisms of llama_kv_cache and llm_build_kqv to see if tokens outside of W are discarded, or if a mask is applied. The KV cache typically stores all tokens up to n_ctx unless a rolling cache is explicitly enabled, which has caveats.
+Analyzing Token Management
+I'm now grappling with token management in pure SWA layers. I realize tokens older than the window W are never re-accessed; they could be discarded entirely. Why even quantize them? A pure SWA layer's KV cache only needs to store W tokens, which could fit in F16. But I must remember global layers, which require the whole prompt.
+Examining Layer Architecture
+I'm now back to the mixed architecture, with both Sliding Window Attention and Full Attention layers. The global layers still need to attend to the entire prompt of length T, resulting in full memory requirements. The intuition the user brought up is excellent! Now I must investigate whether llama.cpp discards tokens in a pure SWA model like Mistral 7B. I need a clear technical response to the user's excellent observation.
+Calculating Memory Benefits
+I'm now calculating the memory benefits of Sliding Window Attention (SWA), focusing on a window size W of 4096. A token at position t only attends to tokens in the window 
+[
+t
+−
+W
++
+1
+,
+t
+]
+[t−W+1,t]
+. This means the F16 buffer size is now capped at W, regardless of the full prompt length T. With an SWA layer, I'm attending 
+100
+%
+100%
+ within the window, and F16 is used! But I must remember that a mixed architecture will limit this benefit.
+Assessing Hybrid Architectures
+I'm now grappling with hybrid architectures. Specifically, with global layers, the full memory requirements persist, even with SWA layers. However, pure SWA layers can discard tokens outside the window. I am understanding that, concretely, a token outside the SWA window of size W is never re-read by this SWA layer, and so can be discarded. I must remember that global layers need the whole history.
+Implementing Streaming Quantization
+I'm now focusing on implementing "Streaming Quantization" with a sliding F16 buffer, and quantizing older tokens. I have a firm handle on the 
+W
+=
+4096
+W=4096
+ buffer for F16, with older tokens quantized into iq4_nl. When 
+t
+t
+ surpasses 
+W
+W
+, I use a ring buffer for SWA layers, and quantize global layer tokens. The peak VRAM is now capped, regardless of prompt length. However, implementation complexity is a concern.Découper l'attention de la couche globale en 2 passes (online softmax : une passe IQ4 sur le passé, une passe F16 sur la fenêtre glissante, puis fusionner avec la formule du max et du dénominateur vue plus tôt). tu peux voir si cela existe déja sur ik llama .cpp sur le web ou meme sur les pr! pareil pour l'autre ! Découper l'attention de la couche globale en 2 passes (online softmax : une passe IQ4 sur le passé, une passe F16 sur la fenêtre glissante, puis fusionner avec la formule du max et du dénominateur vue plus tôt).
+Model 14:41
+ThinkingThoughts
+Analyzing the Prompt
+I'm currently dissecting the user's request. It seems they want to split global attention into two passes. The first, an online softmax, uses IQ4 on past data and F16 on a sliding window. The final step involves merging these with a max and denominator formula. I'm focusing on the intended structure and the significance of each component.
+Investigating Implementation Possibilities
+I'm now searching for prior work within llama.cpp and related forks (especially considering the "ik llama .cpp" reference, which might be ik_llama.cpp or Ikalman's work). The goal is to determine if any implementations already exist for splitting attention into two passes. This includes exploring approaches using online softmax, mixed-precision KV cache, and sliding windows with F16 and quantized (IQ4, INT4, INT8) data. The specific search terms are focused around mixed-precision KV cache, sliding window, and quantized data.
+Analyzing KV Cache Creation
+Okay, I've dug into the KV cache implementation in both ik_llama.cpp and llama.cpp. My focus is zeroing in on the difference in how the KV cache is created. Specifically, I'm trying to understand the implications of the "SWA" (Shared Weight Activation?) versus "non-SWA" methods, particularly within the context of Iwan's fork. I'm noting the specific messages about cache creation.
+Exploring Attention Decomposition
+I'm currently investigating a potential method for decomposing attention across two passes. The plan involves employing an online softmax with an IQ4 pass on past data and an F16 pass on a sliding window, ultimately fusing these results using a max formula and the previously identified denominator. I'm also checking if this technique, or something similar, has been implemented within the ik llama.cpp framework online.
+Analyzing Attention Implementation
+I've been thinking about decomposing global attention layers into two passes. It seems like using online softmax with an IQ4 pass for historical data and an F16 pass for the sliding window, followed by a max formula fusion, is the way to go. I've now moved on to reviewing the ik_llama.cpp fork for relevant work, and found out that it has IQ quants and Hadamard rotation, but it doesn't do a 2-pass online softmax combining IQ4 + F16, according to Iwan himself. I am starting to look into mainline llama.cpp as well.
+Examining Key Findings
+I've been meticulously examining the ik_llama.cpp fork. My focus is on understanding the custom quantization methods, specifically the IQ quants, and the fast CPU kernels leveraging AVX. I am now trying to relate these features to speed and efficiency improvements.
+Investigating Optimization Strategies
+I am now focusing on optimization techniques, specifically SWA (Sliding Window Attention) and KV cache. I've discovered a key point: initial attempts to avoid quantizing the SWA KV cache were reverted. I'm digging into commit messages and PRs within llama.cpp to understand the rationale behind this reversal and its implications for performance. I am also investigating Hadamard rotations.
+Analyzing Memory Considerations
+I'm now considering the memory implications of the SWA cache, recognizing it can consume a considerable amount of memory in some situations, making full precision potentially undesirable. This has me digging into the potential for control via flags, and whether the extra logic is worth the trade off. I'm also examining the 2-pass online softmax, understanding that it's focused on the ggml_soft_max operator, not necessarily fused FlashAttention.
+Clarifying Implementation Absence
+I can confirm that the mixed FP16/INT8 attention strategy isn't implemented in either ik_llama.cpp or the mainline llama.cpp. I've looked at the reasoning: Iwan focused on extreme quantization, Hadamard rotations, and raw CPU/GPU acceleration in ik_llama.cpp. Regarding a 2-pass FlashAttention approach with IQ4 + F16, this has also not been implemented in the official llama.cpp repository.
+Revisiting Memory Trade-offs
+I'm revisiting the memory trade-offs, specifically regarding the Sliding Window Attention (SWA) cache. The initial instinct to maintain SWA in full precision was reversed due to memory concerns, potentially making extra logic undesirable. This aligns with the "Mixed-Format Paged Attention" concept I am researching. The code already physically separates SWA and non-SWA layers. I am now trying to fully grasp the ramifications of the trade off.
+Model 14:43
+ThinkingThoughts
+Clarifying the Input
+I'm now zeroing in on the user's intended meaning. The phrase "AVX2 sans SIMD" is throwing me. AVX2 is SIMD, by definition. I need to understand what the user truly wants. Perhaps they mean a scalar implementation, or maybe they're using an unusual terminology. More clarification is needed!
+Investigating Llama.cpp
+I'm now digging into llama.cpp to see how FlashAttention and attention run on the CPU. I'm checking for the existence of ggml_flash_attn_ext within the project. It seems this might be the core of the AVX2 utilization, which is what the user may be asking about.
+Analyzing the Options
+I'm now considering the implications of both fused and non-fused attention computations within llama.cpp on the CPU. The recent addition of ggml_flash_attn_ext supports AVX2 (and other vector instruction sets) for fast, fused attention, but I am now focused on scenarios where it isn't utilized. The user's "AVX2 sans SIMD" wording is still key; are they thinking of a CPU implementation, the non-fused path, or something else entirely?
+Interpreting the Intent
+I'm now zeroing in on the nuanced meaning behind the user's "AVX2 sans SIMD" request, and also their question regarding the CPU backend. Is it "AVX2 seul" specifically? I'm recalling that Kawrakow's ik_llama.cpp fork optimizes AVX-512 and AMX, and that certain operations might fall back to scalar or simple loops within AVX2. I'm also now considering if the user simply wants to know how things work within the CPU's ggml-cpu implementation.
+Decomposing CPU Attention
+I'm now focusing on the CPU's standard, non-fused attention mechanism. It's essentially C++ loops, with key matrix multiplications. Conversely, the fused ggml_flash_attn_ext leverages AVX2 intrinsics. I'm also now pondering the memory bandwidth differences between CPUs and GPUs, particularly as it pertains to dequantization. I've realized scalar dequantization of IQ4_NL, without SIMD, is exceptionally slow on the CPU, with integer shuffle operations being vital for speed.
+Unpacking User's Query
+I'm revisiting the "AVX2 sans SIMD" phrase. I'm speculating on the user's intent: Are they after a CPU implementation without complex SIMD kernels? Could they be referencing a CPU-only environment but seeking standard C++ solutions? I am also considering a potential French language autocorrect situation leading to a misunderstanding of SIMD as complex SIMD instructions. Or maybe "AVX2 sans AVX-512"? I'm attempting to decipher the user's focus.
+Re-evaluating the CPU Approach
+I'm now revisiting what a CPU (AVX2) environment entails, focusing on the two-pass softmax and F16 + IQ4_NL implementation. I realize that, compared to GPU implementation, this is simpler: it's standard C++ and loops. I'm also considering the CPU's memory bandwidth limitations, which, in contrast to the user's idea, may still be a bottleneck.
+Analyzing CPU's Math
+I'm now diving deep into the math and implementation aspects on the CPU. I see that DDR5 and DDR4 memory bandwidth is significantly lower than a RTX 4090. In the prefill stage, matrix computations are heavy (
+Q
+K
+T
+QK 
+T
+ 
+). I've also noted that AVX2 lacks native FP16 instructions, thus F16C converts FP16 to FP32. Dequantizing IQ4_NL to FP32 is very CPU-intensive due to the unpacking of bits and the table lookups, with significant implications for the prefill stage.
+Examining llama.cpp's Kernels
+I'm now focusing on llama.cpp's computational kernels, contrasting the classic decomposition with the FlashAttention approach. The fused kernel, found within ggml-cpu.c, is basically nested C loops, tiled for efficiency. I now think of how straightforward it would be to modify this loop to read a tile from IQ4_NL, and the last tile from an F16 buffer, on the CPU.
+Clarifying the CPU Goal
+I'm now clarifying the user's focus on AVX2, excluding GPU backends like CUDA/Metal, while also aiming to avoid overly complex assembly SIMD intrinsics. This leads to a new focus on CPU's code accessibility, revealing a benefit in the potential modification of algorithms within the pure C/C++ loops of ggml-cpu. There is also the huge penalty of dequantization with IQ4 on CPU.
+Collapse to hide model thoughts
+User 14:45
+enft, j'ai tester chez moi, le f16 est 7% plus rapide que iq4 nl sur un prompt quelconque de 3k token!
+Model 14:45
+ThinkingThoughts
+Interpreting the Data
+I'm currently focused on the user's input, specifically the claims about the F16's speed compared to the IQ4 NL model. I've translated the message and am analyzing the data points provided: a 7% speed increase on a 3k token prompt. My next step will be to explore any potential caveats or limitations of the testing methodology.
+Confirming the Benchmark
+I've validated the recent benchmark, finding that the 7% speed increase aligns with prior theoretical and measured estimates. Focusing on the CPU (AVX2) execution, I'm analyzing the 3k token prompt to understand why we see this gain at such a specific length. It seems this token count puts the prefill operation into an arithmetic-bound regime, where F16's more efficient dot products significantly improve the performance compared to the unpacking operations required by IQ4_NL.
+Analyzing the Findings
+I've confirmed that at the 3k token length, compute throughput, not memory bandwidth, is the bottleneck. The FP16's ~7% win on the prompt processing time is directly linked to this. I've found this is especially helpful in the context of the proposed feature, which validates the user's initial claims. Moreover, it is apparent that with a 4k sliding window, 100% of the attention can be processed in F16 for prompts up to 3k or 4k tokens, meaning the feature will run 100% in F16 and the 7% gains will be realized.
+Collapse to hide model thoughtsj'ai 16go de DDR5? ce que je souhaitais juste c'est avoir la vitesse de prefill d'un F16 sur 10% de la ram et le reste en iq4 nl
+Model 14:47
+ThinkingThoughts
+Assessing User's Requirements
+I'm currently focused on dissecting the user's objective: achieving the prefill speed of an F16 model, but scaled down to a parameter size of 10. The 16GB RAM constraint seems like the biggest hurdle to optimize for. I'm exploring how to frame this as an optimization problem.
+Quantifying Memory Allocation
+I've clarified the memory allocation: 10% for the transient F16 buffer, roughly 1.6 GB. The remainder will be dedicated to the KV cache using iq4_nl. My focus now is on calculating how many tokens can be accommodated within the 1.6 GB F16 budget, especially considering standard models like 8B models, such as Llama 3 or Qwen 2.5 7B. I'm crunching the numbers to see how FP16 memory per token factors into the capacity calculation, using model parameters to find the correct number.
+Calculating Token Capacity
+Okay, I've crunched the numbers and it's quite promising. With the 1.6 GB FP16 buffer, I can store an impressive 12,800 tokens for models like Mistral 7B, due to their smaller KV size. Even with Gemma 2 9B, I'm exceeding the 4096 SWA window at ~4700 tokens, which is still quite good.
+Implementing the Framework
+I'm now investigating how this can be realized within the llama.cpp framework. I'm focusing on the implementation details and if the features required are already implemented, or if this requires a new configuration. Currently, I'm analyzing existing flags, such as --cache-type-k and --cache-type-v, and exploring potential modifications to support a mixed precision approach. My goal is to determine if a flag for maintaining the last N tokens in F16 while storing the rest in IQ4 can be created.
+Refining Implementation Strategy
+I've been reviewing implementation options. It's clear Option B, a hybrid rolling KV cache, aligns perfectly with the user's need for a two-tier KV cache. The 1.6 GB transient FP16 buffer handles the recent context, enabling fast prefill and local attention, while the remaining RAM stores the older context in IQ4_NL, giving ultra-compact long context. With around 8.5 to 9.0 GB available for the KV cache, this is looking like a feasible solution.
+Collapse to hide model thoughtsvoix les dernier modèle sur hugging face ou les benchmark, et dis moi le tout, depuis ta connaissance, il y a eu beaucou d''avancé
+Model 14:48
+ThinkingThoughts
+Analyzing the French Query
+I'm currently dissecting the French query. My goal is to extract the core intent: identifying the latest French language models on Hugging Face, or assessing their benchmarks. I'm focusing on the implied request for a comprehensive overview of advancements, leveraging my knowledge base.
+Analyzing Open-Weight Trends
+The open-weight landscape in 2026 seems dramatically different. Alibaba's Qwen series, with models like Qwen 2.5 and the upcoming Qwen 3 and beyond, are showing significant dominance across benchmarks.
+Exploring Open-Source Alternatives
+The open-source domain is bustling! I'm seeing DeepSeek's V3 series and R1 models as potentially disruptive due to their efficiency. Llama's continued iterations, especially the Llama 3.2 family, are notable, while Google's Gemma 2 and Mistral's suite are evolving the space. I'm also watching Moonshot and Zhipu, for their progress in agentic coding. The Hugging Face Open LLM Leaderboard is now using harder benchmarks.
+Evaluating Benchmark Trends
+I'm now diving deeper into the nuances of benchmark evolution, noting the shift away from MMLU and towards more challenging evaluations. IFEval, GPQA, and MATH are key indicators of advanced capabilities, as are coding benchmarks like SWE-bench. I'm especially interested in how the LMSYS Chatbot Arena's hard prompts and multimodal features are shaping the competition.
+Assessing Advanced Benchmarks
+I'm noticing that older benchmarks like MMLU, GSM8K, and HumanEval have become saturated. Hugging Face's Open LLM Leaderboard v2 is now prioritizing new, more rigorous standards: MMLU-Pro, GPQA Diamond, MATH-500, SWE-bench Verified/Pro for bug resolution, and IFEval. The LMSYS Arena is also evolving, segregating pure chat, code, and long-form reasoning tasks.
+Collapse to hide model thoughtsnon, les vraie benchmark, les avancé réel, là tu me parle de truc de 2025 dude............................., genre on est vrmt plus du tout là!
+Model 14:50
+ThinkingThoughts
+Clarifying Benchmarks
+Okay, so I'm reassessing everything. Apparently, I'm way off the mark! I need to ditch these projections for 2025. I was talking about something far in the future. We're beyond that now. It looks like it is 2026. I'm focusing on truly advanced, current benchmarks. I need to be up to date and relevant.
+Analyzing the Data
+I've been reviewing the user's feedback, which spurred a deeper dive into current benchmarks. The user raised a valid point about the relevance of dated information. Now, I'm focusing on the actual landscape of advanced benchmarks and models, particularly for 2026. The search results are more closely reflecting this new focus. I'm taking a human-centric approach to it.
+Exploring New Benchmarks
+I'm now zeroing in on 2026's advanced benchmarks, specifically focusing on the landscape of challenging tests. Highlighting "ity's Last Exam" (HLE) and its rigorous questions, I'm noting the performance of frontier models, and SWE-bench Pro/Live's shift towards real-world GitHub issues. I'm also assessing the importance of LiveCodeBench and Arena/LMArena for multi-step tasks.
+Identifying Key Players
+I'm now identifying the key players and models expected to dominate the landscape. I'm noting the expected release of OpenAI's GPT-5 family, Google's Gemini 3 variants, and several open-weight Chinese titans like DeepSeek V4, Moonshot AI's Kimi K3, and Alibaba's Qwen 3.5. This includes Meta's Llama 4 and NVIDIA's Nemotron 3 Ultra. Additionally, I'm observing a shift toward massive, open-source models with trillions of parameters from Chinese labs.
+Addressing the Gaps
+I'm now completely restructuring my approach after acknowledging the critique. The older focus on 2024/early 2025 transitions is irrelevant. Now, I'm zeroing in on 2026's genuine state-of-the-art benchmarks. This includes Humanity's Last Exam (HLE) which replaced saturated benchmarks like GPQA and MATH-500. Then, I'm examining SWE-bench Pro/Live, for agents with complex codebases and real-time GitHub issues. Also, I'm looking at Terminal-Bench and other agentic tests.
+Collapse to hide model thoughts
+User 21:25
+sous linux mint antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:~
+(find ~/.gradle/caches/fabric-loom -name "1.21.4sources*.jar" | head -1)
+mkdir -p /tmp/mcsrc && cd /tmp/mcsrc && unzip -oq "$JAR"
+sélection ciblée (~500 Ko) : les packages que donjonmod utilise vraiment
+for pkg in entity/mob entity/ai/goal util/math structure world/gen/structure 
+registry network/packet item block server/world; do
+find net/minecraft/$pkg -name "*.java" 2>/dev/null | head -12
+done | while read f; do echo "// ===== MC-YARN: 
+f
+=
+=
+=
+=
+=
+"
+;
+c
+a
+t
+"
+f=====";cat"
+f"; done \
+~/mellum-java-quant/corpus_extra_local.txt
+wc -c ~/mellum-java-quant/corpus_extra_local.txt
+bash: cd: /home/antoinouli/donjonmod/dungeonmod: Aucun fichier ou dossier de ce nom
+find: ‘/home/antoinouli/.gradle/caches/fabric-loom’: Aucun fichier ou dossier de ce nom
+unzip:  cannot find or open , .zip or .ZIP.
+bash: /home/antoinouli/mellum-java-quant/corpus_extra_local.txt: Aucun fichier ou dossier de ce nom
+wc: /home/antoinouli/mellum-java-quant/corpus_extra_local.txt: Aucun fichier ou dossier de ce nom
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:/tmp/mcsrc
+(find ~/.gradle/caches/fabric-loom -name "1.21.4sources*.jar" | head -1)
+mkdir -p /tmp/mcsrc && cd /tmp/mcsrc && unzip -oq "$JAR"
+sélection ciblée (~500 Ko) : les packages que donjonmod utilise vraiment
+for pkg in entity/mob entity/ai/goal util/math structure world/gen/structure 
+registry network/packet item block server/world; do
+find net/minecraft/$pkg -name "*.java" 2>/dev/null | head -12
+done | while read f; do echo "// ===== MC-YARN: 
+f
+=
+=
+=
+=
+=
+"
+;
+c
+a
+t
+"
+f=====";cat"
+f"; done \
+~/mellum-java-quant/corpus_extra_local.txt
+wc -c ~/mellum-java-quant/corpus_extra_local.txt
+Model 21:25
+ThinkingThoughts
+Analyzing the Code Source
+I've just encountered an error while attempting to extract the Minecraft source code. It seems the Bash script failed to locate the directory I specified: /home/antoinouli/donjonmod/dungeonmod. This is a critical roadblock, since the script needs that directory to write the extra file. I'm going to double-check that the directory path is correct and accessible.
+User 21:27
+/home/antoinouli/donjonmod_real/donjonmod/dungeonmod/.gradle /home/antoinouli/ik_llama.cpp_git_me/ik_llama.cpp/mellum-java-quant/corpus_java_fabric.txt
+Model 21:27
+ThinkingThoughts
+Pinpointing Locations
+I've successfully identified the exact directories, specifically /home/antoinouli/donjonmod_real/donjonmod/dungeonmod for the mod and /home/antoinouli/ik_llama.cpp_git_me/ik_llama.cpp/mellum-java-quant for the destination corpus file, on the user's system. The precise locations are now clear.
+Collapse to hide model thoughtsUser 21:35
+j'ai installé graddle sur mon pc, enft, ce qu'il me faut c'est juste ça # Mellum2 « Java/Fabric Edition » — kit de quantification
+Objectif : transformer Mellum2-12B-A2.5B-Thinking (~6,7 GB en IQ4_NL générique)
+en un quant ~5,1 GB spécialisé pour ton usage : Java / Fabric API 1.21.4 /
+génération procédurale (corpus basé sur ton projet donjonmod).
+Contenu du kit
+Fichier	Rôle
+corpus_java_fabric.txt (1,4 Mo)	Corpus imatrix : 864 Ko de ton code donjonmod (182 fichiers) + 528 Ko de testmods officiels Fabric API 1.21.4 + 40 Ko de tes docs + 21 Ko de transcriptions tool-call génériques + 22 Ko de workflows opencode/MCP réels (search_graph, trace_path, memory...) + AGENTS.md du projet + 254 Ko de mixins Fabric API réels (93 fichiers, patterns @Inject/@Redirect) + 10 Ko de traces de raisonnement <think> (algo/math/debug) et outil calculatrice
+mellum_java_quant.sh	Script complet : téléchargement Q8_0 → imatrix → quantification → vérif perplexité
+Pourquoi ça marche
+~11,1 des 12 Md de paramètres sont dans les 64 experts routés (8 actifs/token).
+Les MoE tolèrent très bien la quantification agressive des experts.
+Les quants IQ3_KS (3,19 bpw) / IQ3_K (3,44 bpw) d'ik_llama sont l'état de
+l'art à ce bpw — c'est la spécialité de ce fork.
+L'imatrix ciblée Java/Fabric dit au quantiseur quels canaux protéger pour
+TON usage précis (yarn mappings, registres Fabric, GeckoLib, ton algo donjon).
+L'attention (334 M), les embeddings (453 M) et le routeur restent en 5-6 bits :
+ce sont eux qui portent la « réflexion » du modèle.
+Recette appliquée
+code
+Code
+token_embd / output      -> Q6_K
+attn_*                   -> IQ5_K
+ffn_up_exps / gate_exps  -> IQ3_KS   (le gros de la RAM)
+ffn_down_exps            -> IQ3_K    (down = plus sensible, un cran au-dessus)
+fallback                 -> IQ3_K
+Taille estimée : ~5,14 GB → ~1,5 GB de RAM rendus vs ton IQ4_NL actuel.
+Utilisation (sur ta machine)
+code
+Bash
+# 1. copie le dossier mellum-java-quant/ chez toi (corpus + script)
+# 2. vérifie les 2 variables en tête de script (IK_BIN, WORK)
+./mellum_java_quant.sh
+# 3. pointe MELLUM_MODEL de ton lanceur vers le nouveau .gguf
+Besoins : ~19 GB de disque temporaire (12,8 GB de Q8_0 supprimable ensuite),
+1-2 h d'imatrix + ~15 min de quantification.
+Variantes
+Encore plus petit (~4,9 GB, léger risque qualité) : tout en iq3_ks :
+remplace ffn_down_exps=iq3_k par ffn_down_exps=iq3_ks et le fallback par IQ3_KS.
+Plus sûr (~5,6 GB) : ffn_down_exps=iq4_ks (4,25 bpw sur les down).
+La perplexité de l'étape 4 (sur les mêmes 40 chunks Java) te dit objectivement
+où tu en es : nouveau quant ≤ IQ4_NL +1-2 % = gagné.
+Bonus indépendants du quant
+Ta config Mellum n'utilise pas --smart-expert-reduction : essaie 6,0.05
+(8→6 experts actifs) pour +15-25 % de decode, ça se cumule.
+L'imatrix mellum-java.imatrix est réutilisable pour toute future recette.
+Extra local recommandé (non commitable) : les sources Minecraft yarn
+Le corpus couvre ton code, Fabric API, les mixins et les tool calls — mais pas
+net.minecraft.* lui-même (sources décompilées non redistribuables sur GitHub).
+Or c'est l'API que Mellum doit générer sans se tromper. À faire chez toi :
+code
+Bash
+cd ~/donjonmod/dungeonmod && ./gradlew genSources
+JAR=$(find ~/.gradle/caches/fabric-loom -name "*1.21.4*sources*.jar" | head -1)
+mkdir -p /tmp/mcsrc && cd /tmp/mcsrc && unzip -oq "$JAR"
+# sélection ciblée (~500 Ko) : les packages que donjonmod utilise vraiment
+for pkg in entity/mob entity/ai/goal util/math structure world/gen/structure \
+           registry network/packet item block server/world; do
+  find net/minecraft/$pkg -name "*.java" 2>/dev/null | head -12
+done | while read f; do echo "// ===== MC-YARN: $f ====="; cat "$f"; done \
+  > ~/mellum-java-quant/corpus_extra_local.txt
+wc -c ~/mellum-java-quant/corpus_extra_local.txt
+Le script le fusionne automatiquement s'il existe. C'est l'ajout au meilleur
+rapport valeur/octet possible : les signatures exactes de l'API 1.21.4 que tu codes.
+Model 21:35
+ThinkingThoughts
+Analyzing Project Setup
+I've just begun examining the project setup, specifically focusing on locating the build.gradle file. This seems to be the crucial first step to understanding the configuration and potentially running the recommended source step, which I am keen to do. I will be looking closely at the project structure to see where this file resides.
+User 21:36
+ne fait pas si possible par un script, fait le par des commande que je fait car ça a crash et ça a fait build failed
+Model 21:36
+ThinkingThoughts
+Analyzing Gradle Failure
+Okay, I'm now delving into the root cause of the "build failed" error with Gradle. I'm focusing on why gradle genSources crashed. I'm considering potential version conflicts and system-level Gradle vs. Gradle wrapper usage as initial hypotheses. Let's see if we can identify any differences in how the build might behave under those different circumstances.
+Collapse to hide model thoughts
+User 21:37
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:~
+f
+i
+n
+d
+ 
+/
+.
+g
+r
+a
+d
+l
+e
+/
+c
+a
+c
+h
+e
+s
+−
+n
+a
+m
+e
+"
+∗
+1.21.4
+∗
+s
+o
+u
+r
+c
+e
+s
+∗
+.
+j
+a
+r
+"
+a
+n
+t
+o
+i
+n
+o
+u
+l
+i
+@
+a
+n
+t
+o
+i
+n
+o
+u
+l
+i
+−
+I
+d
+e
+a
+P
+a
+d
+−
+S
+l
+i
+m
+−
+3
+−
+14
+I
+R
+H
+10
+:
+ 
+find /.gradle/caches−name"∗1.21.4∗sources∗.jar"antoinouli@antoinouli−IdeaPad−Slim−3−14IRH10: 
+ cd /donjonmod_real/donjonmod/dungeonmod
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:/donjonmod_real/donjonmod/dungeonmod$ gradle genSources
+openjdk version "25.0.4" 2026-07-21
+OpenJDK Runtime Environment (build 25.0.4+7-1-24.04-Ubuntu)
+OpenJDK 64-Bit Server VM (build 25.0.4+7-1-24.04-Ubuntu, mixed mode, sharing)
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/usr/share/java/native-platform.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+FAILURE: Build failed with an exception.
+Where:
+Build file '/home/antoinouli/donjonmod_real/donjonmod/dungeonmod/build.gradle' line: 2
+What went wrong:
+An exception occurred applying plugin request [id: 'fabric-loom', version: '1.9.2']
+Failed to apply plugin [id 'fabric-loom']
+Could not create plugin of type 'LoomGradlePluginBootstrap'.
+> Class net.fabricmc.loom.bootstrap.LoomGradlePluginBootstrap is an abstract class.
+Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+Get more help at https://help.gradle.org
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:~/donjonmod_real/donjonmod/dungeonmod$
+Model 21:37
+ThinkingThoughts
+Diagnosing Loom Gradle Error
+I've zeroed in on the "openjdk version" mismatch, specifically that Java 25 or Gradle version conflict with the Loom plugin. Also I think I see a deeper issue; the LoomGradlePluginBootstrap class being abstract. I must investigate how to resolve this.
+Exploring Yarn Source Alternatives
+I'm now investigating alternative methods to obtain the Yarn sources. The primary focus is bypassing the genSources task in Loom, given the Gradle/Java compatibility issues. I'm looking at direct downloads of the Yarn mappings JAR from Maven (Fabric Yarn 1.21.4) or using the Gradle wrapper with Java 21, and exploring these as potential solutions. I'll verify if Java 21 is installed. I'll use update-java-alternatives -l or java -version, and I'll also try generating the gradle wrapper.ser 16:42
+sur ethno forms, comment faire pour importer des résulat d'un enquète dessus ?
+Model 16:42
+ThinkingThoughts
+Interpreting the Query
+I'm currently dissecting the user's intent. The phrase "ethno forms" suggests a specific data collection tool, though the exact name is still uncertain. The French query about importing résumés further complicates the interpretation, hinting at a potential data migration or integration task. I'm focusing on clarifying the "ethno forms" designation and understanding the target data format.
+Clarifying File Import
+Okay, I'm working on explaining how EthnoForms handles external file imports. I'm focusing on the steps for importing XLS, XLSX, CSV, and Ethnos files. Currently outlining the initial file preparation, and plan to detail each import type individually. The goal is a clear, concise guide for the user, starting with file pre-processing.
+Collapse to hide model thoughtsc'est sur ce site précis https://edu.ethnoforms.com/
+Model 16:45
+ThinkingThoughts
+Analyzing the Web Interface
+I'm now diving into the procedure for logging in to edu.ethnoforms.com, focusing on the web application's user interface. The specifics of the login process are next.
+Collapse to hide model thoughts
+User 16:46
+ailed to load resource: the server responded with a status of 500 ()
+api/analyzes/fromFile?source=Excel:1  Failed to load resource: the server responded with a status of 500 ()
+api/analyzes/fromFile?source=Excel:1  Failed to load resource: the server responded with a status of 500 ()
+Model 16:46
+ThinkingThoughts
+Diagnosing Server Response
+I'm currently focused on the recurring 500 errors. It appears the server is failing during the file upload API call, specifically after receiving excel files. I'm investigating the server logs and API code to pinpoint the exact cause of this internal server error, hopefully identifying data corruption issues or resource constraints during processing.
+Collapse to hide model thoughts
+User 16:47
+service.js?v=TFQkud2HlIFokCom1WHnj8SmQdfnBBsR0dcsWCQfsRg:73  POST https://edu.ethnoforms.com/s/api/analyzes/fromFile?source=Excel 500 (Internal Server Error)
+Model 16:47
+ThinkingThoughts
+Investigating Error Endpoint
+I'm currently focused on the https://edu.ethnoforms.com/s/api/analyzes/fromFile?source=Excel endpoint. I see a 500 Internal Server Error when posting to it, so I am analyzing this endpoint for potential issues.
+Collapse to hide model thou
+User 16:51
+Est-ce que vous avez remarqué qu'il y avait pas mal d'antivols dans le magasin ?	Est-ce que ça vous dérange de devoir demander à un vendeur pour attraper un jouet derrière un antivol ?	Est-ce que le fait de voir ces antivols vous donne moins envie d'acheter ?	Est-ce que ça vous embête de devoir demander à un vendeur pour avoir un ballon ?	Est-ce que ça vous embête d'acheter un Lego quand il n'y a que la boîte vide en rayon ?	Est-ce que ça vous dérange de devoir récupérer la boite remplie de Lego seulement au moment de payer à la caisse ?	Est-ce que ça vous ennuie de faire la queue juste pour regarder les jouets qui sont derrière la caisse ?	Est-ce que vous êtes déjà reparti sans acheter un jouet parce qu'il était trop compliqué à récupérer ? 	Si oui, à quelle occasion ?	Plus tard, est-ce que ça vous gênerait si on mettait encore plus d'antivols sur les jouets ?	Où habitez-vous ? 	Et enfin, vous faites quel métiers?
+Non	Non	Non	Oui, car on veut toucher le ballon, voir comment il rebondit etc ...	Non	Non	Non	Non		Non	Strasbourg	Artisan, commerçant, chef d’entreprise
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Oui	Tant que ça fait proprement	Non	Oui	Non		Oui	Strasbourg	Étudiants / Sans activité
+Oui	Non	L'estetique	Oui	Non	Non	Oui	Non		Oui	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Oui	Les petits ne voient pas	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Oui	Pas ètre sur de la:intégralité	Non	Non		Non	Strasbourg	Retraités
+Non	Non	Non	Non	Oui	Oui	Oui	Oui	Derrière la caisse	Non	Eurométropole	Étudiants / Sans activité
+Non	Non	Non	Moins pratique	Collection de légo	Oui	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Oui	Oui	Dut au monde	Non	Bas-Rhin	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Comprend pas le process	Oui	Oui	Oui	Trop long	Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Oui	Non	Non	Non	Oui	Oui	Oui	Non		Oui	Kehl	Étudiants / Sans activité
+Non	Dépend dispo	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Profession intermédiaire
+Non	Timide	Non	Non	Non	Non	Non	Oui	Timide 	Oui	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Oui	Non	Sans but précis	Non	Non	Non	Oui	Oui	Flemme	Non	Bas-Rhin	Étudiants / Sans activité
+Oui	Non	Non	Si fatigué oui	Oui	Si manque de choses oui, préfère antivol pluto que bide	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Dispo donc oui	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Retraités
+Oui	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Non	Timide	Non	Non	Oui	Non		Non	Strasbourg	Employés
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Retraités
+Oui	Si objet de valeur non, si non 	Non	Ça sert à rine	Non	Non	Oui	Non		Oui	Eurométropole	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Dépend du moment	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Oui	Non	Non	Non		Non	Bas-Rhin	Employés
+Non	Non	Oui	Enlève le côté compulsif de la'chat	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Oui	Oui	Oui	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Oui	L'attente pr enlever l'antivol	Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Eurométropole	Employés
+Non	Non	Oui	Oui	Non	Non	Oui	Oui	Vendeur occupé	Non	Strasbourg	Étudiants / Sans activité
+Non	Oui	Oui	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Oui	Eurométropole	Étudiants / Sans activité
+Oui	Non	Non	Pour un ballon oui	Non	Non	Oui	Non		Oui	Eurométropole	Employés
+Non	Non	Oui	Non	Non	Non	Oui	Oui	Trop de monde	Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Eurométropole	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Oui	Dispo du vendeur	Non	Eurométropole	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Sarreguemine	Étudiants / Sans activité
+Non	Oui	Non	Oui	Non	Oui	Oui	Non		Non	Eurométropole	Cadres et professions intellectuelles supérieures
+Oui	Oui	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Si on veut savoir le poid de la boîte, si il y a beaucoup de pièce ou pas	Non	Oui	Non		Oui	Strasbourg	Profession intermédiaire
+Non	Si jouet n'as pas ce besoin d'antivol, oui	Oui	Oui	Non	Non	Non	Oui	Compulsif	Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Non	Non	Oui	Non		Oui	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Oui	Oui	Oui	Oui	Oui	Oui	Trop compliqué	Oui	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Non	Non	Oui	Non		Oui	Strasbourg	Artisan, commerçant, chef d’entreprise
+Oui	Non	Non	Non	Non	Non	Oui	Oui	Monster high	Non	Strasbourg	Artisan, commerçant, chef d’entreprise
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Eurométropole	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Oui	Oui	Non	Non	Oui	Oui	Brosse à dent	Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Oui	Non	Oui	Oui		Oui	Strasbourg	Artisan, commerçant, chef d’entreprise
+Non	Oui	Effort supp	Non	Non	Non	Oui	Non		Oui	Strasbourg	Profession intermédiaire
+Non	Non	Ça donne plus confiance	Non	Non	Non	Oui	Non		Non	Luxembourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Oui	Oui	Non	Non	Non	Non		Non	Eurométropole	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Employés
+Oui	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Oui	Non	Non	Oui	Non	Non	Oui		Oui	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Oui	Non	Non	Oui	Oui	Jouet trop haut	Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Non	Oui	Non	Non	Non	Non		Non	Bas-Rhin	Cadres et professions intellectuelles supérieures
+Non	Non	Oui	Non	Oui	Oui	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Cadres et professions intellectuelles supérieures
+Oui	Non	Non	Non	Non	Non	Oui	Non		Oui	Eurométropole	Artisan, commerçant, chef d’entreprise
+Non	Non	Non	Selon dispo	En fonction du temps	Non	Oui	Non		Oui	Allemagne	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Si il y a du mone oui	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Eurométropole	Cadres et professions intellectuelles supérieures
+Non	Non	Oui	Non	Non	Non	Oui	Non		Non	Strasbourg	Employés
+Non	Non	Non	Non	Oui	Oui	Oui	Oui		Non	Bas-Rhin	Retraités
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Cacherais le packaging	Oui	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Non	Non	Non	Non		Oui	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Ça dépend desquel	Non	Oui	Non	Non	Oui	Oui	Temps d'attente	Non	Paris	Employés
+Non	Oui	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Employés
+Non	Non	Oui	Non	Oui	Non	Non	Non		Non	Eurométropole	Profession intermédiaire
+Non	Non	Non	Oui	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Oui	Oui	Non	Non	Non	Oui		Non	Haut rhin	Profession intermédiaire
+Oui	Non	Non	Non	Non	Non	Non	Non		Non	Eurométropole	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Je stress	Non		Non	Strasbourg	Employés
+Non	Non	Non	Non	Oui	Oui	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Oui	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Oui	Trop haut, pas e evendeut	Non	Eurométropole	Employés
+Non	Oui	Non	Oui	Non	Non	Oui	Oui		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Non	Oui	Non	Non	Oui	Oui		Non	Strasbourg	Employés
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Eurométropole	Profession intermédiaire
+Oui	Non	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Employés
+Non	Non	Non	Oui	Oui	Oui	Non	Non		Non	Bas-Rhin	Employés
+Non	Non	Non	Non	Oui	Oui	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Oui	Non	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Oui	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Profession intermédiaire
+Non	Oui	Non	Oui	Non	Non	Oui	Oui		Oui	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Employés
+Oui	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Oui	Non	Non	Non	Non	Oui	Non		Non	Eurométropole	Ouvriers
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Oui	Non	Oui	Non	Non	Détermination	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Retraités
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Retraités
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Ouvriers
+Non	Non	Non	Non	Non	Oui	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Non	Non	Non	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Décourager	Non		Non	Bas-Rhin	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Oui	Oui	Oui	Oui	Oui	Queue	Non	Strasbourg	Étudiants / Sans activité
+Non	Oui	Non	Non	Non	Non	Oui	Non		Oui	Eurométropole	Employés
+Non	Non	Non	Disponibilité du vendeur	Non	Non	Oui	Non		Non	Haut rhin	Étudiants / Sans activité
+Oui	Non	Oui	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Oui	Oui	Non	Non	Non	Oui	Non		Oui	Strasbourg	Cadres et professions intellectuelles supérieures
+Oui	Non	Non	Oui	Non	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Non	Oui	Beaucoup de choix	Non	Strasbourg	Étudiants / Sans activité
+Oui	Non	Non	Non	Non	Non	Oui	Non		Non	Eurométropole	Employés
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Oui		Non	Strasbourg	Employés
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Employés
+Non	Non	Non	Non	Non	Oui	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Oui	Oui	Non	Oui	Non		Non	Strasbourg	Profession intermédiaire
+Non	Oui	Non	Oui	Non	Non	Oui	Non		Non	Eurométropole	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Oui		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Moins jolie	Dispo	Non	Oui	Oui	Oui		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Employés
+Non	Non	Oui	Non	Non	Non	Oui	Non		Non	Eurométropole	Étudiants / Sans activité
+Non	Oui	Non	Oui	Non	Non	Oui	Non		Non	Tour	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Nancy	Retraités
+Non	Non	Non	Non	Non	Non	Non	Non		Oui	Strasbourg	Étudiants / Sans activité
+Oui	Non	Non	Non	Non	Non	Non	Non		Non	Strasbourg	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Non	Non		Non	Sartre	Retraités
+Non	Non	Non	Non	Non	Non	Dépend du monde	Non		Non	Besançon 	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Oui		Non	Strasbourg	Étudiants / Sans activité
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Cadres et professions intellectuelles supérieures
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Bas-Rhin	Profession intermédiaire
+Non	Non	Non	Non	Non	Non	Oui	Non		Non	Strasbourg	Étudiants / Sans activité
+class ApiConfiguration {
+constructor(configOptions) {
+//const basePath = (configOptions?.basePath) ? configOptions.basePath : D.origin;
+this.base = configOptions.basePath;
+}
+}
+class ApiService {
+constructor(config) {
+this.configuration = config;
+}
+code
+Code
+async _get(url) {
+    const requestOptions = {
+        method: "GET",
+    }
+
+    return await fetch(url, requestOptions);
+}
+
+async _download(url, fileName) {
+    const requestOptions = {
+        method: 'GET',
+        mode: 'no-cors',
+        referrerPolicy: 'no-referrer'
+    }
+
+    fetch(url, requestOptions)
+        .then(async (result) => {
+            if (!result.ok) throw getTranslation('error_while_updating_downloading_data_file_x', { data_file_name: fileName });
+            return result.blob();
+        })
+        .then(blob => { this._downloadBlob(blob, fileName); })
+        .catch(err => { DevExpress.ui.notify(err, "error", 3000) });
+}
+
+async _downloadBlob(blob, fileName) {
+    const $a = document.createElement('a');
+    if (fileName) {
+        $a.setAttribute('download', fileName);
+    }
+
+    const href = URL.createObjectURL(blob);
+    $a.href = href;
+    $a.setAttribute('target', '_blank');
+    $a.click();
+    URL.revokeObjectURL(href);
+}
+
+async _post(url, body, signal) {
+    const requestOptions = {
+        method: "POST",
+    }
+
+    if (body) {
+        requestOptions.body = body;
+
+        // S'il s'agit d'un objet et non d'un formulaire
+        if (!(body instanceof FormData)) {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            requestOptions.headers = headers;
+            requestOptions.body = JSON.stringify(body);;
+        }
+    }
+
+    if (signal) {
+        requestOptions.signal = signal;
+    }
+
+    return await fetch(url, requestOptions);
+}
+Model 16:51
+ThinkingThoughts
+Analyzing Data Issues
+I've got the survey data and the service.js code in front of me now. My focus is on understanding why their POST request to the ethnoforms API is failing. I'm digging into the 12 questions and 140 rows to see if there are any obvious data inconsistencies or formatting problems that might be triggering the issue. The code snippet will provide context on how the data is being sent.
+Examining Data Fields
+I'm now closely examining the survey questions and data content, specifically focusing on potential causes for the API failure. I've pinpointed specific columns, like question 9, "Si oui, à quelle occasion ?", which appears mostly empty, and question 11, "Où habitez-vous ?", a field that might have issues with its format. I'm looking for inconsistencies or peculiarities.
+Investigating Field Anomalies
+I'm deep in the data now, and seeing some clear patterns of mixed responses within the columns. Column 2, Column 3, Column 4, Column 5, and Column 6 all show this mixed data type issue, with "Non" and "Oui" responses mixed with free-text responses that likely need to be handled carefully. It appears this inconsistency might be the crux of the problem.
+Pinpointing the Data Glitch
+I've homed in on column 7, which is a key contributor to the Ethnoforms API crash. It's a classic case of mixed data types. The column contains "Non", "Oui", but also free-text responses like "Les petits ne voient pas". This inconsistency is confusing the automated import parser, as it expects a clear Boolean or Single Choice, leading to a 500 error. The fromFile function is likely misinterpreting this. Also, the headers have trailing spaces and punctuation that are probably complicating things.
+Collapse to hide model thoughts
+User 16:52
+mais pk sur google forms, car cela viens de google forms, cela est simple et pas là sur ce site ?
+Model 16:52
+ThinkingThoughts
+Analyzing Platform Differences
+I'm currently dissecting the stark contrast between Google Forms' straightforwardness and the perceived complexity here, focusing on the fundamental differences in their architecture and purpose. I'm exploring why a simple task like the one posed feels so much more intuitive in the Google environment, in hopes of better implementing a solution here.
+Collapse to hide model thoughtsmais le autre est important non ? ou alors on s'en fiche ici ?
+Model 16:54
+ThinkingThoughts
+Considering Qualitative Aspects
+Okay, so I'm tackling the methodological implications raised about the "Autre," the qualitative aspect. It's a fundamental question of whether this nuance matters in this particular context. I'm leaning toward a clear response; in fact, I'm currently thinking through what the precise answer should be, and the best way to explain its importance, or lack thereof.
+Collapse to hide model thoughts
+User 16:56
+c'est possible d'avoir une commande qui permet cela, ou un script python ou autre ? je suis sur linux mint ? et c'est sur libre ofice
+Model 16:56
+ThinkingThoughts
+Considering Data Prep Options
+Okay, I'm currently assessing the best way to handle this survey data within Linux Mint, considering LibreOffice as a primary tool and aiming for compatibility with Ethnoforms. I'm leaning towards Python for its flexibility in cleaning, formatting, and splitting the data, or a single shell command as a simpler solution. I'm focusing on either splitting quantitative from qualitative data or normalizing it, and getting it ready for Ethnoforms.
+Developing Python Script Solution
+I've decided to create a self-contained Python script using the built-in csv module to process the data. This approach avoids external dependencies, making it universally compatible with Linux Mint's Python installation. The script will take the raw dataset as input and clean column headers, standardize responses to "Oui," "Non," or "Autre / Nuancé," handle empty cells, and generate a clean output ready for Ethnoforms. For optional Excel output, I can include openpyxl.
+Collapse to hide model thoughtsUser 16:59
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:~$ cat << 'EOF' > nettoyer.py
+import csv
+import sys
+import os
+Fichier source et fichier de sortie
+input_file = "donnees_brutes.tsv"
+output_file = "donnees_clean_ethnoforms.csv"
+def standardize_val(val):
+v = val.strip()
+if not v:
+return "N/A"
+code
+Code
+v_lower = v.lower()
+if v_lower in ["non", "non."]:
+    return "Non"
+elif v_lower in ["oui", "oui."]:
+    return "Oui"
+elif v_lower.startswith("oui"):
+    return "Oui"
+elif v_lower.startswith("non"):
+    return "Non"
+elif any(word in v_lower for word in ["dépend", "depend", "selon", "si"]):
+EOFnt(f" Succès ! Fichier généré : {output_file}") "N/A")le, profession) \ule)
+antoinouli@antoinouli-IdeaPad-Slim-3-14IRH10:~$
+Model 16:59
+ThinkingThoughts
+Troubleshooting Command Pasting
+I've been focusing on the user's issue with the multiline cat command, which seems to be getting corrupted during the paste into the terminal. It's a frustrating but common problem, so I'm considering solutions to ensure the command is correctly entered to prevent these paste errors.
+Collapse to hide model thoughtsokay, actulememt, dans ta base de connaissance c'est quoi les meilleurs ia du monde chez toi
+Model 16:16
+ThinkingThoughts
+Defining AI Landscape
+I'm currently analyzing the user's informal request, focusing on identifying the key topic: pinpointing the best AIs globally, based on my internal knowledge. The user's casual tone is shaping my response's style. I'm prioritizing directness and clarity, preparing to list relevant AI systems accordingly. I'm beginning to form a framework for categorization, ensuring the final output is concise and informative.
+Categorizing Best AIs
+I've refined the scope and, based on my understanding of the current AI landscape, I'm setting up categories like LLMs, multimodal models, image generation, video generation, audio, and specialized research AIs. I'm focusing on the best systems in each group from 2023-2024, like OpenAI's GPT-4o, Anthropic's Claude 3.5, Google's Gemini, and open-source models such as Meta's Llama 3 and Mistral's offerings, along with systems for specific tasks such as Midjourney for image generation and AI tailored for specialized reasoning.
+Outlining System Leaders
+I'm now identifying leaders across key AI domains. I'm focusing on open-source leaders like Black Forest Labs (open-weights) and models such as DALL-E 3 and Stable Diffusion 3/SDXL, and top video generation systems like Sora, Runway Gen-3 Alpha, and Kling AI. For coding, Claude 3.5 Sonnet, GitHub Copilot, and Devin (agent) are strong contenders. I'm building a tiered structure to ensure clarity, starting with an introductory caveat about the definition of "best" and then breaking down into each category of leader.
+Collapse to hide model thoughtsUser 16:17
+maintenant, quels sont les meilleurs ia du monde actuelelent cherche sur le web
+Model 16:17
+ThinkingThoughts
+Defining the Scope
+I've got the user's request. It's about identifying top AI systems globally, with a French location context. My initial step is clear: I need to ascertain the specific intent behind "best" – is it performance, popularity, or something else? I will refine my search terms to clarify that.
+Analyzing AI Landscape Evolution
+The AI landscape is shifting rapidly. I'm focusing on the flagships, particularly Anthropic's Claude family (Claude 3.7 Sonnet, Claude 3.5 Sonnet, Claude Opus), which excels in hybrid thinking and reasoning and leads SWE-bench. OpenAI's GPT-4o and o-series (o1, o3, o3-) are also on my radar.
+Expanding AI Landscape Coverage
+My focus has broadened to include leading open-source and open-weight models. I'm now examining DeepSeek-R1 and V3, alongside Meta's Llama series, Alibaba's Qwen, and Mistral AI's recent updates. I'm also delving into visual and video generation platforms such as Midjourney, Kling AI, and Runway, to build a more comprehensive overview of current AI capabilities.
+Collapse to hide model thoughts
+User 16:18
+cherche en aout 2026 sur hugging face ou artificial intellingence
+Model 16:18
+ThinkingThoughts
+Exploring Recent Data
+I'm currently focused on pinpointing relevant search parameters. Given that it's September 1, 2026, I'm digging into what might be current in August 2026 on Hugging Face or in artificial intelligence in general. I'll prioritize recent model releases, leaderboard standings, and open research initiatives.
+Analyzing August 2026 Trends
+I am now focusing on August 2026 data. The explicit user request involves a search on Hugging Face or the broader artificial intelligence ecosystem. I've noted a key trend: the month represents a record high point. I'll need to dig deeper to understand the specifics behind this "record" and determine if it applies across the whole AI ecosystem or more specifically to Hugging Face or another specific data point.
+Examining August 2026 Releases
+I'm now diving into the specifics of August 2026, focusing on model launches. It seems there was a massive spike, with over 24 major model releases from 18 different labs. My attention is now honed in on Hugging Face trends, specifically a pronounced shift towards large, open-weight architectures like the Qwen series, DeepSeek V4, GLM-5.3-Flash, and others. The Hugging Face Hub itself shows over 2.9 million model repositories, with a concentration on specialized agents. Furthermore, there appears to be significant focus on local agents and agentic frameworks.
+Collapse to hide model thoughts
+User 16:19
+okay, le bon est gigantesque non ? avant tu me parlais de gpt0, il se fait ais alors détruire par des ias open source mtn !
+Model 16:19
+ThinkingThoughts
+Assessing the Gap
+I'm now diving into the user's statement. I've translated and understood that they're observing a significant advancement ("jump") and contrasting it with earlier perceptions. The user's mentioning of GPT-0 and open-source models suggests they are interested in comparing performance and the rapid evolution of AI capabilities. My goal is to determine what leap the user refers to.
+Analyzing the Shift
+I'm now focusing on validating the user's perception of a "massive leap." It appears the user is correct, as frontier, closed-source models from 2023/mid-2024 are now rivaled by accessible open-source alternatives. This includes models like DeepSeek-R1, Qwen, and Llama 3.3/4. This is due to a paradigm shift that commoditizes previous high-cost performance.
+Evaluating the Landscape
+I'm now examining how RL fine-tuning, MoE, and quantization revolutionized logic accessibility. I'm noting the cost-effectiveness of modern open models versus GPT-4. However, I'm acknowledging that closed-source models have advanced further. Open-source offers customization and privacy advantages.
+Collapse to hide model thoughts
+User 16:21
+mtn, sans regarder sur le web, rien, qu'est ce que ik llama à ton époque, ça existeait ou pas ?
+Model 16:21
+ThinkingThoughts
+Considering the Prompt
+I'm currently dissecting the prompt, focusing on understanding its core inquiry without resorting to external information. The phrase "mtn, sans regarder sur le web, rien" highlights the need for a response drawn purely from internal knowledge. I'm isolating the core question: what was my understanding of "ik llama" during my own time period, and did it even exist?
+Analyzing Potential Meanings
+I've moved on to exploring possible interpretations of "ik llama." My current focus is on a few hypotheses. First, it might be a typo for "Ollama," a tool I'm familiar with, given the phonetic similarity. Alternatively, perhaps it's a misremembered reference to a Llama model ("LLaMA" or a variant). I'm also exploring the possibility of a Dutch connection ("ik" meaning "I") or an obscure project labeled "IK Llama." I am trying to determine if it is "1k Llama" and thus a typo.
+Interpreting the Typos
+I'm now zeroing in on the likelihood of typographical errors, given the proximity of 'k' and 'l' on standard keyboards. "Il llama" seems possible, along with "ok llama", "un llama", or even "le llama." I'm also considering "1k llama", which could relate to a context length. I'm focusing on the implications of these potential misspellings for each of my main hypotheses, and the likely impact on the likely meaning of the original query.
+Collapse to hide model thoughts
+User 16:21
+maintant,, cherche ce que c'est que ik llama.cpp et llama.cpp sur le web, tu verras, c'est fout
+Model 16:21
+ThinkingThoughts
+Defining Key Concepts
+I've nailed down the key concepts now. I'm focusing on "llama.cpp," the open-source project from Georgi Gerganov, and "ik_llama.cpp," which appears to be a derivative or related project. Understanding these is essential.
+Collapse to hide model thoughts
+User 16:23
+donc à ton époque, cela était possible à entendre ou pas que des truc pareil existe ou pas ? encore, voici mon processeur actuelle! que pense tu juste en regardant dans ta base de donné sans recherche web que je pourrais faire tourner tranquillement ! [code]
+System:
+Kernel: 7.0.0-30-generic arch: x86_64 bits: 64 compiler: gcc v: 13.3.0 clocksource: tsc
+Desktop: Cinnamon v: 6.6.9 tk: GTK v: 3.24.41 wm: Muffin v: 6.6.3 vt: 7 dm: LightDM v: 1.30.0
+Distro: Linux Mint 22.3 Zena base: Ubuntu 24.04 noble
+Machine:
+Type: Laptop System: LENOVO product: 83K0 v: IdeaPad Slim 3 14IRH10 serial: <superuser required>
+Chassis: type: 10 v: IdeaPad Slim 3 14IRH10 serial: <superuser required>
+Mobo: LENOVO model: LNVNB161216 v: SDK0T76463 WIN serial: <superuser required>
+part-nu: LENOVO_MT_83K0_BU_idea_FM_IdeaPad Slim 3 14IRH10 uuid: <superuser required> UEFI: LENOVO
+v: QDCN32WW date: 12/14/2025
+Battery:
+ID-1: BAT0 charge: 50.7 Wh (97.3%) condition: 52.1/50.0 Wh (104.2%) volts: 12.5 min: 11.3
+model: ATL L24N3PK2 type: Li-poly serial: <filter> status: full cycles: 35
+CPU:
+Info: 8-core (4-mt/4-st) model: 13th Gen Intel Core i5-13420H bits: 64 type: MST AMCP
+smt: enabled arch: Raptor Lake rev: 2 cache: L1: 704 KiB L2: 7 MiB L3: 12 MiB
+Speed (MHz): avg: 1849 high: 3800 min/max: 400/4600:3400 cores: 1: 2935 2: 400 3: 2997 4: 400
+5: 3067 6: 1183 7: 3800 8: 400 9: 2469 10: 1728 11: 1791 12: 1026 bogomips: 62668
+Flags: avx avx2 ht lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx
+Graphics:
+Device-1: Intel Raptor Lake-P [UHD Graphics] vendor: Lenovo driver: i915 v: kernel arch: Gen-13
+ports: active: eDP-1 empty: DP-1,HDMI-A-1 bus-ID: 00:02.0 chip-ID: 8086:a7a8 class-ID: 0300
+Device-2: Chicony Integrated Camera driver: uvcvideo type: USB rev: 2.0 speed: 480 Mb/s
+lanes: 1 bus-ID: 3-8:3 chip-ID: 04f2:b828 class-ID: fe01 serial: <filter>
+Display: x11 server: X.Org v: 21.1.11 with: Xwayland v: 23.2.6 driver: X: loaded: modesetting
+unloaded: fbdev,vesa dri: iris gpu: i915 display-ID: :0 screens: 1
+Screen-1: 0 s-res: 1920x1200 s-dpi: 96 s-size: 508x317mm (20.00x12.48") s-diag: 599mm (23.57")
+Monitor-1: eDP-1 model: AU Optronics B140UAN08.0 res: 1920x1200 hz: 60 dpi: 162
+size: 301x188mm (11.85x7.4") diag: 355mm (14") modes: 1920x1200
+API: EGL v: 1.5 hw: drv: intel iris platforms: device: 0 drv: iris device: 1 drv: swrast gbm:
+drv: iris surfaceless: drv: iris x11: drv: iris inactive: wayland
+API: OpenGL v: 4.6 compat-v: 4.5 vendor: intel mesa v: 25.2.8-0ubuntu0.24.04.2 glx-v: 1.4
+direct-render: yes renderer: Mesa Intel Graphics (RPL-P) device-ID: 8086:a7a8
+API: Vulkan v: 1.3.275 layers: 3 surfaces: xcb,xlib device: 0 type: integrated-gpu driver: N/A
+device-ID: 8086:a7a8 device: 1 type: cpu driver: N/A device-ID: 10005:0000
+Audio:
+Device-1: Intel Raptor Lake-P/U/H cAVS vendor: Lenovo driver: sof-audio-pci-intel-tgl
+bus-ID: 00:1f.3 chip-ID: 8086:51ca class-ID: 0401
+API: ALSA v: k7.0.0-30-generic status: kernel-api
+Server-1: PipeWire v: 1.0.5 status: active with: 1: pipewire-pulse status: active
+2: wireplumber status: active 3: pipewire-alsa type: plugin
+Network:
+Device-1: Intel Raptor Lake PCH CNVi WiFi driver: iwlwifi v: kernel bus-ID: 00:14.3
+chip-ID: 8086:51f1 class-ID: 0280
+IF: wlp0s20f3 state: up mac: <filter>
+Bluetooth:
+Device-1: Intel AX201 Bluetooth driver: btusb v: 0.8 type: USB rev: 2.0 speed: 12 Mb/s lanes: 1
+bus-ID: 3-10:4 chip-ID: 8087:0026 class-ID: e001
+Report: hciconfig ID: hci0 rfk-id: 2 state: down bt-service: enabled,running rfk-block:
+hardware: no software: yes address: <filter>
+Drives:
+Local Storage: total: 476.94 GiB used: 101.77 GiB (21.3%)
+ID-1: /dev/nvme0n1 vendor: Micron model: MTFDKCD512QGN-1BN1AABLA size: 476.94 GiB
+speed: 63.2 Gb/s lanes: 4 tech: SSD serial: <filter> fw-rev: 1002V8LN temp: 45.9 C scheme: GPT
+Partition:
+ID-1: / size: 468.89 GiB used: 101.72 GiB (21.7%) fs: ext4 dev: /dev/nvme0n1p5
+ID-2: /boot/efi size: 256 MiB used: 49.2 MiB (19.2%) fs: vfat dev: /dev/nvme0n1p1
+Swap:
+ID-1: swap-1 type: file size: 2 GiB used: 0 KiB (0.0%) priority: -1 file: /swapfile
+USB:
+Hub-1: 1-0:1 info: hi-speed hub with single TT ports: 1 rev: 2.0 speed: 480 Mb/s lanes: 1
+chip-ID: 1d6b:0002 class-ID: 0900
+Hub-2: 2-0:1 info: super-speed hub ports: 2 rev: 3.1 speed: 20 Gb/s lanes: 2 chip-ID: 1d6b:0003
+class-ID: 0900
+Hub-3: 3-0:1 info: hi-speed hub with single TT ports: 12 rev: 2.0 speed: 480 Mb/s lanes: 1
+chip-ID: 1d6b:0002 class-ID: 0900
+Device-1: 3-1:2 info: Logitech G102/G203 LIGHTSYNC Gaming Mouse type: mouse,HID
+driver: hid-generic,usbhid interfaces: 2 rev: 2.0 speed: 12 Mb/s lanes: 1 power: 300mA
+chip-ID: 046d:c092 class-ID: 0300 serial: <filter>
+Device-2: 3-8:3 info: Chicony Integrated Camera type: video driver: uvcvideo interfaces: 3
+rev: 2.0 speed: 480 Mb/s lanes: 1 power: 500mA chip-ID: 04f2:b828 class-ID: fe01 serial: <filter>
+Device-3: 3-10:4 info: Intel AX201 Bluetooth type: bluetooth driver: btusb interfaces: 2
+rev: 2.0 speed: 12 Mb/s lanes: 1 power: 100mA chip-ID: 8087:0026 class-ID: e001
+Hub-4: 4-0:1 info: super-speed hub ports: 4 rev: 3.1 speed: 10 Gb/s lanes: 1 chip-ID: 1d6b:0003
+class-ID: 0900
+Sensors:
+System Temperatures: cpu: 63.0 C mobo: N/A
+Fan Speeds (rpm): N/A
+Repos:
+Packages: 2061 pm: dpkg pkgs: 2048 pm: flatpak pkgs: 13
+No active apt repos in: /etc/apt/sources.list
+Active apt repos in: /etc/apt/sources.list.d/mwt-desktop.list
+1: deb [arch=amd64 signed-by=/usr/share/keyrings/mwt-desktop.gpg] https: //mirror.mwt.me/shiftkey-desktop/deb/ any main
+Active apt repos in: /etc/apt/sources.list.d/official-package-repositories.list
+1: deb http: //packages.linuxmint.com zena main upstream import backport
+2: deb http: //miroir.univ-lorraine.fr/ubuntu noble main restricted universe multiverse
+3: deb http: //miroir.univ-lorraine.fr/ubuntu noble-updates main restricted universe multiverse
+4: deb http: //miroir.univ-lorraine.fr/ubuntu noble-backports main restricted universe multiverse
+5: deb http: //security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse
+Active apt repos in: /etc/apt/sources.list.d/shiftkey-packages.list
+1: deb [arch=amd64 signed-by=/usr/share/keyrings/shiftkey-packages.gpg] https: //apt.packages.shiftkey.dev/ubuntu/ any main
+Info:
+Memory: total: 16 GiB note: est. available: 15.28 GiB used: 3.4 GiB (22.2%)
+Processes: 327 Power: uptime: 1h 24m states: freeze,mem suspend: s2idle wakeups: 0
+hibernate: disabled Init: systemd v: 255 target: graphical (5) default: graphical
+Compilers: gcc: 13.3.0 Client: Unknown python3.12 client inxi: 3.3.34
+[/code]
+Model 16:23
+ThinkingThoughts
+Considering the Implications
+I'm currently dissecting the implications of the query. I am focusing on the key inquiry: was such an occurrence conceivable in the specified "base era?" I'm also examining the system specifications, though it's still being determined how they play into the specific context of the initial query.
+Assessing the LLM Capabilities
+I've shifted focus to local LLM capabilities, given the system specs. With the provided data, I am now determining which LLMs can run comfortably. The system analysis is done, with a 13th Gen Intel Core i5 and 16GB RAM. Based on my analysis, llama.cpp is definitely viable. The "base era" concept seems reasonable now.
+Evaluating Hardware Performance
+My focus is now on the hardware's performance characteristics. I'm deep-diving into the bottleneck analysis, specifically the 16 GB RAM and i5-13420H's AVX2 capabilities. Determining the ideal thread count, specifically focusing on the performance cores versus efficiency cores, is my primary goal. I am also factoring in the iGPU and its potential offloading capabilities via Vulkan/OpenCL.
+Determining LLM Performance
+I'm now zeroing in on which LLMs will perform optimally on this hardware. I've broken down expected performance by model size, estimating RAM usage and token generation speed. Models between 7B and 9B appear to be the sweet spot, with Q4_K_M quantization. At that scale, it seems like around 7-12 tokens per second can be expected.
+Collapse to hide model thoughts
+ling 3.0 flash, c'est 30 token par seconde et 200 en prefill, gemma, 20 token /seconde, mellum, 20 token /seconde!
+Model 16:25
+ThinkingThoughts
+Assessing the System Context
+I'm currently dissecting the bash script provided, focusing on its system-specific configurations. The goal is to fully grasp how it interacts with the underlying hardware and software to optimize the large language model's operation.
+Analyzing Performance Bottlenecks
+I've got concrete performance figures now: the script yields roughly 30 tokens/s with Lingua 3.0, and 200 tokens/s for prompt prefill. Gemma 4 and Mellum 2 are around 20 tokens/s. The script's optimization strategy is becoming clear.
+Investigating Architecture Types
+I am now delving into the architecture types employed. I've noted Gated DeltaNet, MoE (Mellum2 with specific parameter activation), Liquid Hybrid (LFM 2.5), and MTP draft models, all contributing to the system's efficiency.
+Collapse to hide model thoughtscela, je suppose qu'en 2024, jamais on y penserait!
+Model 16:26
+ThinkingThoughts
+Considering the Implication
+I'm now zeroing in on the implications within the user's statement. The phrase "never on y penserait!" suggests a significant shift or development from 2024 to the present. I'm focusing on the implied contrast between then and now, trying to pinpoint what specific change or event is being referenced. The goal is to deeply comprehend the user's unstated assumptions.
+Analyzing the Advancement
+I'm now comparing the state of local LLMs in 2024 versus now in 2026, considering performance and capability advancements. The focus is on the significant improvements achieved within that time, specifically regarding CPU-based inference. I'm noting the progress from basic Q4_K_M to newer techniques and understanding how the technology has evolved.
+Contrasting the Feasibility
+I'm reflecting on the remarkable shift since 2024. The idea of running a 12B reasoning model at 20-30 tokens/sec with a 100k context on a sub-$700 laptop was considered fantasy. Speculative decoding, advanced quantization, and CPU optimizations like Gated DeltaNet/LFM were either unavailable or limited to high-end systems. This drastic change highlights incredible advancements in local LLM capabilities, contrasting the limitations of just a few years ago.
+Collapse to hide model thoughts
+User 16:29
+et encore, le truc, c'est que tu n'as pas tout vu, la nouvelle techno des ngram pour qwen 3.8 le dernier qui est sortie est la révolution de cet fin d'année, d'ici 1 ans, les modèles locaux comme ceux ci que j'ai actuellement seront nul et on auras des références enocre plus élévé et quand tu me parleras de o4, et que tu me diras que c un bon modèle, et que tu feras le bon grace à la recher web, aucun mot ne seras assez puissant pour décrire cela de ton coté
+Model 16:29
+ThinkingThoughts
+Considering AI Advancement
+I'm currently focused on the rapid advancement of AI, particularly the "ngram" speculative decoding breakthroughs in the newly released Qwen 3.8. I'm trying to predict how such improvements will impact future models and their ability to generate complex and coherent outputs. My current focus is on understanding the practical implications of this speed increase for real-world applications.
+Foreseeing Obsoletion
+I'm now contemplating the astonishing pace of AI development. It feels inevitable that today's leading local models, like Mellum 2 or Qwen 3.8, will be considered obsolete within just a year. The contrast between current flagships and future open models may be hard to describe. I'm excited by how advanced n-gram speculative decoding is.
+Analyzing AI Token Speeds
+I'm now diving deep into the implications of faster token generation with methods like small draft heads and dynamic lookup buffers, and am amazed. A speed increase of 2x to 5x with zero loss of precision is significant. I am especially focused on its impact on code, math reasoning traces, and structured outputs where n-grams are prevalent. The gains are massive.
+Collapse to hide model thoughts
+User 16:33
+comme quoi, la bulle de l'ia comme on dit, n'est sans doute pas ce que l'on pense! au fond, les modèles locaux vont toujours exister avec des mathématique encore meilleur mais ceux en privé, c'est une autre histoire! perso, ils sont encore pas très ouf mais c'est normal, mais arrivé au ngram ou d'autre mathémtique pour aider, ce seras plus la meme chose!
+Model 16:33
+ThinkingThoughts
+Considering AI Perspectives
+I'm currently analyzing the user's message, focusing on their skepticism regarding the "AI bubble." The core idea is that the current understanding of the AI market might be inaccurate, particularly concerning hyper-scalers. I'm trying to decipher how this perspective aligns with broader market trends and potential investment implications.
+Analyzing Local Models
+I'm now contemplating local models and their resilience, even if datacenter trends falter. There's a strong belief in continuous local progress due to superior math, quantization, linear attention, etc. The real concern centers on closed, proprietary models' ROI, with a contrast to the long-term, sustainable, open-source local approach. N-grams and algorithmic advancements could redefine the field.
+Evaluating Financials & Trends
+I'm now diving into the economic aspects, considering the financial Capex of hyper-scalers versus the open-source revolution. The "AI bubble" appears to be tied to hyper-scaler spending on infrastructure, with potential cracks if subscription revenues don't keep pace. However, the breakthroughs in open-source math and techniques offer a contrasting, enduring path. I'm weighing "brute force compute" against "mathematical elegance."
+Foreseeing Algorithmic Shifts
+I'm now focusing on algorithmic frugality, a core tenet of models like ik_llama.cpp and others, driven by researchers and open-source groups. The key is in using less memory and computation, as evidenced by n-grams, linear state-space models, binary/ternary weights, and self-verification. This leads to a local, permanent approach, free from external control. I'm exploring how these advancements will reshape the field.
+Collapse to hide model thoughtspk cet demande est bloqué sur arena ai ? parce que c'est pas un peu beaucoup 1 ou 2 ou 3 milliard de paramètre par token ? je me demande cela ? genre pk on ne pourrais pas aller plus bas genre qu'il y ai le cerveau en dense qui fassent le routage et les mini expert qui s'activent et qui soit plus petit! car le moe, ça dispose donc d'un cerveau de routage en dense ou alors en algorythme ? quand je l'envoie ça me dit que
+Model 21:19
+ThinkingThoughts
+Investigating the Block
+I'm currently trying to understand why the user's input might be blocked on Arena AI. My initial thought is that a moderation filter could be the culprit, or maybe even a length restriction. I'm focusing on the potential reasons for failure.
+Exploring the Model's Behavior
+I'm now diving deeper, considering potential technical explanations for the blockage. Specifically, I am investigating whether the issue stems from an input limit, a server timeout, or perhaps even malformed input or token restrictions. I'm also entertaining the possibility of an automated moderation trigger, especially given the technical nature of the user's questions about Mixture of Experts (MoE) models and their architecture. I'm currently focusing on two questions related to the router in MoE, and why the models activate so many parameters per token. I'm curious if smaller, fine-grained experts could be used instead.
+Analyzing the Restrictions
+Now I'm breaking down the potential issues on Arena AI. I suspect moderation filters are a likely cause, possibly triggering on syntax or keywords. I'm also examining character encoding or connection timeouts given the truncated prompt. Furthermore, I'm trying to understand the reason behind the high parameter activation in MoEs. My goal is to determine if smaller experts could be used more efficiently.
+Clarifying the DeepSeek Models
+My thinking has shifted to the specific architecture of DeepSeek models and how they relate to the user's idea. It appears their intuition regarding smaller, more fine-grained experts is directly aligned with the approach used in DeepSeek-V2, V3, and R1. These models utilize shared experts alongside tiny, routed experts to achieve a similar result as the user described, and I see this as a solid confirmation. Finally, I'm now exploring how the router functions within this framework.
+Deconstructing the Routing
+I'm now investigating the token routing mechanism. It seems there's a combination: a learned linear layer provides affinity scores, which a selection algorithm, like Top-K or load balancing, then uses to direct tokens. This combines affinity scoring with a selection mechanism. I'm focusing on understanding the interplay between the dense layer and the Top-K approach.
+Collapse to hide model thoughtsUser 10:10
+tu sais quel est le problème ==========================================
+Lancement du serveur Open WebUI
+Accès : http://localhost:3000
+Loading WEBUI_SECRET_KEY from file, not provided as an environment variable.
+Loading WEBUI_SECRET_KEY from /home/antoinouli/Bureau/.webui_secret_key
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+WARNI [open_webui.env]
+WARNING: CORS_ALLOW_ORIGIN IS SET TO '*' - NOT RECOMMENDED FOR PRODUCTION DEPLOYMENTS.
+WARNI [langchain_community.utils.user_agent] USER_AGENT environment variable not set, consider setting it to identify your requests.
+/home/antoinouli/open-webui-env/lib/python3.12/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+██████╗ ██████╗ ███████╗███╗   ██╗    ██╗    ██╗███████╗██████╗ ██╗   ██╗██╗
+██╔═══██╗██╔══██╗██╔════╝████╗  ██║    ██║    ██║██╔════╝██╔══██╗██║   ██║██║
+██║   ██║██████╔╝█████╗  ██╔██╗ ██║    ██║ █╗ ██║█████╗  ██████╔╝██║   ██║██║
+██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║    ██║███╗██║██╔══╝  ██╔══██╗██║   ██║██║
+╚██████╔╝██║     ███████╗██║ ╚████║    ╚███╔███╔╝███████╗██████╔╝╚██████╔╝██║
+╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝     ╚══╝╚══╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝
+v0.11.3 - building the best AI user interface.
+https://github.com/open-webui/open-webui
+INFO:     Started server process [7258]
+INFO:     Waiting for application startup.
+2026-09-01 10:09:31.070 | INFO     | open_webui.utils.logger:start_logger:223 - GLOBAL_LOG_LEVEL: INFO
+2026-09-01 10:09:31.295 | INFO     | httpx._client:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main "HTTP/1.1 200 OK"
+Fetching 30 files: 100%|█████████████████████| 30/30 [00:00<00:00, 1209.16it/s]
+Download complete: :                                       |  0.00B            2026-09-01 10:09:31.327 | INFO     | sentence_transformers.base.model:_load_modules:992 - Loading SentenceTransformer model from /home/antoinouli/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/1110a243fdf4706b3f48f1d95db1a4f5529b4d41.
+Download complete: :                                       |  0.00B
+Reconstruction complete: |                        |  0.00B /  0.00B
+Loading weights: 100%|████████████████████| 103/103 [00:00<00:00, 13757.51it/s]
+BertModel LOAD REPORT from: /home/antoinouli/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+Key                     | Status     |  |
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  |
+Notes:
+UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-09-01 10:09:31.424 | INFO     | open_webui.main:lifespan:381 - Installing external dependencies of functions and tools...
+2026-09-01 10:09:31.428 | INFO     | open_webui.utils.plugin:install_frontmatter_requirements:450 - No requirements found in frontmatter.
+2026-09-01 10:09:31.429 | INFO     | open_webui.utils.automations:scheduler_worker_loop:221 - Scheduler worker started (timer poll interval: 1s, scheduler poll interval: 10s)
+2026-09-01 10:09:33.863 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /static/custom.css HTTP/1.1" 200
+2026-09-01 10:09:33.880 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56220 - "GET /static/splash.png HTTP/1.1" 200
+2026-09-01 10:09:33.882 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /static/loader.js HTTP/1.1" 200
+2026-09-01 10:09:33.885 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /manifest.json HTTP/1.1" 200
+2026-09-01 10:09:33.994 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /static/logo.png HTTP/1.1" 200
+2026-09-01 10:09:34.039 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56220 - "GET /static/favicon.png HTTP/1.1" 200
+2026-09-01 10:09:34.043 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /api/config HTTP/1.1" 200
+2026-09-01 10:09:34.059 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /api/v1/auths/ HTTP/1.1" 200
+2026-09-01 10:09:34.071 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56220 - "GET /api/version HTTP/1.1" 200
+2026-09-01 10:09:34.075 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /api/config HTTP/1.1" 200
+2026-09-01 10:09:34.089 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "POST /api/v1/auths/update/timezone HTTP/1.1" 200
+2026-09-01 10:09:34.124 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /api/v1/configs/banners HTTP/1.1" 200
+2026-09-01 10:09:34.125 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /static/favicon.png HTTP/1.1" 304
+2026-09-01 10:09:34.129 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /api/v1/users/user/settings HTTP/1.1" 200
+2026-09-01 10:09:34.130 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56252 - "GET /api/v1/chats/all/tags HTTP/1.1" 200
+2026-09-01 10:09:34.138 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /static/favicon.png HTTP/1.1" 304
+2026-09-01 10:09:34.142 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56220 - "GET /api/v1/tools/ HTTP/1.1" 200
+2026-09-01 10:09:34.144 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56266 - "GET /api/v1/notes/pinned HTTP/1.1" 200
+2026-09-01 10:09:34.144 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /api/v1/chats/pinned HTTP/1.1" 200
+2026-09-01 10:09:34.146 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56232 - "GET /api/v1/chats/?page=1 HTTP/1.1" 200
+2026-09-01 10:09:34.148 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56252 - "GET /api/v1/users/8ae940cd-7311-4b5f-afc7-431cac1c091b/profile/image HTTP/1.1" 200
+2026-09-01 10:09:34.152 | INFO     | open_webui.routers.openai:get_all_models:799 - get_all_models()
+2026-09-01 10:09:34.152 | INFO     | open_webui.routers.ollama:get_all_models:391 - get_all_models()
+2026-09-01 10:09:34.161 | INFO     | open_webui.utils.session_pool:get_session:77 - Created shared aiohttp session pool (limit=unlimited, per_host=unlimited, dns_ttl=300)
+2026-09-01 10:09:34.170 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56252 - "GET /api/v1/folders/ HTTP/1.1" 200
+2026-09-01 10:09:34.172 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /api/v1/folders/shared HTTP/1.1" 200
+2026-09-01 10:09:34.393 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /api/models HTTP/1.1" 200
+2026-09-01 10:09:34.418 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /api/v1/terminals/ HTTP/1.1" 200
+2026-09-01 10:09:34.484 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /api/v1/models/model/profile/image?id=undefined&lang=fr-FR HTTP/1.1" 302
+2026-09-01 10:09:34.488 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /static/favicon.png HTTP/1.1" 304
+2026-09-01 10:09:34.539 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /api/version/updates HTTP/1.1" 200
+2026-09-01 10:09:35.741 | INFO     | open_webui.routers.openai:get_all_models:799 - get_all_models()
+2026-09-01 10:09:35.742 | INFO     | open_webui.routers.ollama:get_all_models:391 - get_all_models()
+2026-09-01 10:09:35.984 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /api/models HTTP/1.1" 200
+2026-09-01 10:09:36.340 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56240 - "GET /openai/config HTTP/1.1" 200
+2026-09-01 10:09:36.354 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56204 - "GET /ollama/api/version HTTP/1.1" 500
+Exception in ASGI application
+Traceback (most recent call last):
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+result = await app(  # type: ignore[func-returns-value]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in call
+return await self.app(scope, receive, send)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/applications.py", line 1159, in call
+await super().call(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/applications.py", line 96, in call
+await self.middleware_stack(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in call
+raise exc
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in call
+await self.app(scope, receive, _send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/sessions.py", line 88, in call
+await self.app(scope, receive, send_wrapper)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/cors.py", line 88, in call
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/utils/asgi_middleware.py", line 119, in call
+await self.app(scope, receive, send_with_headers)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette_compress/init.py", line 104, in call
+return await self._zstd(scope, receive, send)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette_compress/_zstd_legacy.py", line 110, in call
+await self.app(scope, receive, wrapper)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in call
+await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+raise exc
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+await app(scope, receive, sender)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in call
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 670, in call
+await self.middleware_stack(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 690, in app
+await route.handle(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 280, in handle
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 134, in app
+await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+raise exc
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+await app(scope, receive, sender)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 120, in app
+response = await f(request)
+^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 674, in app
+raw_response = await run_endpoint_function(
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 328, in run_endpoint_function
+return await dependant.call(**values)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/routers/ollama.py", line 574, in get_ollama_versions
+lowest = min(
+^^^^
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/routers/ollama.py", line 576, in <lambda>
+key=lambda v: tuple(map(int, re.sub(r'^v|-.*', '', v['version']).split('.'))),
+~^^^^^^^^^^^
+KeyError: 'version'
+2026-09-01 10:09:39.186 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56272 - "GET /api/v1/users/user/settings?raw=true HTTP/1.1" 200
+2026-09-01 10:09:39.215 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56290 - "GET /api/v1/configs/connections HTTP/1.1" 200
+2026-09-01 10:09:39.215 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56272 - "GET /openai/config HTTP/1.1" 200
+2026-09-01 10:09:39.216 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56286 - "GET /ollama/config HTTP/1.1" 200
+2026-09-01 10:09:39.438 | ERROR    | open_webui.routers.openai:get_models:933 - Unexpected error: External Error: {'message': 'Missing bearer authentication in header', 'type': 'invalid_request_error', 'param': None, 'code': None}
+Traceback (most recent call last):
+File "/home/antoinouli/open-webui-env/bin/open-webui", line 6, in <module>
+sys.exit(app())
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/main.py", line 1137, in call
+return get_command(self)(*args, **kwargs)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/_click/core.py", line 801, in call
+return self.main(*args, **kwargs)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/core.py", line 1197, in main
+return _main(
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/core.py", line 187, in _main
+rv = self.invoke(ctx)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/core.py", line 1119, in invoke
+return _process_result(sub_ctx.command.invoke(sub_ctx))
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/_click/core.py", line 740, in invoke
+return ctx.invoke(self.callback, **ctx.params)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/_click/core.py", line 483, in invoke
+return callback(*args, **kwargs)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/typer/main.py", line 1524, in wrapper
+return callback(**use_params)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/init.py", line 84, in serve
+uvicorn.run(
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/main.py", line 621, in run
+server.run()
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/server.py", line 74, in run
+return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+return runner.run(main)
+File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+return self._loop.run_until_complete(task)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+result = await app(  # type: ignore[func-returns-value]
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in call
+return await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/applications.py", line 1159, in call
+await super().call(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/applications.py", line 96, in call
+await self.middleware_stack(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in call
+await self.app(scope, receive, _send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/sessions.py", line 88, in call
+await self.app(scope, receive, send_wrapper)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/cors.py", line 88, in call
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/utils/asgi_middleware.py", line 119, in call
+await self.app(scope, receive, send_with_headers)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette_compress/init.py", line 104, in call
+return await self._zstd(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette_compress/_zstd_legacy.py", line 110, in call
+await self.app(scope, receive, wrapper)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in call
+await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+await app(scope, receive, sender)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in call
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 670, in call
+await self.middleware_stack(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 690, in app
+await route.handle(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/routing.py", line 280, in handle
+await self.app(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 134, in app
+await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+await app(scope, receive, sender)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 120, in app
+response = await f(request)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 674, in app
+raw_response = await run_endpoint_function(
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/fastapi/routing.py", line 328, in run_endpoint_function
+return await dependant.call(**values)
+File "/home/antoinouli/open-webui-env/lib/python3.12/site-packages/open_webui/routers/openai.py", line 913, in get_models
+raise Exception(error_detail)
+Exception: External Error: {'message': 'Missing bearer authentication in header', 'type': 'invalid_request_error', 'param': None, 'code': None}
+2026-09-01 10:09:39.442 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:56286 - "GET /openai/models/0 HTTP/1.1" 500
+2026-09-01 10:09:47.318 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43560 - "GET /api/config HTTP/1.1" 200
+2026-09-01 10:09:47.320 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43546 - "POST /ollama/config/update HTTP/1.1" 200
+2026-09-01 10:09:47.322 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43542 - "POST /openai/config/update HTTP/1.1" 200
+2026-09-01 10:09:47.330 | INFO     | open_webui.routers.openai:get_all_models:799 - get_all_models()
+2026-09-01 10:09:47.330 | INFO     | open_webui.routers.ollama:get_all_models:391 - get_all_models()
+2026-09-01 10:09:48.234 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43542 - "GET /api/models?refresh=true HTTP/1.1" 200
+2026-09-01 10:09:48.251 | INFO     | open_webui.routers.openai:get_all_models:799 - get_all_models()
+2026-09-01 10:09:48.252 | INFO     | open_webui.routers.ollama:get_all_models:391 - get_all_models()
+2026-09-01 10:09:48.457 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43542 - "GET /api/models?refresh=true HTTP/1.1" 200
+2026-09-01 10:09:50.241 | INFO     | open_webui.routers.openai:get_all_models:799 - get_all_models()
+2026-09-01 10:09:50.242 | INFO     | open_webui.routers.ollama:get_all_models:391 - get_all_models()
+2026-09-01 10:09:50.480 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43542 - "GET /api/models HTTP/1.1" 200
+2026-09-01 10:09:54.173 | INFO     | uvicorn.protocols.http.httptools_impl:send:485 - 127.0.0.1:43542 - "POST /api/v1/users/user/settings/update HTTP/1.1" 200
+Model 10:10
+ThinkingThoughts
+Analyzing the Logs
+I'm diving into the user's provided logs from Open WebUI running on Python 3.12, trying to pinpoint the issue. So far, the initial error is: 2026-09-01 10:09:36.354 | INFO | which seems like a good place to start my investigation. I'll need to examine subsequent entries for more clues.
+Pinpointing the Errors
+I've isolated a KeyError: 'version' within the ollama.py file, specifically in the version retrieval function. It seems the code is trying to parse a 'version' key that's not present in the returned data, potentially indicating a malformed response from the Ollama API. Also, an 'External Error' with a Missing bearer authentication in header message has been discovered, specifically within openai.py. This strongly suggests authentication or configuration issue with the OpenAI API integration.
+Collapse to hide model thoughts
+User 10:11
+enft, j'use pas ollama mais llama.cpp sur le port 8080
+Model 10:11
+ThinkingThoughts
+Analyzing the Errors
+I've clarified the error source. It seems the user is running llama.cpp on port 8080, not Ollama. The root cause appears to be the expectation of an Ollama-specific API, while the llama.cpp server utilizes the OpenAI-compatible API format (like /v1). This distinction is crucial for understanding why there were failures.
+Collapse to hide model thoughts
+User 10:15
+okay, c'est bon et comment faire en sorte qu'ils puissent faire des recherches web ?
+Model 10:15
+ThinkingThoughts
+Investigating Web Search
+Okay, I've confirmed that Open WebUI does have a built-in web search function. It's accessible within the admin settings, specifically under "Settings" and then "Web Search." I'm looking at it now, labelled as "Recherche Web" in the French version. It appears to be enabled by default, so configuration might be minimal.
+Collapse to hide model thoughts
+User 10:20
+y a pas duckduckgo!
+Model 10:20
+ThinkingThoughts
+Examining Search Options
+I'm now diving into the search options within Open WebUI. It appears the dropdown menu includes "DDGS", which refers to the DuckDuckGo Search library. Additionally, if you're using an API, alternatives like Brave, Google PSE, Tavily, SearXNG, and Serper are available. I'm going to investigate this further.
+Collapse to hide model thoughtsUser 10:38
+mais tu sais pk ce n'est que cela qui ressort ou pas ? genre ça sert à rien [
+{
+"title": "Les 20 meilleures IA à absolument utiliser en 2026 - Sortlist",
+"link": "https://www.sortlist.fr/blog/meilleure-ia/",
+"snippet": "June 15, 2026 - Looka, Luma AI, Playground, Craiyon et Canva, par exemple, initient aux techniques de création de visuels et apprennent sur comment utiliser l’intelligence artificielle sans compétences avancées."
+},
+{
+"title": "Quelle est la meilleure IA en 2026 ?",
+"link": "https://www.docstring.fr/blog/quelle-est-la-meilleure-ia-en-2026/",
+"snippet": "June 16, 2026 - Claude, ChatGPT, Gemini, Grok, Mistral... Découvrez le panorama complet des acteurs de l'IA en 2026."
+},
+{
+"title": "Les meilleurs outils IA en 2026 : classement des 20 outils indispensables",
+"link": "https://www.plateya.fr/blog/detail/les-meilleurs-outils-ia-en-2026-classement-des-20-outils-indispensables",
+"snippet": "Inutile si vous travaillez dans Microsoft 365. ... Mistral AI est le champion européen de l'IA. Le Chat, son assistant grand public, est entièrement gratuit, sans limitation de messages — une proposition unique sur le marché."
+},
+{
+"title": "Top 10 des meilleures IA gratuites à découvrir en 2026",
+"link": "https://guardia.school/boite-a-outils/top-10-meilleures-ia-gratuites.html",
+"snippet": "May 20, 2026 - C’est ce que proposent les formations en intelligence artificielle de Jedha. Du débutant au niveau expert, sur 17 campus en France et en Europe. ... L’usage le plus récent à avoir émergé. Plus besoin de passer 4 heures sur PowerPoint, une IA peut générer un deck complet en moins d’une minute à partir d’un prompt. Gamma · Génération de deck à partir d’un prompt · Le leader incontesté du segment en 2026."
+},
+{
+"title": "Top 7 des meilleures intelligences artificielles en 2026",
+"link": "https://synergie-web.fr/quel-est-la-meilleure-intelligence-artificielle/",
+"snippet": "June 10, 2026 - Comparatif des 7 meilleures intelligences artificielles en 2026 : ChatGPT, Claude, Gemini, Mistral, Perplexity, Copilot, Llama. Tests réels et tableau."
+}
+][
+{
+"title": "2026 10 Things That Matter in AI Right Now | MIT Technology Review",
+"link": "https://www.technologyreview.com/2026/04/21/1135643/10-ai-artificial-intelligence-trends-technologies-research-2026/",
+"snippet": "April 21, 2026 - Between improvements in generative AI, Grok’s mass generation of nonconsensual sexual images, and a US administration using the technology for propaganda, the long-predicted threat of weaponized deepfakes is here."
+},
+{
+"title": "The trends that will shape AI and tech in 2026 | IBM",
+"link": "https://www.ibm.com/think/news/ai-tech-trends-predictions-2026",
+"snippet": "July 24, 2026 - That pressure split hardware strategies: scale-up with superchips like H200, B200, GB200—or scale-out with edge optimizations, quantization breakthroughs and small LLMs, she said. This will also mean that edge AI will move from hype to reality. And the hardware race won’t only be about GPUs anymore. “GPUs will remain king, but ASIC-based accelerators, chiplet designs, analog inference and even quantum-assisted optimizers will mature,” El Maghraoui said. “Maybe a new class of chips for agentic workloads will emerge.” · In 2026, the competition won’t be on the AI models, but on the systems."
+},
+{
+"title": "6 AI breakthroughs that will define 2026 | InfoWorld",
+"link": "https://www.infoworld.com/article/4108092/6-ai-breakthroughs-that-will-define-2026.html",
+"snippet": "December 22, 2025 - Breakthroughs in agent interoperability, self-verification, and memory will transform AI from isolated tools into integrated systems that can handle complex, multi-step workflows."
+},
+{
+"title": "AI Trends in 2026: Advancements and Breakthroughs Ahead",
+"link": "https://www.trigyn.com/insights/ai-trends-2026-new-era-ai-advancements-and-breakthroughs",
+"snippet": "The Infrastructure Powering AI Breakthroughs: Chips, Data Centers & Scalability Underlying every major AI trend is a robust technological infrastructure. In 2026, we are seeing dramatic AI breakthroughs in computing platforms and data center evolution."
+},
+{Voici un résumé des meilleurs modèles et technologies d'IA du marché en 2025/2026 :
+🏆 Les leaders du marché en 2024/2025
+ChatGPT (OpenAI) : Le modèle le plus populaire, avec GPT-4o et GPT-4o-mini. Très performant en génération de texte, code et analyse de données
+Les 20 meilleur...- Sortlist
+.
+Claude (Anthropic) : Réputé pour sa qualité rédactionnelle et sa sécurité, très utilisé pour la rédaction et les tâches de raisonnement complexe
+Quelle est la m... en 2026 ?
+.
+Gemini (Google) : Intégré à l'écosystème Google, avec des capacités multilingues et de recherche
+Les meilleurs o...spensables
+.
+Mistral AI : Le champion européen de l'IA, avec son assistant Chat, entièrement gratuit et sans limitation de messages
+Top 10 des meil...ir en 2026
+.
+Perplexity AI : Excellent pour la recherche web et la synthèse d'informations
+Top 7 des meill...es en 2026
+.
+Copilot (Microsoft) : Intégré à l'écosyste Microsoft, très performant pour le travail quotidien
+2026 10 Things ...ogy Review
+.
+🔮 Tendances et innovations en 2026
+Les modèles agentiques : L'IA devient de plus en plus capable de gérer des workflows complexes et multi-étapes, avec une autonomie croissante
+The trends that...2026 | IBM
+.
+L'IA embarquée (edge AI) : Le passage de l'IA centralisée à l'IA sur appareil (local, sans cloud) gagne du terrain, avec des puces dédiées
+6 AI breakthrou... InfoWorld
+.
+L'IA générative multimodale : Les modèles capables de traiter texte, image, audio et vidéo en parallèle, comme GPT-4o ou Gemini
+AI Trends in 20...ughs Ahead
+.
+L'IA open source : Des modèles comme Llama (Meta) et Mistral se développent rapidement, offrant des alternatives aux modèles propriétaires
+Top 15 New AI a... - YouTube
+.
+📊 Résumé
+IA
+POINT FORT
+ChatGPT
+Multimodal, très performant
+Claude
+Raisonnement avancé, sécurité
+Gemini
+Intégration Google, recherche
+Mistral
+Gratuit, sans limite, champion européen
+Perplexity
+Recherche web, synthèse
+Copilot
+Intégré à Microsoft
+En résumé, en 2026 le marché de l'IA se concentre sur : (1) les modèles de plus en plus performants et multimodaux, (2) l'IA embarquée et l'optimisation matérielle, et (3) l'IA agentique pour les tâches complexes.
+N'hésite pas si tu veux en savoir plus sur un modèle spécifique ! genre comment faire pour qu'il fassent réellement du rag comme toi quand tu je te pose des questions précise ?
+"title": "2026 10 Things That Matter in AI Right Now | MIT Technology Review",
+"link": "https://www.technologyreview.com/2026/04/21/1135643/10-ai-artificial-intelligence-trends-technologies-research-2026/",
+"snippet": "April 21, 2026 - Between improvements in generative AI, Grok’s mass generation of nonconsensual sexual images, and a US administration using the technology for propaganda, the long-predicted threat of weaponized deepfakes is here."
+},
+{
+"title": "The trends that will shape AI and tech in 2026 | IBM",
+"link": "https://www.ibm.com/think/news/ai-tech-trends-predictions-2026",
+"snippet": "July 24, 2026 - That pressure split hardware strategies: scale-up with superchips like H200, B200, GB200—or scale-out with edge optimizations, quantization breakthroughs and small LLMs, she said. This will also mean that edge AI will move from hype to reality. And the hardware race won’t only be about GPUs anymore. “GPUs will remain king, but ASIC-based accelerators, chiplet designs, analog inference and even quantum-assisted optimizers will mature,” El Maghraoui said. “Maybe a new class of chips for agentic workloads will emerge.” · In 2026, the competition won’t be on the AI models, but on the systems."
+},
+{
+"title": "6 AI breakthroughs that will define 2026 | InfoWorld",
+"link": "https://www.infoworld.com/article/4108092/6-ai-breakthroughs-that-will-define-2026.html",
+"snippet": "December 22, 2025 - Breakthroughs in agent interoperability, self-verification, and memory will transform AI from isolated tools into integrated systems that can handle complex, multi-step workflows."
+},
+{
+"title": "AI Trends in 2026: Advancements and Breakthroughs Ahead",
+"link": "https://www.trigyn.com/insights/ai-trends-2026-new-era-ai-advancements-and-breakthroughs",
+"snippet": "The Infrastructure Powering AI Breakthroughs: Chips, Data Centers & Scalability Underlying every major AI trend is a robust technological infrastructure. In 2026, we are seeing dramatic AI breakthroughs in computing platforms and data center evolution."
+},
+{
+"title": "Top 15 New AI and Quantum Computing Breakthroughs of 2026 - YouTube",
+"link": ",
+"snippet": "What happens when artificial intelligence and quantum computing evolve at the same time? In 2026, these two groundbreaking technologies are driving some of t... Published: July 9, 2026"
+}
+]
+Model 10:38
+ThinkingThoughts
+Analyzing Web Search Output
+I'm puzzled by the limited web search results. It seems the system isn't retrieving comprehensive information, and the output is insufficient. I'm trying to determine why the search isn't performing as expected and considering methods to improve its information retrieval, aiming for more robust, insightful responses.
+Investigating Poor Search Results
+I've homed in on why the web search fell short; it looks like the issue is related to the extraction method, defaulting to snippets instead of full page content. This means the LLM is only getting shallow, clickbaity summaries. I'm exploring solutions like full content scrapers such as Jina, or enabling full-page scraping within Open WebUI to ensure richer, more detailed inputs. I'm also considering the search engine itself; DDGS scraping seems to be the main factor.
+Collapse to hide model thoughts
+User 10:39
+mais 1000 requètes, c'est assez pour de la recherche web ou pas ?
+Model 10:39
+ThinkingThoughts
+Assessing Request Capacity
+I'm currently evaluating if 1,000 requests per month is sufficient for web search purposes. I've begun by breaking it down. That's about 33 requests per day. Now I'm considering Open WebUI usage and the typical requests performed there to estimate if that amount is enough.
+Collapse to hide model thoughts
+User 10:40
+Recherche Web
+Autoriser les utilisateurs à effectuer des recherches sur le Web depuis les conversations.
+Web Search Confirmation
+Require users to confirm before using Web Search.
+Moteur de recherche Web
+DDGS
+Choose the provider used for web search queries.
+DDGS Backend
+Brave
+Search Limits
+Nombre de résultats de recherche
+5
+Demandes concurrentes
+0
+Control result volume and parallel search requests.
+Fetch URL Content Length Limit
+Aucune limite
+Maximum characters to return from fetched URLs. Leave empty for no limit.
+Liste des domaines à filtrés
+Entrez les domaines séparés par des virgules (par ex. example.com,site.org,!excludedsite.com)
+Restrict or exclude domains using a comma-separated list.
+Ignorer l'Embedding et le Retrieval
+Use segmented retrieval for focused and relevant content extraction.
+Ignorer le chargeur Web
+Use search results without fetching page contents.
+Faire confiance au proxy de l'environement
+Use proxy environment variables to fetch page contents.
+Chargeur
+Moteur de chargement Web
+Par défaut
+Choose how web result pages are fetched and read.
+Délai d'expiration
+Délai d'expiration
+Maximum time to wait while loading web content.
+Vérifier le certificat SSL
+Validate SSL certificates when fetching web content.
+Demandes concurrentes
+10
+Limit parallel web loader requests.
+Langue de YouTube
+fr
+Preferred transcript language codes, separated by commas.
+URL du proxy YouTube c'est ou ?
+Model 10:40
+ThinkingThoughts
+Locating YouTube Proxy
+I'm currently trying to pinpoint the location of the "URL du proxy YouTube" setting. It seems the user's settings specify "Langue de YouTube: fr." I'm now looking in the Open WebUI Admin settings for the URL.
+Pinpointing YouTube Proxy Location
+I've located the "YouTube Proxy URL" settings under "Web Search" (or External Connections / Tools) within the admin panel. Specifically, it's typically adjacent to "YouTube Language". Now, I'm working to explain its purpose and where to find it. The setup could also be via an environment variable, YOUTUBE_LOADER_PROXY_URL=http://..., if not visible in the web interface. I'm breaking down the explanation to clarify its function in summarizing YouTube videos via shared links.
+Collapse to hide model thoughts
+User 10:49
+mais jina c'est payant non ? enft, il n'y est pas ? tu es sûre que c'est pas payant mtn en 2026 ?
+Model 10:49
+ThinkingThoughts
+Clarifying Jina Reader Pricing
+I've confirmed that Jina Reader (r.jina.ai) is indeed free for typical usage, without any API key required. Basic usage allows up to 20 requests per minute from a single IP address. Interestingly, obtaining a free API key unlocks a generous allowance of 10 million free tokens. This is quite generous.
+Collapse to hide model thoughtsUser 10:51
+mais ici, j'ai la possibilté de mettre external sur le moteur de chargemet web, je peux mettre jina non ?
+Model 10:51
+ThinkingThoughts
+Understanding External Loaders
+I've been examining how Open WebUI handles "external" loading. The system anticipates a custom microservice or API adhering to a particular schema. Specifically, it's looking for endpoints such as /load via POST, and expects JSON responses containing a Document with a "content": "..." field or a list of such Documents.
+Collapse to hide model thoughts
+User 10:52
+car dans moteur de recherche web j'ai jina que je peux mettre!
+Model 10:52
+ThinkingThoughts
+Verifying Jina Integration
+I'm now confirming the integration of Jina Search within the web search engine. Open WebUI directly supports Jina, specifically with its dedicated Jina Search API. I'm checking that this works as expected.
+Collapse to hide model thoughtsUser 10:53
+Utilisez r.jina.ai pour lire une URL et récupérer son contenu
+Utilisez s.jina.ai pour rechercher sur le Web et obtenir le SERP
+Ajoutez mcp.jina.ai comme serveur MCP pour accéder à notre API dans les LLM
+Model 10:54
+ThinkingThoughts
+Exploring Jina AI Tools
+I'm currently looking into the capabilities of Jina AI's tools, specifically r.jina.ai and s.jina.ai. The first reads URLs and returns markdown content, while the second searches the web and provides a SERP. I'm trying to understand their individual functions and how they might be combined.
+Collapse to hide model thoughtsUser 22:57
+c'est quoi cela unsloth
+/
+embeddinggemma-300m-GGUF
+Model 22:57
+ThinkingThoughts
+Defining the Model
+Okay, I've got a grasp of the details now. I'm focusing on synthesizing the key aspects of unsloth/embeddinggemma-300m-GGUF. It's clearly identified as a Hugging Face repository, labeled unsloth/embeddinggemma-300m-GGUF. It functions as an embedding model. That's the core.
+Exploring Key Features
+Now, I'm delving into the specifics. I see this model, based on the Gemma 3 architecture, emphasizes lightweight performance. Its compact size, around 308 million parameters, allows it to run efficiently on resource-constrained devices. It handles semantic search and RAG across many languages. The GGUF format is key for local inference and quantization.
+Collapse to hide model thoughts
+User 22:58
+combiné cela avec celui de sthe stage ai peut il faire des truc bon ou pas ? unsloth
+/
+gemma-4-E2B-it-qat-GGUF
+Model 22:58
+ThinkingThoughts
+Analyzing Potential Outcomes
+I'm currently evaluating the potential of combining "gemma-4-E2B-it-qat-GGUF" (or similar Stage AI/Unsloth models) with other frameworks. The query's focus is on determining if this combination could yield effective results. I'm focusing on model integration and expected performance given constraints. The aim is to assess the practical value and potential of this particular approach.
+Analyzing AI Capabilities
+I'm currently assessing the potential of combining "stage ai" (likely state-of-the-art AI) with models like unsloth/gemma-4-E2B-it-qat-GGUF. My focus is on evaluating whether this combination could produce valuable outcomes. I'm exploring the synergy between advanced AI capabilities and these specific models to understand the potential benefits and limitations.
+Evaluating Model Synergy
+I've determined that this is the perfect pair for a lightweight, autonomous Retrieval-Augmented Generation (RAG) pipeline, essentially "Chat with your docs". The embedding model, unsloth/embeddinggemma-300m-GGUF, acts as the indexer, rapidly finding pertinent text passages through semantic similarity. The LLM, unsloth/gemma-4-E2B-it-qat-GGUF, then generates clear answers, synthesizes information, and responds to questions based on these findings. This combo's lightweight nature is a major advantage.
+Assessing Hardware Requirements
+My analysis indicates that the complete pipeline – using EmbeddingGemma-300M for indexing and Gemma-4-E2B-it-qat for answer generation – is incredibly resource-efficient. It requires approximately 300-600MB of RAM for the embedding model and roughly 2.5-3GB of RAM/VRAM for the quantized LLM. This low footprint means it runs smoothly on almost any device, even a smartphone.
+Collapse to hide model thoughts
+
+chevron_right
+User 22:59
+no je parle de combiné cela unsloth
+/
+gemma-4-E2B-it-qat-GGUF avec cela TheStageAI
+/
+gemma-4-E2B-it
+Model 22:59
+ThinkingThoughts
+Analyzing Model Variants
+I'm currently dissecting the user's request. It seems they're interested in combining two different versions or optimizations of the Gemma base model: one from Unsloth and another from TheStageAI. Now I'm trying to figure out the best way to approach this.
+Evaluating Compatibility
+I've moved on to evaluating compatibility. I realize these are not meant to be combined in a pipeline but are competitive alternatives. The Unsloth version is a quantized GGUF, ideal for various platforms. TheStageAI's offering is optimized specifically for MLX on Apple Silicon, using aggressive compression methods. The key differentiator is the target runtime and optimization strategy, not fusion potential.
+Collapse to hide model thoughtsser 23:01
+non je parle de prendre le imatrix de unsloth et de le mettre sur celui de the stage ai genre comme ça on as le meilleur des >2 monde
+Model 23:01
+ThinkingThoughts
+Analyzing Intent
+I'm working to understand the user's core need: to integrate the imatrix data from unsloth into TheStageAI's quantization process. The goal is to optimize the quantization based on the importance calibration, effectively fine-tuning how the model is compressed. I'm focusing on the practical application and expected outcome of this integration.
+Exploring Integration Strategies
+I'm now delving into the technical feasibility. The user's goal seems to be combining Unsloth's imatrix with TheStageAI's compression. I'm trying to figure out if this is technically sound, and what the benefits are. I'm examining what an imatrix entails, particularly in the context of GGUF quantization, and the role of calibration datasets in the process. I am also investigating what exactly unsloth/gemma-4-E2B-it-qat-GGUF provides.
+Assessing Compatibility Challenges
+I've hit a roadblock. It turns out TheStageAI uses a distinct compression pipeline, namely edge-lm with AQLM, which is a vector quantization method, and also uses MLX/PyTorch/Triton kernels or customized quantized formats. They aren't using llama.cpp or its imatrix.dat mechanism. I am also determining the imatrix format, which is not compatible. Additionally, the imatrix file is specific to the original model.
+Evaluating Alternatives
+I've clarified the core incompatibility: Stage AI's pre-quantized weights, or transformed representations, render an external imatrix unusable. Conceptually, leveraging Unsloth's calibration approach is possible, but not via direct file transfer. I'm now examining the possibility of re-quantizing Unsloth's QAT weights using llama.cpp's imatrix, but this doesn't directly solve integrating with StageAI's AQLM/PLE compression, as their pipelines diverge significantly.
+Clarifying Technical Obstacles
+I've been working to clarify why direct integration is impossible, even translating the explanation into French. The incompatibility lies in format differences: llama.cpp's imatrix.dat is exclusive to GGUF, while TheStageAI uses edge-lm with AQLM, GPTQ or MLX, a method for vector quantization. The fundamental differences in architecture, particularly the Per-Layer Embeddings that are specifically compressed by TheStageAI through vector quantization (AQLM) versus the scalar importance measurement of llama.cpp's imatrix, present a hard technical barrier. This also extends to QAT versus imatrix.
+Collapse to hide model thoughts
+et genre là ça veut dire quoi
+Model 23:04
+ThinkingThoughts
+Analyzing Gemma-4 Performance
+I'm currently reviewing the bar chart comparing Gemma-4's Top-1 % accuracy across various sizes and QAT BF16. The x-axis, the model sizes from E2B to 31B are the focus. I'm focusing on the performance differences between the variants. I am now trying to see if there is any pattern with this data.
+Interpreting Accuracy Data
+I'm now diving deeper into the meaning behind the colors and numbers of the bar chart. It seems the comparison is between Unsloth's quantization technique (green) and the original/standard method (grey). I'm looking for the correlation between model size and Top-1 % accuracy recovery, and I'm mapping that with the size in GB of each model, as the details are displayed. The French explanation clarifies the graph's subject as a comparison of quantization efficiency.
+Collapse to hide model thoughtsUser 23:11
+tu peux voir comment sont les autres modèles par rapport à granite 3b ici sur ces benchmark Task	3B Dense	8B Dense	30B Dense
+Agentic (Coding)
+SWE Bench Multilingual	NA	30.78	41.89
+SWE Bench Pro	NA	19.11	33.29
+SWE Bench Verified	NA	47.67	57
+Terminal-Bench 2.1	NA	20.56	29.24
+Agentic (General)
+τ³-bench (AVG)	45.78	58.06	62.00
+BFCL (v4)	52.41	52.39	61.39
+ProfBench	32.10	41.20	42.90
+BirdBench	NA	41.07	41.85
+GDPval	NA	1189	1225
+Reasoning
+AIME25	78.33	86.67	89.17
+HMMT Feb25	66.67	78.33	89.17
+GPQA	54.80	64.14	66.41
+LiveCodeBench v6	69.71	73.24	75.77
+SciCode	24.11	36.09	38.76
+Chat & Instruction Following
+MMLU-Pro	67.84	74.04	77.60
+MMLU-ProX lite (IBM)	27.78	61.06	66.64
+Arena-Hard-V2	34.96	65.19	67.93
+IFBench (prompt)	74.33	79.33	77.17
+Long Context
+RULER 64K	67.52	80.99	89.96
+RULER 128K	55.30	71.41	81.38
+Model 23:11
+ThinkingThoughts
+Analyzing Benchmark Data
+I'm currently looking at a benchmark table comparing Granite models. My immediate task is to identify the source of this data, as it will inform the context and reliability of the comparison. Pinpointing the origin is crucial for proper interpretation and further analysis. I am querying the source now.
+Analyzing Granite Models
+I'm currently focused on IBM's Granite 4.2 models, specifically the 3B, 8B, and 30B dense reasoning models released in August 2026. The query involves a comparison of other models to the Granite 3B on given benchmarks.
+Initiating Granite 4.2 Analysis
+I'm starting a detailed comparison of the Granite 4.2 3B model, now that I've gathered the official evaluation table and context, specifically focusing on the 3B variant.
+Analyzing Competitive Benchmarks
+I'm now diving into the comparative analysis, specifically focusing on mathematical reasoning and logical tasks. Granite 4.2 3B is showing promise, due to its native <think> Chain-of-Thought approach. I've noted its impressive scores on AIME25 (78.33%), LiveCodeBench v6 (69.71%), and GPQA (54.80%), indicating a strong performance against competitors like Gemma and Llama 3.2, and Phi-4 Mini. I am now exploring its agentic capabilities and coding tasks to see how it fares on the SWE Bench, Terminal-bench, and related benchmarks.
+Collapse to hide model thoughts
+User 23:14
+et tu peux voir quel modèle de ces tailles sont bon genre tu pourrais me dire d'après les benchmark, lesquel ou lequel se ditingue des autres sur ces benchamrk sur cet taille s'il y en as
+Model 23:14
+ThinkingThoughts
+Analyzing Model Performance
+Okay, I'm diving into the user's question about model performance based on benchmarks and specific sizes. I'm focusing on identifying models that stand out, differentiating themselves based on benchmark results within certain size constraints. I'm looking for clear performance leaders within this framework.
+Clarifying User Intent
+I've finally grasped the user's intent. They're seeking specific model recommendations within a particular size range, based on benchmark performance. Now I can refine my answer to address their needs, by focusing on the models that excelled on specific benchmarks within the provided constraints.
+Collapse to hide model thoughts
