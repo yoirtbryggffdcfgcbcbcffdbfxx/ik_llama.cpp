@@ -5607,8 +5607,14 @@ static void llama_set_inputs(llama_context & lctx, const llama_batch & batch) {
             if (data_swa_win || data_swa_win_f16) {
                 const auto & built = lctx.swa_window_view;
                 const uint32_t pad = llama_kv_cache::get_padding(cparams.flash_attn);
+                // For the Gemma 4 MTP/assistant head the window view is derived from the target's
+                // committed live_swa() only (the head never writes its drafts to the target cache),
+                // so do not add n_tokens there -- matching build_gemma4_mtp().
+                const bool mtp_pending =
+                    (lctx.model.arch == LLM_ARCH_GEMMA4_MTP || lctx.model.arch == LLM_ARCH_GEMMA4_ASSISTANT) &&
+                    lctx.mtp_target_ctx != nullptr;
                 const int64_t live = built.compacted
-                    ? (int64_t) mask_kv_self.live_swa() + n_tokens : 0;
+                    ? (int64_t) mask_kv_self.live_swa() + (mtp_pending ? 0 : n_tokens) : 0;
                 const llama_swa_window_view view = built.compacted
                     ? llama_swa_calc_window_view_compact(live, mask_kv_self.sink_rows,
                                                          n_tokens, built.window, pad)

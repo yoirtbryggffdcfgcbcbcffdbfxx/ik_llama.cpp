@@ -613,7 +613,12 @@ ggml_cgraph * llm_build_context::build_gemma4_mtp() {
                 // so llm_build_kv()/llm_build_kqv() slice the K/V cache over that window as well,
                 // and so the mask fill step in llama.cpp uses the target's live SWA state.
                 const uint32_t pad = llama_kv_cache::get_padding(flash_attn);
-                const int64_t live = (int64_t) target_kv.live_swa() + n_tokens;
+                // MTP drafts are speculative and are never written to the target cache (the head
+                // passes null K/V to llm_build_kv, so llm_build_kv_store is skipped). The committed
+                // window is therefore exactly target_kv.live_swa(); adding n_tokens would push the
+                // window view past the compacted buffer once the target cache fills (OOB in the
+                // ggml view assert) because those draft positions are not in the cache yet.
+                const int64_t live = (int64_t) target_kv.live_swa();
                 const llama_swa_window_view view = llama_swa_calc_window_view_compact(
                         live, target_kv.sink_rows, n_tokens, target_hparams.n_swa, pad);
                 lctx.swa_window_view = {
