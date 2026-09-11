@@ -737,6 +737,9 @@ class Model:
         if chkhsh == "ccc2ef013c104be7bae2965776d611e1d7a8a2a9c547dd93a682c9a9fc80352e":
             # ref: https://huggingface.co/openai/gpt-oss-20b
             res = "gpt-4o"
+        if chkhsh == "36f3066e97b7f3994b379aaacde306c1444c6ae84e81a5ae3cd2b7ed3b8c42d4":
+            # ref: https://huggingface.co/openbmb/MiniCPM5-1B
+            res = "minicpm5"
         if res is None:
             logger.warning("\n")
             logger.warning("**************************************************************************************")
