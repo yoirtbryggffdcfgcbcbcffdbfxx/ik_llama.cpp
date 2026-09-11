@@ -100,14 +100,25 @@ common_peg_arena autoparser::build_parser(const generation_params & inputs) cons
         ctx.content              = &content;
         ctx.reasoning            = &reasoning;
 
+        bool has_tools           = inputs.tools.is_array() && !inputs.tools.empty();
+        bool has_response_format = inputs.json_schema.is_object() && !inputs.json_schema.empty();
+        bool pure_content        = reasoning.mode == reasoning_mode::NONE;
+
+        // When tools are enabled, let an unclosed reasoning block end at the start of a genuine
+        // tool call (e.g. "<think>...<tool_call>name..." without "</think>").
+        if (has_tools && !has_response_format && inputs.tool_choice != COMMON_CHAT_TOOL_CHOICE_NONE &&
+            jinja_caps.supports_tool_calls) {
+            std::string marker = !tools.format.section_start.empty() ? tools.format.section_start : tools.format.per_call_start;
+            ctx.tool_call_marker = trim_whitespace(marker);
+            if (!ctx.tool_call_marker.empty() && ctx.tool_call_marker != "{") {
+                ctx.tool_call_lookahead = tools.build_tool_call_lookahead(ctx);
+            }
+        }
+
         // Build reasoning parser
         ctx.reasoning_parser = reasoning.build_parser(ctx);
 
         auto parser = p.eps();
-
-        bool has_tools           = inputs.tools.is_array() && !inputs.tools.empty();
-        bool has_response_format = inputs.json_schema.is_object() && !inputs.json_schema.empty();
-        bool pure_content        = reasoning.mode == reasoning_mode::NONE;
 
         if (has_response_format) {
             auto response_format = p.rule("response-format", p.content(p.schema(p.json(), "response-format-schema", inputs.json_schema)));
@@ -135,12 +146,31 @@ common_peg_parser analyze_reasoning::build_parser(parser_build_context & ctx) co
 
     if (mode == reasoning_mode::TAG_BASED || mode == reasoning_mode::TOOLS_ONLY) {
         if (!end.empty()) {
+            auto trimmed_end = trim_whitespace(end);
+            auto reasoning_body = p.reasoning(p.until(trimmed_end));
+            auto reasoning_end  = p.optspace(end);
+
+            if (ctx.tool_call_lookahead.has_value() && !ctx.tool_call_marker.empty() &&
+                ctx.tool_call_marker != trimmed_end) {
+                // Tolerate a missing closing tag when a genuine tool call starts inside the
+                // reasoning block. The reasoning text is consumed in segments, each stopping at
+                // either the closing tag or the tool call marker; a marker that is *not* followed
+                // by a valid tool name (e.g. the model merely mentions "<tool_call>" while
+                // thinking) is swallowed and the scan continues.
+                auto & marker      = ctx.tool_call_marker;
+                auto   segment     = p.until_one_of({ trimmed_end, marker });
+                auto   false_alarm = p.negate(*ctx.tool_call_lookahead) + p.literal(marker);
+                auto   body        = segment + p.zero_or_more(false_alarm + segment);
+                reasoning_body     = p.reasoning(body);
+                reasoning_end      = p.choice({ p.optspace(end), p.peek(*ctx.tool_call_lookahead) });
+            }
+
             if (!start.empty()) {
                 // Standard tag-based: optional(<think>reasoning</think>)
-                return p.optional(p.optspace(start) + p.reasoning(p.until(trim_whitespace(end))) + p.optspace(end));
+                return p.optional(p.optspace(start) + reasoning_body + reasoning_end);
             }
             // Delimiter-style (empty start)
-            return p.optional(p.reasoning(p.until(trim_whitespace(end))) + p.optspace(end));
+            return p.optional(reasoning_body + reasoning_end);
         }
     }
 
@@ -176,6 +206,51 @@ common_peg_parser analyze_content::build_optional_wrapped(parser_build_context &
         return p.optional(start + p.content(p.until(end)) + end);
     }
     return p.eps();
+}
+
+common_peg_parser analyze_tools::build_tool_call_lookahead(parser_build_context & ctx) const {
+    auto &       p      = ctx.p;
+    const auto & inputs = ctx.inputs;
+
+    std::string marker = trim_whitespace(!format.section_start.empty() ? format.section_start : format.per_call_start);
+    if (marker.empty() || format.mode == tool_format::NONE) {
+        return p.eps();
+    }
+
+    auto names = p.choice();
+    foreach_function(inputs.tools, [&](const json & tool) {
+        const std::string name = tool.at("function").at("name");
+        names |= p.literal(name);
+    });
+
+    if (format.mode == tool_format::JSON_NATIVE) {
+        // <marker> [ "[" ] "{" "name": "<tool>"
+        std::string name_field = format.name_field;
+        if (!format.function_field.empty() && format.function_field != "function" &&
+            name_field.find('.') == std::string::npos) {
+            name_field.clear();  // nested name: cannot verify cheaply
+        }
+        auto head = p.literal(marker) + p.space();
+        if (marker != "{") {
+            if (format.tools_array_wrapped) {
+                head = head + p.optional(p.literal("[") + p.space());
+            }
+            head = head + p.literal("{") + p.space();
+        }
+        if (name_field.empty()) {
+            return head;
+        }
+        return head + p.literal("\"" + name_field + "\"") + p.space() + p.literal(":") + p.space() +
+               p.literal("\"") + names + p.literal("\"");
+    }
+
+    // <marker> [name_prefix] <tool>
+    auto head = p.literal(marker) + p.space();
+    std::string name_prefix = trim_whitespace(function.name_prefix);
+    if (!name_prefix.empty()) {
+        head = head + p.literal(name_prefix) + p.space();
+    }
+    return head + names;
 }
 
 common_peg_parser analyze_tools::build_parser(parser_build_context & ctx) const {
@@ -246,7 +321,12 @@ common_peg_parser analyze_tools::build_func_parser(common_chat_peg_builder & p, 
                                                     const common_peg_parser & call_id_section, bool have_call_id,
                                                     const common_peg_parser & args,
                                                     std::optional<common_peg_parser> atomic_peek) const {
-    auto              open           = p.tool_open(function.name_prefix + p.tool_name(p.literal(name)) + function.name_suffix);
+    // Be lenient about whitespace around the function name: small models frequently emit
+    // "<tool_call>name <arg_key>" instead of "<tool_call>name\n<arg_key>".
+    auto              name_suffix    = trim_whitespace(function.name_suffix).empty() && !function.name_suffix.empty()
+                                           ? p.space()
+                                           : p.optspace(function.name_suffix);
+    auto              open           = p.tool_open(p.optspace(function.name_prefix) + p.tool_name(p.literal(name)) + name_suffix);
     bool              matched_atomic = false;
     common_peg_parser func_parser    = p.eps();
 
@@ -270,7 +350,7 @@ common_peg_parser analyze_tools::build_func_parser(common_chat_peg_builder & p, 
         // we only emit tool_close when we can actually see the closing marker. This prevents
         // premature closing during partial parsing when we've seen e.g. "</" which could be
         // either "</tool_call>" (end) or "<arg_key>" prefix that failed to match.
-        func_parser = func_parser + p.tool_close(p.peek(p.literal(format.per_call_end)));
+        func_parser = func_parser + p.tool_close(p.peek(p.space() + p.literal(trim_whitespace(format.per_call_end))));
     } else {
         func_parser = func_parser + p.tool_close(p.space());  // force this to process tool closing callbacks in mapper
     }
@@ -364,8 +444,18 @@ common_peg_parser analyze_tools::build_tool_parser_tag_tagged(parser_build_conte
     // stop at the trimmed closer only before an arg tag, so one inside a value does not match
     std::vector<std::string> value_end = { arguments.value_suffix };
     auto trimmed_suffix = trim_whitespace(arguments.value_suffix);
-    if (trimmed_suffix != arguments.value_suffix && !arguments.name_prefix.empty()) {
-        value_end.push_back(trimmed_suffix + arguments.name_prefix);
+    if (trimmed_suffix != arguments.value_suffix) {
+        if (!arguments.name_prefix.empty()) {
+            value_end.push_back(trimmed_suffix + trim_whitespace(arguments.name_prefix));
+        }
+        // tolerate whitespace variations: "</arg_value> <arg_key>" / "</arg_value> </tool_call>"
+        value_end.push_back(trimmed_suffix + " ");
+        value_end.push_back(trimmed_suffix + "\t");
+        std::string closer = !function.close.empty() ? function.close : format.per_call_end;
+        closer = trim_whitespace(closer);
+        if (!closer.empty()) {
+            value_end.push_back(trimmed_suffix + closer);
+        }
     }
     auto until_suffix = p.rule("until-suffix", p.until_one_of(value_end));
 
@@ -391,10 +481,11 @@ common_peg_parser analyze_tools::build_tool_parser_tag_tagged(parser_build_conte
         for (const auto & [param_name, param_schema] : properties.items()) {
             bool is_required = required.find(param_name) != required.end();
 
+            // tolerate whitespace variations around the tags (e.g. "</arg_key> <arg_value>" instead of a newline)
             auto arg =
-                p.tool_arg(p.tool_arg_open(arguments.name_prefix + p.tool_arg_name(p.literal(param_name)) +
-                                           arguments.name_suffix) +
-                           arguments.value_prefix +
+                p.tool_arg(p.tool_arg_open(p.optspace(arguments.name_prefix) + p.tool_arg_name(p.literal(param_name)) +
+                                           p.optspace(arguments.name_suffix)) +
+                           p.space() + p.optspace(arguments.value_prefix) +
                            (schema_info.resolves_to_string(param_schema) ?
                                 p.tool_arg_string_value(until_suffix) :
                                 p.tool_arg_json_value(p.schema(

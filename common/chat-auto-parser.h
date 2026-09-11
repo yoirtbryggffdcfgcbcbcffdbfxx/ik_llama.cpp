@@ -225,6 +225,11 @@ struct parser_build_context {
     bool                              extracting_reasoning = false;
     const analyze_reasoning *         reasoning            = nullptr;
     const analyze_content *           content              = nullptr;
+    // Lookahead parser recognising the beginning of a genuine tool call (marker followed by a
+    // valid tool name). When set, an unclosed reasoning block is allowed to end right before it,
+    // so models that forget to emit the closing reasoning tag before calling a tool still work.
+    std::optional<common_peg_parser>  tool_call_lookahead;
+    std::string                       tool_call_marker;
 
     parser_build_context(common_chat_peg_builder & p, const generation_params & inputs);
 };
@@ -361,6 +366,10 @@ struct analyze_tools : analyze_base {
     common_peg_parser build_tool_parser_json_native(parser_build_context & ctx) const;
     common_peg_parser build_tool_parser_tag_json(parser_build_context & ctx) const;
     common_peg_parser build_tool_parser_tag_tagged(parser_build_context & ctx) const;
+
+  public:
+    // Lookahead recognising "<marker> [name_prefix] <valid tool name>" (never consumes input)
+    common_peg_parser build_tool_call_lookahead(parser_build_context & ctx) const;
 
     // Shared helper: builds func_parser from open+call_id+args, handling atomic wrapping and close.
     // atomic_peek: if present, used as the peek expression in the third atomicity branch.

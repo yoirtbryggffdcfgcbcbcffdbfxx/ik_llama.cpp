@@ -87,6 +87,8 @@ static void test_normalize_quotes_with_embedded_quotes(testing & t);
 // TAG_WITH_TAGGED argument parsing tests
 static void test_tagged_args_with_embedded_quotes(testing & t);
 static void test_tagged_args_closer_newline_optional(testing & t);
+static void test_tagged_args_whitespace_tolerant(testing & t);
+static void test_unclosed_reasoning_before_tool_call(testing & t);
 
 int main(int argc, char * argv[]) {
     testing t(std::cout);
@@ -113,6 +115,8 @@ int main(int argc, char * argv[]) {
     t.test("normalize_quotes_to_json", test_normalize_quotes_to_json);
     t.test("tagged_args_embedded_quotes", test_tagged_args_with_embedded_quotes);
     t.test("tagged_args_closer_newline_optional", test_tagged_args_closer_newline_optional);
+    t.test("tagged_args_whitespace_tolerant", test_tagged_args_whitespace_tolerant);
+    t.test("unclosed_reasoning_before_tool_call", test_unclosed_reasoning_before_tool_call);
 
     return t.summary();
 }
@@ -2372,4 +2376,170 @@ static void test_tagged_args_closer_newline_optional(testing & t) {
     check("closer without newline",
         "<tool_call>search\n<arg_key>file</arg_key>\n<arg_value>app.log</arg_value>"
         "<arg_key>pattern</arg_key>\n<arg_value>error</arg_value>\n</tool_call>");
+}
+
+// Small models (e.g. Ling-3.0-tiny) often emit spaces instead of the newlines the template
+// uses between the tags: "<tool_call>name <arg_key>k</arg_key> <arg_value>v</arg_value> </tool_call>"
+static void test_tagged_args_whitespace_tolerant(testing & t) {
+    struct autoparser a;
+    a.analysis_complete              = true;
+    a.jinja_caps.supports_tool_calls = true;
+    a.tools.format.mode              = tool_format::TAG_WITH_TAGGED;
+    a.tools.format.per_call_start    = "<tool_call>";
+    a.tools.format.per_call_end      = "</tool_call>";
+    a.tools.function.name_suffix     = "\n";
+    a.tools.arguments.name_prefix    = "<arg_key>";
+    a.tools.arguments.name_suffix    = "</arg_key>\n";
+    a.tools.arguments.value_prefix   = "<arg_value>";
+    a.tools.arguments.value_suffix   = "</arg_value>\n";
+    a.content.mode                   = content_mode::PLAIN;
+    a.reasoning.mode                 = reasoning_mode::NONE;
+
+    generation_params inputs;
+    inputs.tools = json::parse(R"([{"type":"function","function":{"name":"web_search","parameters":{
+        "type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}}])");
+    inputs.tool_choice          = COMMON_CHAT_TOOL_CHOICE_AUTO;
+    inputs.reasoning_format     = COMMON_REASONING_FORMAT_NONE;
+    inputs.enable_thinking      = false;
+    inputs.parallel_tool_calls  = false;
+
+    auto arena = a.build_parser(inputs);
+    common_chat_parser_params pp;
+    pp.format           = COMMON_CHAT_FORMAT_PEG_NATIVE;
+    pp.reasoning_format = COMMON_REASONING_FORMAT_NONE;
+    pp.parse_tool_calls = true;
+
+    auto check = [&](const char * label, const std::string & gen) {
+        common_chat_msg msg;
+        try {
+            msg = common_chat_peg_parse(arena, gen, /* is_partial = */ false, pp);
+        } catch (const std::exception & ex) {
+            t.assert_true(std::string(label) + " : parsed (" + ex.what() + ")", false);
+            return;
+        }
+        if (!t.assert_equal(std::string(label) + " : tool calls", 1u, msg.tool_calls.size())) {
+            return;
+        }
+        t.assert_equal(std::string(label) + " : name", std::string("web_search"), msg.tool_calls[0].name);
+        t.assert_equal(std::string(label) + " : args", std::string("{\"query\":\"GPT-6 pricing $10\"}"), msg.tool_calls[0].arguments);
+    };
+
+    check("spaces instead of newlines",
+        "<tool_call>web_search <arg_key>query</arg_key> <arg_value>GPT-6 pricing $10</arg_value> </tool_call>");
+    check("newlines", "<tool_call>web_search\n<arg_key>query</arg_key>\n<arg_value>GPT-6 pricing $10</arg_value>\n</tool_call>");
+    check("no whitespace", "<tool_call>web_search<arg_key>query</arg_key><arg_value>GPT-6 pricing $10</arg_value></tool_call>");
+}
+
+// Reasoning models sometimes forget to close </think> before emitting a tool call. When tools
+// are provided, the reasoning block may end right before a genuine tool call (marker followed
+// by a valid tool name). A bare mention of the marker inside the reasoning must not trigger it.
+static void test_unclosed_reasoning_before_tool_call(testing & t) {
+    auto make_inputs = [](bool with_tools) {
+        generation_params inputs;
+        if (with_tools) {
+            inputs.tools = json::parse(R"([{"type":"function","function":{"name":"web_search","parameters":{
+                "type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}}])");
+        }
+        inputs.tool_choice          = COMMON_CHAT_TOOL_CHOICE_AUTO;
+        inputs.reasoning_format     = COMMON_REASONING_FORMAT_AUTO;
+        inputs.enable_thinking      = true;
+        inputs.parallel_tool_calls  = false;
+        return inputs;
+    };
+
+    auto run = [&](struct autoparser & a, const generation_params & inputs, const std::string & gen, const char * label) {
+        auto arena = a.build_parser(inputs);
+        common_chat_parser_params pp;
+        pp.format           = COMMON_CHAT_FORMAT_PEG_NATIVE;
+        pp.reasoning_format = COMMON_REASONING_FORMAT_AUTO;
+        pp.parse_tool_calls = true;
+        common_chat_msg msg;
+        try {
+            msg = common_chat_peg_parse(arena, gen, /* is_partial = */ false, pp);
+        } catch (const std::exception & ex) {
+            t.assert_true(std::string(label) + " : parsed (" + ex.what() + ")", false);
+        }
+        return msg;
+    };
+
+    // --- tagged format (Ling / GLM style)
+    {
+        struct autoparser a;
+        a.analysis_complete              = true;
+        a.jinja_caps.supports_tool_calls = true;
+        a.tools.format.mode              = tool_format::TAG_WITH_TAGGED;
+        a.tools.format.per_call_start    = "<tool_call>";
+        a.tools.format.per_call_end      = "</tool_call>";
+        a.tools.function.name_suffix     = "\n";
+        a.tools.arguments.name_prefix    = "<arg_key>";
+        a.tools.arguments.name_suffix    = "</arg_key>\n";
+        a.tools.arguments.value_prefix   = "<arg_value>";
+        a.tools.arguments.value_suffix   = "</arg_value>\n";
+        a.content.mode                   = content_mode::PLAIN;
+        a.reasoning.mode                 = reasoning_mode::TAG_BASED;
+        a.reasoning.start                = "<think>";
+        a.reasoning.end                  = "</think>";
+
+        auto inputs = make_inputs(true);
+
+        auto msg = run(a, inputs, "<think>I should search.<tool_call>web_search\n<arg_key>query</arg_key>\n<arg_value>GPT-6</arg_value>\n</tool_call>", "tagged unclosed");
+        t.assert_equal("tagged unclosed : reasoning", std::string("I should search."), msg.reasoning_content);
+        t.assert_equal("tagged unclosed : content", std::string(""), msg.content);
+        if (t.assert_equal("tagged unclosed : tool calls", 1u, msg.tool_calls.size())) {
+            t.assert_equal("tagged unclosed : args", std::string("{\"query\":\"GPT-6\"}"), msg.tool_calls[0].arguments);
+        }
+
+        msg = run(a, inputs, "<think>I could use <tool_call> but no.</think>Answer: 42", "tagged mention");
+        t.assert_equal("tagged mention : reasoning", std::string("I could use <tool_call> but no."), msg.reasoning_content);
+        t.assert_equal("tagged mention : content", std::string("Answer: 42"), msg.content);
+        t.assert_equal("tagged mention : tool calls", 0u, msg.tool_calls.size());
+
+        msg = run(a, inputs, "<think>Maybe <tool_call> no. Yes:<tool_call>web_search\n<arg_key>query</arg_key>\n<arg_value>x</arg_value>\n</tool_call>", "tagged mention then call");
+        t.assert_equal("tagged mention then call : reasoning", std::string("Maybe <tool_call> no. Yes:"), msg.reasoning_content);
+        t.assert_equal("tagged mention then call : tool calls", 1u, msg.tool_calls.size());
+
+        msg = run(a, inputs, "<think>Thinking.</think><tool_call>web_search\n<arg_key>query</arg_key>\n<arg_value>x</arg_value>\n</tool_call>", "tagged closed");
+        t.assert_equal("tagged closed : reasoning", std::string("Thinking."), msg.reasoning_content);
+        t.assert_equal("tagged closed : tool calls", 1u, msg.tool_calls.size());
+
+        // unknown tool name after the marker must not end the reasoning
+        msg = run(a, inputs, "<think>I could call <tool_call>other_tool but no.</think>Answer", "tagged unknown tool");
+        t.assert_equal("tagged unknown tool : reasoning", std::string("I could call <tool_call>other_tool but no."), msg.reasoning_content);
+        t.assert_equal("tagged unknown tool : content", std::string("Answer"), msg.content);
+
+        // without tools the marker is plain reasoning text
+        auto no_tools = make_inputs(false);
+        msg = run(a, no_tools, "<think>I could use <tool_call>web_search but no.</think>Answer", "tagged no tools");
+        t.assert_equal("tagged no tools : reasoning", std::string("I could use <tool_call>web_search but no."), msg.reasoning_content);
+        t.assert_equal("tagged no tools : content", std::string("Answer"), msg.content);
+    }
+
+    // --- JSON format (Qwen3 style)
+    {
+        struct autoparser a;
+        a.analysis_complete              = true;
+        a.jinja_caps.supports_tool_calls = true;
+        a.tools.format.mode              = tool_format::JSON_NATIVE;
+        a.tools.format.per_call_start    = "<tool_call>";
+        a.tools.format.per_call_end      = "</tool_call>";
+        a.tools.format.name_field        = "name";
+        a.tools.format.args_field        = "arguments";
+        a.content.mode                   = content_mode::PLAIN;
+        a.reasoning.mode                 = reasoning_mode::TAG_BASED;
+        a.reasoning.start                = "<think>";
+        a.reasoning.end                  = "</think>";
+
+        auto inputs = make_inputs(true);
+
+        auto msg = run(a, inputs, "<think>I should search.<tool_call>\n{\"name\": \"web_search\", \"arguments\": {\"query\": \"GPT-6\"}}\n</tool_call>", "json unclosed");
+        t.assert_equal("json unclosed : reasoning", std::string("I should search."), msg.reasoning_content);
+        if (t.assert_equal("json unclosed : tool calls", 1u, msg.tool_calls.size())) {
+            t.assert_equal("json unclosed : name", std::string("web_search"), msg.tool_calls[0].name);
+        }
+
+        msg = run(a, inputs, "<think>I could use <tool_call> but no.</think>Answer: 42", "json mention");
+        t.assert_equal("json mention : reasoning", std::string("I could use <tool_call> but no."), msg.reasoning_content);
+        t.assert_equal("json mention : content", std::string("Answer: 42"), msg.content);
+        t.assert_equal("json mention : tool calls", 0u, msg.tool_calls.size());
+    }
 }
