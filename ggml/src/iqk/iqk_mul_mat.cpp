@@ -378,6 +378,7 @@ struct MulMat {
             case GGML_TYPE_Q8_K_R16:
             case GGML_TYPE_MXFP4_R8:
             case GGML_TYPE_BF16_R16: return 16;
+            case GGML_TYPE_Q1_0_G128_LUT: return QK1_0_G128_LUT_ROWS;
             default: return 1;
         }
 #else
@@ -414,6 +415,7 @@ struct MulMat {
             case GGML_TYPE_Q8_K_R8: return 8;
             case GGML_TYPE_Q8_K_R16:
             case GGML_TYPE_BF16_R16: return 16;
+            case GGML_TYPE_Q1_0_G128_LUT: return QK1_0_G128_LUT_ROWS;
             default: return 1;
         }
 #endif
@@ -520,12 +522,54 @@ extern "C" IQK_API int iqk_dequant_type(int type, int Ny) {
     return MulMat::is_dequant_better(ggml_type(type), Ny);
 }
 
-extern "C" IQK_API bool iqk_mul_mat(long Nx, long Ny, long ne00,
+extern "C" // Dedicated GEMM for Q1_0_G128_LUT: builds the activation LUTs once per y-chunk and
+// reuses them across all output-row tiles (T-MAC style loop order).
+IQK_API bool iqk_mul_mat_q1_0_lut(long Nx, long Ny, long ne00, int typeA, const void * A, long strideA,
+                          int typeB, const void * B, long strideB, float * C, long stride_C, int ith, int nth);
+
+bool iqk_mul_mat_q1_0_lut(long Nx, long Ny, long ne00, int typeA, const void * A, long strideA,
+                          int typeB, const void * B, long strideB, float * C, long stride_C, int ith, int nth) {
+    constexpr int kRows = 32;
+    if (Nx % kRows != 0) return false;
+    MulMat mm;
+    if (!MulMat::prepare(typeA, typeB, ne00, mm, IQK_MAX_NY)) return false;
+    int ny = (int)mm.funcs.size();
+    while (ny > 0 && !mm.funcs[ny-1]) --ny;
+    if (ny == 0) return false;
+    if (Ny >= nth) {
+        // Enough columns: split y so each thread builds the LUTs for its own columns (no duplication).
+        long ythread = (Ny + nth - 1)/nth;
+        long y0 = ith*ythread, y1 = std::min<long>(Ny, y0 + ythread);
+        for (long y = y0; y < y1; y += ny) {
+            int nrc_y = (int)std::min<long>(ny, y1 - y);
+            for (long x = 0; x < Nx; x += kRows) {
+                DataInfo info{C + x + y*stride_C, (const char *)B + y*strideB, (size_t)stride_C, (size_t)strideB, 0, 1, nullptr, 0};
+                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, kRows);
+            }
+        }
+    } else {
+        // Few columns: split x for parallelism; the LUT (few columns) is cheap to rebuild per thread.
+        long xthread = (Nx + nth - 1)/nth;
+        long x0 = ith*xthread, x1 = std::min<long>(Nx, x0 + xthread);
+        for (long y = 0; y < Ny; y += ny) {
+            int nrc_y = (int)std::min<long>(ny, Ny - y);
+            for (long x = x0; x < x1; x += kRows) {
+                DataInfo info{C + x + y*stride_C, (const char *)B + y*strideB, (size_t)stride_C, (size_t)strideB, 0, 1, nullptr, 0};
+                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, kRows);
+            }
+        }
+    }
+    return true;
+}
+
+IQK_API bool iqk_mul_mat(long Nx, long Ny, long ne00,
         int typeA, const void * A, long strideA,
         int typeB, const void * B, long strideB,
         float * C, long stride_C, int ith, int nth) {
 
     constexpr int k_min_step = 32;
+
+    if (typeA == GGML_TYPE_Q1_0_G128_LUT && iqk_mul_mat_q1_0_lut(Nx, Ny, ne00, typeA, A, strideA, typeB, B, strideB, C, stride_C, ith, nth)) return true;
 
     MulMat mm;
 
@@ -965,6 +1009,7 @@ bool MulMat::prepare(int typeA, int typeB, int ne00, MulMat& mm, int Ny) {
         case GGML_TYPE_IQ2_BN:
         case GGML_TYPE_IQ2_BN_R4:
         case GGML_TYPE_Q1_0_G128:
+        case GGML_TYPE_Q1_0_G128_LUT:
             return iqk_set_kernels_1bit(ne00, typeA, typeB, mm.funcs, mm.func16);
 
         default:
@@ -1057,6 +1102,7 @@ bool MulMat::prepare(int typeA, int typeB, int ne00, MulMat& m, int /*Ny*/) {
         case GGML_TYPE_IQ1_S_R4:
         case GGML_TYPE_IQ1_M_R4:
         case GGML_TYPE_Q1_0_G128:
+        case GGML_TYPE_Q1_0_G128_LUT:
             return iqk_set_kernels_1bit(ne00, typeA, typeB, m.funcs, m.func16);
         case GGML_TYPE_IQ1_KT:
         case GGML_TYPE_IQ2_KT:
