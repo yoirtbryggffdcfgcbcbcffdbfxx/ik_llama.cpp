@@ -529,7 +529,8 @@ IQK_API bool iqk_mul_mat_q1_0_lut(long Nx, long Ny, long ne00, int typeA, const 
 
 bool iqk_mul_mat_q1_0_lut(long Nx, long Ny, long ne00, int typeA, const void * A, long strideA,
                           int typeB, const void * B, long strideB, float * C, long stride_C, int ith, int nth) {
-    constexpr int kRows = 32;
+    constexpr int kRows = 32;       // taille d'un groupe de lignes (imposée par le format)
+    constexpr int kTile = 1024;     // tuile de dispatch (multiple de kRows) : amortit le remplissage LUT + le hash sur ngroups>1
     if (Nx % kRows != 0) return false;
     MulMat mm;
     if (!MulMat::prepare(typeA, typeB, ne00, mm, IQK_MAX_NY)) return false;
@@ -542,20 +543,26 @@ bool iqk_mul_mat_q1_0_lut(long Nx, long Ny, long ne00, int typeA, const void * A
         long y0 = ith*ythread, y1 = std::min<long>(Ny, y0 + ythread);
         for (long y = y0; y < y1; y += ny) {
             int nrc_y = (int)std::min<long>(ny, y1 - y);
-            for (long x = 0; x < Nx; x += kRows) {
+            for (long x = 0; x < Nx; x += kTile) {
+                int nrc_x = (int)std::min<long>(kTile, Nx - x);
                 DataInfo info{C + x + y*stride_C, (const char *)B + y*strideB, (size_t)stride_C, (size_t)strideB, 0, 1, nullptr, 0};
-                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, kRows);
+                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, nrc_x);
             }
         }
     } else {
         // Few columns: split x for parallelism; the LUT (few columns) is cheap to rebuild per thread.
-        long xthread = (Nx + nth - 1)/nth;
-        long x0 = ith*xthread, x1 = std::min<long>(Nx, x0 + xthread);
+        // On découpe en groupes complets de 32 lignes pour que x0 reste aligné sur un groupe
+        // (le kernel indexe les poids par groupe de QK1_0_G128_LUT_ROWS=32 lignes).
+        long ngroups_tot = Nx / kRows;
+        long gthread = (ngroups_tot + nth - 1)/nth;
+        long g0 = ith*gthread, g1 = std::min<long>(ngroups_tot, g0 + gthread);
+        long x0 = g0*kRows, x1 = g1*kRows;
         for (long y = 0; y < Ny; y += ny) {
             int nrc_y = (int)std::min<long>(ny, Ny - y);
-            for (long x = x0; x < x1; x += kRows) {
+            for (long x = x0; x < x1; x += kTile) {
+                int nrc_x = (int)std::min<long>(kTile, x1 - x);
                 DataInfo info{C + x + y*stride_C, (const char *)B + y*strideB, (size_t)stride_C, (size_t)strideB, 0, 1, nullptr, 0};
-                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, kRows);
+                mm.funcs[nrc_y-1](ne00, (const void *)((const char *)A + x*strideA), strideA, info, nrc_x);
             }
         }
     }

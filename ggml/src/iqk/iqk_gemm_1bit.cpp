@@ -1553,9 +1553,11 @@ static void mul_mat_q1_0_g128_lut_q8_0(int n, const void * vx, size_t bx, const 
             }
         }
     }
-    std::vector<float> acc(nrc_x);
+    static thread_local std::vector<float> acc;
+    if ((int)acc.size() < nrc_x) acc.resize(nrc_x);
+    float * accp = acc.data();
     for (int iy = 0; iy < nrc_y; ++iy) {
-        std::fill(acc.begin(), acc.end(), 0.0f);
+        std::fill(accp, accp + nrc_x, 0.0f);
         for (int ib = 0; ib < nb; ++ib) {
             const int8_t * lutlo = c_lutlo.data() + ((size_t)iy*nb + ib)*512;
             const int8_t * luthi = c_luthi.data() + ((size_t)iy*nb + ib)*512;
@@ -1565,8 +1567,8 @@ static void mul_mat_q1_0_g128_lut_q8_0(int n, const void * vx, size_t bx, const 
                 lvhi[g] = _mm256_broadcastsi128_si256(_mm_load_si128((const __m128i*)(luthi + g*16)));
             }
             const auto * dd = (const ggml_half *)q8.y[iy][ib].d;
-            float dsub[4]; int bsub[4];
-            for (int k = 0; k < 4; ++k) { uint32_t ub = (uint32_t)dd[k] << 16; float f; memcpy(&f, &ub, 4); dsub[k] = f; bsub[k] = ((const int16_t *)dd)[4+k]; }
+            float dsub[4]; __m256i bs16[4];
+            for (int k = 0; k < 4; ++k) { uint32_t ub = (uint32_t)dd[k] << 16; float f; memcpy(&f, &ub, 4); dsub[k] = f; bs16[k] = _mm256_set1_epi16((int16_t)((const int16_t *)dd)[4+k]); }
             for (int grp = 0; grp < ngroups; ++grp) {
                 const auto * blk = (const block_q1_0_g128_lut *)((const char *)vx + (size_t)grp*QK1_0_G128_LUT_ROWS*bx + (size_t)ib*sizeof(block_q1_0_g128_lut));
                 __m256i sA[4] = {zero,zero,zero,zero};
@@ -1584,25 +1586,33 @@ static void mul_mat_q1_0_g128_lut_q8_0(int n, const void * vx, size_t bx, const 
                     sB[k] = _mm256_add_epi16(sB[k], _mm256_add_epi16(_mm256_unpackhi_epi8(va,vb), _mm256_unpackhi_epi8(vc,vd)));
                 }
                 float dwv[32];
+#ifdef __F16C__
+                // 4 conversions vectorielles (F16C) au lieu de 32 scalaires ; exact (fp16->fp32 n'arrondit pas).
+                for (int r = 0; r < QK1_0_G128_LUT_ROWS; r += 8)
+                    _mm256_storeu_ps(dwv + r, _mm256_cvtph_ps(_mm_loadu_si128((const __m128i*)(blk->d + r))));
+#else
                 for (int r = 0; r < QK1_0_G128_LUT_ROWS; ++r) dwv[r] = GGML_FP16_TO_FP32(blk->d[r]);
-                float * arow = acc.data() + (size_t)grp*QK1_0_G128_LUT_ROWS;
+#endif
+                float * arow = accp + (size_t)grp*QK1_0_G128_LUT_ROWS;
                 for (int k = 0; k < 4; ++k) {
-                    __m256i c32 = _mm256_set1_epi32(bsub[k]);
+                    // soustraction de bsub en int16 (S-bsub tient en int16) : 2 ops/k au lieu de 16 sub_epi32.
+                    __m256i sa = _mm256_sub_epi16(sA[k], bs16[k]);
+                    __m256i sb = _mm256_sub_epi16(sB[k], bs16[k]);
                     __m256 dks = _mm256_set1_ps(dsub[k]);
                     auto flush = [&](__m128i c16, const float * dw8, int ro) {
-                        __m256 f = _mm256_cvtepi32_ps(_mm256_sub_epi32(_mm256_cvtepi16_epi32(c16), c32));
+                        __m256 f = _mm256_cvtepi32_ps(_mm256_cvtepi16_epi32(c16));
                         __m256 sc = _mm256_mul_ps(_mm256_loadu_ps(dw8), dks);
                         _mm256_storeu_ps(arow + ro, _mm256_fmadd_ps(f, sc, _mm256_loadu_ps(arow + ro)));
                     };
-                    flush(_mm256_castsi256_si128(sA[k]),  dwv +  0,  0);
-                    flush(_mm256_castsi256_si128(sB[k]),  dwv +  8,  8);
-                    flush(_mm256_extracti128_si256(sA[k],1), dwv + 16, 16);
-                    flush(_mm256_extracti128_si256(sB[k],1), dwv + 24, 24);
+                    flush(_mm256_castsi256_si128(sa),  dwv +  0,  0);
+                    flush(_mm256_castsi256_si128(sb),  dwv +  8,  8);
+                    flush(_mm256_extracti128_si256(sa,1), dwv + 16, 16);
+                    flush(_mm256_extracti128_si256(sb,1), dwv + 24, 24);
                 }
             }
         }
         float * out = info.dst_row(iy);
-        for (int ix = 0; ix < nrc_x; ++ix) out[ix] = acc[ix];
+        for (int ix = 0; ix < nrc_x; ++ix) out[ix] = accp[ix];
     }
 }
 
