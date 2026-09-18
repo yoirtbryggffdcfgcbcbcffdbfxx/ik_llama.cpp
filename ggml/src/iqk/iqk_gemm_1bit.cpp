@@ -1553,9 +1553,10 @@ static void mul_mat_q1_0_g128_lut_q8_0(int n, const void * vx, size_t bx, const 
             }
         }
     }
-    std::vector<float> acc(nrc_x);
+    static thread_local std::vector<float> acc;
+    if ((int)acc.size() < nrc_x) acc.resize(nrc_x, 0.0f);
     for (int iy = 0; iy < nrc_y; ++iy) {
-        std::fill(acc.begin(), acc.end(), 0.0f);
+        std::fill(acc.begin(), acc.begin() + nrc_x, 0.0f);
         for (int ib = 0; ib < nb; ++ib) {
             const int8_t * lutlo = c_lutlo.data() + ((size_t)iy*nb + ib)*512;
             const int8_t * luthi = c_luthi.data() + ((size_t)iy*nb + ib)*512;
@@ -1584,13 +1585,16 @@ static void mul_mat_q1_0_g128_lut_q8_0(int n, const void * vx, size_t bx, const 
                     sB[k] = _mm256_add_epi16(sB[k], _mm256_add_epi16(_mm256_unpackhi_epi8(va,vb), _mm256_unpackhi_epi8(vc,vd)));
                 }
                 float dwv[32];
-                for (int r = 0; r < QK1_0_G128_LUT_ROWS; ++r) dwv[r] = GGML_FP16_TO_FP32(blk->d[r]);
+                for (int r = 0; r < QK1_0_G128_LUT_ROWS; r += 8)
+                    _mm256_storeu_ps(dwv + r, _mm256_cvtph_ps(_mm_loadu_si128((const __m128i *)(blk->d + r))));
                 float * arow = acc.data() + (size_t)grp*QK1_0_G128_LUT_ROWS;
                 for (int k = 0; k < 4; ++k) {
-                    __m256i c32 = _mm256_set1_epi32(bsub[k]);
+                    __m256i b16 = _mm256_set1_epi16((short)bsub[k]);
+                    sA[k] = _mm256_sub_epi16(sA[k], b16);
+                    sB[k] = _mm256_sub_epi16(sB[k], b16);
                     __m256 dks = _mm256_set1_ps(dsub[k]);
                     auto flush = [&](__m128i c16, const float * dw8, int ro) {
-                        __m256 f = _mm256_cvtepi32_ps(_mm256_sub_epi32(_mm256_cvtepi16_epi32(c16), c32));
+                        __m256 f = _mm256_cvtepi32_ps(_mm256_cvtepi16_epi32(c16));
                         __m256 sc = _mm256_mul_ps(_mm256_loadu_ps(dw8), dks);
                         _mm256_storeu_ps(arow + ro, _mm256_fmadd_ps(f, sc, _mm256_loadu_ps(arow + ro)));
                     };
