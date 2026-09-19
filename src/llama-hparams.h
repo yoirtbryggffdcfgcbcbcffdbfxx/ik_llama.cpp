@@ -28,6 +28,12 @@ struct llama_hparams {
     uint32_t n_embd;
     uint32_t n_embd_out = 0;
     uint32_t n_layer;
+    // Nanbeige looped transformer: weights contain n_layer physical layers, but the
+    // graph unrolls them n_loops times. n_layer_all is the logical (unrolled) count and
+    // defaults to n_layer for every other architecture, so it is a no-op there.
+    uint32_t n_layer_all = 0;           // logical layer count; 0 => use n_layer
+    uint32_t n_loops = 1;               // number of times the physical layers are repeated
+    bool     skip_loop_final_norm = false; // if true, do not apply output_norm between loops
     int32_t n_layer_kv_from_start = -1; // if non-negative, the first n_layer_kv_from_start layers have KV cache
     uint32_t n_rot;
     uint32_t n_rot_swa;
@@ -333,12 +339,15 @@ struct llama_hparams {
         return false;
     }
 
+    // number of layers actually executed by the graph / addressed by the KV cache
+    uint32_t n_layer_runtime() const { return n_layer_all > 0 ? n_layer_all : n_layer; }
+
     bool has_kv(uint32_t il) const {
         return n_layer_kv_from_start > 0 ? il < n_layer_kv_from_start : true;
     }
 
     uint32_t n_head(uint32_t il = 0) const {
-        if (il < n_layer) {
+        if (il < n_layer_runtime()) {
             return n_head_arr[il];
         }
         printf("%s: Oops, il = %d\n", __func__, il);
@@ -346,7 +355,7 @@ struct llama_hparams {
     }
 
     uint32_t n_head_kv(uint32_t il = 0) const {
-        if (il < n_layer) {
+        if (il < n_layer_runtime()) {
             return n_head_kv_arr[il];
         }
 
@@ -364,7 +373,7 @@ struct llama_hparams {
     }
 
     uint32_t n_ff(uint32_t il = 0) const {
-        if (il < n_layer) {
+        if (il < n_layer_runtime()) {
             return n_ff_arr[il];
         }
 

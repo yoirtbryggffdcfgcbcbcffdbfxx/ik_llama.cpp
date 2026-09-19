@@ -1759,6 +1759,47 @@ class LlamaModel(Model):
                 raise ValueError(f"Unprocessed experts: {experts}")
 
 
+@Model.register("NanbeigeForCausalLM")
+class NanbeigeModel(LlamaModel):
+    # Nanbeige 4.2 is a looped transformer: the HF config stores only the physical
+    # layers plus `num_loops` (and `skip_loop_final_norm`). The C++ graph unrolls them,
+    # so the GGUF keeps the physical block_count and carries these two extra keys.
+    # Tensors and q/k permutation are identical to Llama.
+    model_arch = gguf.MODEL_ARCH.NANBEIGE
+
+    def set_gguf_parameters(self):
+        # Deliberately skip LlamaModel.set_gguf_parameters(): this fork customised it for
+        # an MoE model (prefix_dense_intermediate_size) which Nanbeige does not provide.
+        Model.set_gguf_parameters(self)
+
+        hparams = self.hparams
+        self.gguf_writer.add_vocab_size(hparams["vocab_size"])
+
+        rope_dim = hparams.get("head_dim")
+        if rope_dim is None:
+            rope_dim = hparams["hidden_size"] // hparams["num_attention_heads"]
+        self.gguf_writer.add_rope_dimension_count(rope_dim)
+
+        rope_scaling = hparams.get("rope_scaling")
+        if rope_scaling is not None and "factor" in rope_scaling:
+            if rope_scaling.get("type") == "linear":
+                self.gguf_writer.add_rope_scaling_type(gguf.RopeScalingType.LINEAR)
+                self.gguf_writer.add_rope_scaling_factor(rope_scaling["factor"])
+
+        tokenizer_config_file = self.dir_model / 'tokenizer_config.json'
+        if tokenizer_config_file.is_file():
+            with open(tokenizer_config_file, "r", encoding="utf-8") as f:
+                tokenizer_config_json = json.load(f)
+                if "add_prefix_space" in tokenizer_config_json:
+                    self.gguf_writer.add_add_space_prefix(tokenizer_config_json["add_prefix_space"])
+
+        n_loops = int(hparams.get("num_loops", 1) or 1)
+        if n_loops < 1:
+            n_loops = 1
+        self.gguf_writer.add_num_loops(n_loops)
+        self.gguf_writer.add_skip_loop_final_norm(bool(hparams.get("skip_loop_final_norm", False)))
+
+
 @Model.register("DeciLMForCausalLM")
 class DeciModel(Model):
     model_arch = gguf.MODEL_ARCH.DECI

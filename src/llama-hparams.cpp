@@ -325,6 +325,32 @@ void llm_load_hparams(
                     }
                 }
             } break;
+        case LLM_ARCH_NANBEIGE:
+            {
+                ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+                ml.get_key(LLM_KV_NUM_LOOPS,            hparams.n_loops,              false);
+                ml.get_key(LLM_KV_SKIP_LOOP_FINAL_NORM, hparams.skip_loop_final_norm, false);
+
+                // Looped transformer: the file stores n_layer physical layers which the
+                // graph repeats n_loops times (sharing weights, but with one KV slot per
+                // logical layer). Keep n_layer physical for loading/memory accounting and
+                // expose the unrolled count via n_layer_all.
+                if (hparams.n_loops > 1) {
+                    hparams.n_layer_all = hparams.n_layer * hparams.n_loops;
+                    GGML_ASSERT(hparams.n_layer_all <= LLAMA_MAX_LAYERS);
+                    for (uint32_t il = hparams.n_layer; il < hparams.n_layer_all; ++il) {
+                        const uint32_t ip = il % hparams.n_layer;
+                        hparams.n_head_arr[il]    = hparams.n_head_arr[ip];
+                        hparams.n_head_kv_arr[il] = hparams.n_head_kv_arr[ip];
+                        hparams.n_ff_arr[il]      = hparams.n_ff_arr[ip];
+                    }
+                }
+
+                switch (hparams.n_layer) {
+                    case 22: model.type = e_model::MODEL_3B; break;
+                    default: model.type = e_model::MODEL_UNKNOWN;
+                }
+            } break;
         case LLM_ARCH_LLAMA4:
             {
                 ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);

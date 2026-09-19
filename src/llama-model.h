@@ -591,6 +591,13 @@ struct llama_model {
 
     std::vector<llama_layer> layers;
 
+    // Looped transformers (Nanbeige) execute more (logical) layers than the number of
+    // physical layers stored in the file: the graph/KV use the unrolled count while the
+    // weights are shared. Map a logical layer index onto its physical layer. For every
+    // other architecture this is the identity.
+    const llama_layer & layer_rt(int il) const { return layers[il % (int) hparams.n_layer]; }
+    llama_layer &       layer_rt(int il)       { return layers[il % (int) hparams.n_layer]; }
+
     llama_split_mode split_mode;
     int main_gpu;
     int max_gpu = 0; // max. number of GPUs to use per layer for aplit mode "graph"
