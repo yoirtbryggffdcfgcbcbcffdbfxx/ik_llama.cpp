@@ -405,7 +405,6 @@ create_tensors_helper::create_tensors_helper(llama_model_loader & _ml, llama_mod
 
 static std::vector<int> create_split(int nr, int granularity, const std::vector<float> & splits, const std::vector<size_t> & mem_used,
         bool verbose = false) {
-    GGML_ASSERT(nr % granularity == 0);
     GGML_ASSERT(!splits.empty());
     if (granularity < 0) return std::vector<int>(splits.size(), nr);
     GGML_ASSERT(mem_used.size() == splits.size());
@@ -465,6 +464,9 @@ static std::vector<int> create_split(int nr, int granularity, const std::vector<
         ++sum;
     }
     for (auto & r : result) r *= granularity;
+    int last = int(result.size()) - 1;
+    while (last > 0 && result[last] == 0) --last;
+    result[last] += nr - nchunk*granularity;
     return result;
 }
 
@@ -708,7 +710,7 @@ bool create_tensors_helper::create_k2horizon_tensors(const LLM_TN & tn) {
             layer.ffn_gate_inp = create_tensor(ctx_split, tn(LLM_TENSOR_FFN_GATE_INP, "weight", i), {n_embd, hparams.n_expert});
             layer.ffn_exp_probs_b = create_tensor(ctx_split, tn(LLM_TENSOR_FFN_EXP_PROBS_B, "bias", i),
                     {hparams.n_expert}, llama_model_loader::TENSOR_NOT_REQUIRED);
-            create_std_ffn_exps(n_embd, tn, i, 0, hparams.n_ff_exp, ctx_split);
+            use_mmap_buffer &= !create_std_ffn_exps(n_embd, tn, i, 0, hparams.n_ff_exp, ctx_split);
             if (hparams.n_expert_shared > 0) {
                 layer.ffn_gate_shexp = create_tensor(ctx_split, tn(LLM_TENSOR_FFN_GATE_SHEXP, "weight", i),
                         {n_embd, hparams.n_ff_shexp > 0 ? hparams.n_ff_shexp : (int64_t)(hparams.n_ff_exp * hparams.n_expert_shared)});
@@ -3617,6 +3619,15 @@ bool create_tensors_helper::create_deepseek4_tensors(const LLM_TN & tn) {
         // vision variant: image tokens route through this bias instead of the hash path
         layer.ffn_exp_probs_b_vl = create_tensor_from_meta(ctx_split, format("blk.%d.exp_probs_b_vl.bias", i), llama_model_loader::TENSOR_NOT_REQUIRED);
 
+        // the engram table is hash-indexed and tens of GB: keep it in the input (host) context
+        // so -ngl never moves it off the file mapping
+        layer.engram_embd = create_tensor_from_meta(ctx_input, format("blk.%d.engram_embd.weight", i), llama_model_loader::TENSOR_NOT_REQUIRED);
+        if (layer.engram_embd) {
+            layer.engram_wkv = create_tensor_from_meta(ctx_split, format("blk.%d.engram_wkv.weight", i));
+            layer.engram_k   = create_tensor_from_meta(ctx_split, format("blk.%d.engram_k.weight", i));
+            layer.engram_q   = create_tensor_from_meta(ctx_split, format("blk.%d.engram_q.weight", i));
+        }
+
     }
 
     return use_mmap_buffer;
@@ -5891,6 +5902,7 @@ bool create_tensors_helper::create_tensors() {
         case LLM_ARCH_MISTRAL4:
             use_mmap_buffer = create_deepseek2_tensors(tn); break;
         case LLM_ARCH_DEEPSEEK4:
+        case LLM_ARCH_DEEPSEEK41:
             use_mmap_buffer = create_deepseek4_tensors(tn); break;
         case LLM_ARCH_GLM_DSA:
             use_mmap_buffer = create_glm_dsa_tensors(tn); break;

@@ -483,6 +483,7 @@ extern "C" {
         GGML_TYPE_IQ4_K_R4  = 339,
         GGML_TYPE_IQ5_K_R4  = 340,
         GGML_TYPE_IQ4_KS_R4 = 344,
+        GGML_TYPE_IQ4_KS_R16= 345,
         GGML_TYPE_IQ5_KS_R4 = 352,
         GGML_TYPE_MXFP4_R8  = 353,
         GGML_TYPE_Q8_K_R16  = 397,
@@ -584,6 +585,7 @@ extern "C" {
         GGML_FTYPE_MOSTLY_IQ4_K_R4  = 332, // except 1d tensors
         GGML_FTYPE_MOSTLY_IQ5_K_R4  = 333, // except 1d tensors
         GGML_FTYPE_MOSTLY_IQ4_KS_R4 = 337, // except 1d tensors
+        GGML_FTYPE_MOSTLY_IQ4_KS_R16= 338, // except 1d tensors
         GGML_FTYPE_MOSTLY_IQ5_KS_R4 = 341, // except 1d tensors
         GGML_FTYPE_MOSTLY_MXFP4_R8  = 342, // except 1d tensors
         GGML_FTYPE_MOSTLY_Q8_K_R16  = 397, // except 1d tensors
@@ -937,6 +939,7 @@ extern "C" {
 
     // TODO: remove the following from the public API to avoid unnecessary assumptions about data layout
     GGML_API GGML_CALL int64_t ggml_blck_size(enum ggml_type type);
+    GGML_API GGML_CALL int64_t ggml_row_blck_size(enum ggml_type type);
     GGML_API GGML_CALL size_t  ggml_type_size(enum ggml_type type);             // size in bytes for all elements in a block
     GGML_API GGML_CALL size_t  ggml_row_size (enum ggml_type type, int64_t ne); // size in bytes for all elements in a row
 
@@ -1574,6 +1577,17 @@ extern "C" {
             struct ggml_tensor  * a,
             struct ggml_tensor  * b,
             float                 eps);
+
+    // a must be contiguous. b must have one row and b->ne[0] must be eqal a->ne[0]
+    // a and b must be contiguous
+    // b must be GGML_TYPE_F32
+    // a must be GGML_TYPE_F32 || GGML_TYPE_F16 || GGML_TYPE_BF16 || GGML_TYPE_Q8_0
+    GGML_API struct ggml_tensor * ggml_fused_grouped_rms_norm(
+            struct ggml_context * ctx,
+            struct ggml_tensor  * a,
+            struct ggml_tensor  * b,
+            float                 eps,
+            int                   ngroups);
 
     GGML_API struct ggml_tensor * ggml_fused_norm(
             struct ggml_context * ctx,
