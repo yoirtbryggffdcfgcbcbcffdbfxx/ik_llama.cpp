@@ -97,6 +97,7 @@ static const std::map<llm_arch, const char *> LLM_ARCH_NAMES = {
     { LLM_ARCH_OPENPANGU,       "openpangu"    },
     { LLM_ARCH_MUSE_GLIMMER,    "muse-glimmer" },
     { LLM_ARCH_LFM2,            "lfm2"         },
+    { LLM_ARCH_SPARK2_5,        "spark2_5"     },
     { LLM_ARCH_UNKNOWN,         "(unknown)"    },
 };
 

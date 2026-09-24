@@ -2784,6 +2784,68 @@ class DFlash2DraftModel(DFlashDraftModel):
         return super().modify_tensors(data_torch, self.normalize_tensor_name(name), bid)
 
 
+@Model.register("Spark2_5ForCausalLM")
+class Spark2_5Model(Model):
+    model_arch = gguf.MODEL_ARCH.SPARK2_5
+
+    def set_gguf_parameters(self) -> None:
+        super().set_gguf_parameters()
+
+        hparams = self.hparams
+        layer_types = hparams["layer_types"]
+        if len(layer_types) != self.block_count:
+            raise ValueError(
+                f"Spark2_5 layer_types length {len(layer_types)} != num_hidden_layers {self.block_count}"
+            )
+        if any(layer_type not in ("sliding_attention", "full_attention") for layer_type in layer_types):
+            raise ValueError(f"Spark2_5 has unsupported layer_types: {layer_types}")
+        if hparams.get("gate_attn_act_mode") != "sigmoid" or hparams.get("headwise_attn_output_gate") is not True:
+            raise ValueError("Spark2_5 conversion requires head-wise sigmoid attention gates")
+        if hparams.get("hidden_act") != "gelu":
+            raise ValueError(f"Spark2_5 conversion requires GELU, got {hparams.get('hidden_act')!r}")
+
+        self.gguf_writer.add_vocab_size(hparams["vocab_size"])
+        if (sliding_window := hparams.get("sliding_window")) is not None:
+            self.gguf_writer.add_sliding_window(sliding_window)
+        self.gguf_writer.add_sliding_window_pattern(
+            [layer_type == "sliding_attention" for layer_type in layer_types]
+        )
+
+        # Spark-X2.5 uses layer-type-dependent RoPE (different partial rotary factor for full vs sliding).
+        rope_parameters = hparams.get("rope_parameters") or {}
+        head_dim = hparams["head_dim"]
+        if (full_rope := rope_parameters.get("full_attention")) is not None:
+            if (rope_theta := full_rope.get("rope_theta")) is not None:
+                self.gguf_writer.add_rope_freq_base(rope_theta)
+            self.gguf_writer.add_rope_dimension_count(
+                int(head_dim * float(full_rope.get("partial_rotary_factor", 1.0)))
+            )
+        if (swa_rope := rope_parameters.get("sliding_attention")) is not None:
+            if (rope_theta_swa := swa_rope.get("rope_theta")) is not None:
+                self.gguf_writer.add_rope_freq_base_swa(rope_theta_swa)
+            n_rot_swa = int(head_dim * float(swa_rope.get("partial_rotary_factor", 1.0)))
+            arch_name = gguf.MODEL_ARCH_NAMES[self.model_arch]
+            self.gguf_writer.add_uint32(f"{arch_name}.rope.dimension_count_swa", n_rot_swa)
+
+    def modify_tensors(self, data_torch: Tensor, name: str, bid: int | None) -> Iterable[tuple[str, Tensor]]:
+        if name.endswith(".self_attn.q_k_v_proj.weight"):
+            if bid is None:
+                raise ValueError(f"Spark2_5 fused QKV tensor has no block id: {name}")
+            yield self.format_tensor_name(gguf.MODEL_TENSOR.ATTN_QKV, bid), data_torch
+            return
+
+        if name.endswith(".self_attn.g_proj.weight"):
+            if bid is None:
+                raise ValueError(f"Spark2_5 attention gate tensor has no block id: {name}")
+            expected = self.hparams["num_attention_heads"]
+            if data_torch.shape[0] != expected:
+                raise ValueError(
+                    f"Spark2_5 layer {bid} attention gate width {data_torch.shape[0]} != head count {expected}"
+                )
+
+        yield from super().modify_tensors(data_torch, name, bid)
+
+
 @Model.register("Qwen3DSparkModel")
 class DSparkModel(DFlashDraftModel):
     """Qwen3 DSpark sidecar: DFlash backbone plus a Markov head."""
