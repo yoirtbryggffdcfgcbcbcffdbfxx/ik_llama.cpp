@@ -453,6 +453,35 @@ static work_buffer_t & thread_local_work_buffer() {
     return f;
 }
 
+static inline void iqk_prefetch_tile(const void * p) {
+#if defined(_MSC_VER)
+    _mm_prefetch((const char *)p, _MM_HINT_T0);
+#elif defined(__GNUC__) || defined(__clang__)
+    __builtin_prefetch(p, 0, 3);
+#else
+    (void)p;
+#endif
+}
+
+// Tiled dequant+gemm loop shared by the dense/MoE/fused-up-gate paths (A1 may be null).
+template <typename Body>
+static inline void iqk_dequant_tiles(
+        int k_x_step, int nrc_x, size_t max_size,
+        const char * A0, const char * A1, long strideA, long first_x,
+        Body body) {
+    auto & f = thread_local_work_buffer();
+    if (f.size() < max_size) f.resize(max_size);
+    char * buf = f.data();
+    for (int ix = 0; ix < nrc_x; ix += k_x_step) {
+        const int this_nrc_x = ix + k_x_step <= nrc_x ? k_x_step : nrc_x - ix;
+        if (ix + k_x_step < nrc_x) {
+            iqk_prefetch_tile(A0 + (first_x + ix + k_x_step)*strideA);
+            if (A1) iqk_prefetch_tile(A1 + (first_x + ix + k_x_step)*strideA);
+        }
+        body(ix, this_nrc_x, buf);
+    }
+}
+
 bool iqk_convert_repack(int typeA, int n, const void * vx, size_t bx, void * vy, size_t stride_y, int nrc_x) {
 
     switch (typeA) {
@@ -601,18 +630,16 @@ extern "C" IQK_API bool iqk_mul_mat(long Nx, long Ny, long ne00,
 
         DataInfo info{C + first_x, (const char *)B, (size_t)stride_C, row_size_qy, 0, 1, nullptr, 0};
 
-        auto& f = thread_local_work_buffer();
-
-        for (int ix = 0; ix < nrc_x; ix += k_x_step) {
-            auto this_info = info;
-            this_info.s += ix;
-            int this_nrc_x = ix + k_x_step <= nrc_x ? k_x_step : nrc_x - ix;
-            if (f.size() < row_size_qx*this_nrc_x) f.resize(row_size_qx*this_nrc_x);
-            if (!iqk_convert_repack(typeA, ne00, (const char *)A + (first_x + ix)*strideA, strideA, f.data(), ne00, this_nrc_x)) {
-                GGML_ABORT("Fatal error");
-            }
-            mm.mul_mat_NxM(ne00, f.data(), row_size_qx, this_info, this_nrc_x, Ny);
-        }
+        iqk_dequant_tiles(k_x_step, (int)nrc_x, row_size_qx*k_x_step,
+                (const char *)A, nullptr, strideA, first_x,
+            [&](int ix, int this_nrc_x, char * buf) {
+                auto this_info = info;
+                this_info.s += ix;
+                if (!iqk_convert_repack(typeA, ne00, (const char *)A + (first_x + ix)*strideA, strideA, buf, ne00, this_nrc_x)) {
+                    GGML_ABORT("Fatal error");
+                }
+                mm.mul_mat_NxM(ne00, buf, row_size_qx, this_info, this_nrc_x, Ny);
+            });
 
         return true;
 
@@ -791,18 +818,16 @@ extern "C" IQK_API bool iqk_mul_mat_moe(long Nx, long Ny, long ne00, int ne11,
 
         DataInfo info{C + first_x, (const char *)B, nb1/sizeof(float), row_size_qy, 0, ne11, row_mapping, nb2/sizeof(float)};
 
-        auto& f = thread_local_work_buffer();
-
-        for (int ix = 0; ix < nrc_x; ix += k_x_step) {
-            auto this_info = info;
-            this_info.s += ix;
-            int this_nrc_x = ix + k_x_step <= nrc_x ? k_x_step : nrc_x - ix;
-            if (f.size() < row_size_qx*this_nrc_x) f.resize(row_size_qx*this_nrc_x);
-            if (!iqk_convert_repack(typeA, ne00, (const char *)A + (first_x + ix)*strideA, strideA, f.data(), ne00, this_nrc_x)) {
-                GGML_ABORT("Fatal error");
-            }
-            mm.mul_mat_NxM(ne00, f.data(), row_size_qx, this_info, this_nrc_x, Ny);
-        }
+        iqk_dequant_tiles(k_x_step, (int)nrc_x, row_size_qx*k_x_step,
+                (const char *)A, nullptr, strideA, first_x,
+            [&](int ix, int this_nrc_x, char * buf) {
+                auto this_info = info;
+                this_info.s += ix;
+                if (!iqk_convert_repack(typeA, ne00, (const char *)A + (first_x + ix)*strideA, strideA, buf, ne00, this_nrc_x)) {
+                    GGML_ABORT("Fatal error");
+                }
+                mm.mul_mat_NxM(ne00, buf, row_size_qx, this_info, this_nrc_x, Ny);
+            });
 
         return true;
 
@@ -858,25 +883,23 @@ extern "C" IQK_API bool iqk_moe_fused_up_gate(long Nx, long Ny, long ne00, int n
 
             DataInfo info{C + first_x, (const char *)B, nb1/sizeof(float), row_size_qy, 0, ne11, row_mapping, nb2/sizeof(float)};
 
-            auto& f = thread_local_work_buffer();
-
-            for (int ix = 0; ix < nrc_x; ix += k_x_step) {
-                auto this_info = info;
-                this_info.s += ix;
-                int this_nrc_x = ix + k_x_step <= nrc_x ? k_x_step : nrc_x - ix;
-                if (f.size() < 2*row_size_qx*this_nrc_x) f.resize(2*row_size_qx*this_nrc_x);
-                auto Xu = f.data();
-                auto Xg = f.data() + row_size_qx*this_nrc_x;
-                if (!iqk_convert_repack(typeA, ne00, (const char *)Aup   + (first_x + ix)*strideA, strideA, Xu, ne00, this_nrc_x)) {
-                    GGML_ABORT("Fatal error");
-                }
-                if (!iqk_convert_repack(typeA, ne00, (const char *)Agate + (first_x + ix)*strideA, strideA, Xg, ne00, this_nrc_x)) {
-                    GGML_ABORT("Fatal error");
-                }
-                auto up_b   = up_b_c   ? (const float *)up_b_c + first_x + ix : nullptr;
-                auto gate_b = gate_b_c ? (const float *)gate_b_c + first_x + ix : nullptr;
-                mm.mul_mat_up_gate_NxM(ne00, Xu, Xg, row_size_qx, up_b, gate_b, this_info, this_nrc_x, Ny, unary_op, limit);
-            }
+            iqk_dequant_tiles(k_x_step, (int)nrc_x, 2*row_size_qx*k_x_step,
+                    (const char *)Aup, (const char *)Agate, strideA, first_x,
+                [&](int ix, int this_nrc_x, char * buf) {
+                    auto this_info = info;
+                    this_info.s += ix;
+                    auto Xu = buf;
+                    auto Xg = buf + row_size_qx*this_nrc_x;
+                    if (!iqk_convert_repack(typeA, ne00, (const char *)Aup   + (first_x + ix)*strideA, strideA, Xu, ne00, this_nrc_x)) {
+                        GGML_ABORT("Fatal error");
+                    }
+                    if (!iqk_convert_repack(typeA, ne00, (const char *)Agate + (first_x + ix)*strideA, strideA, Xg, ne00, this_nrc_x)) {
+                        GGML_ABORT("Fatal error");
+                    }
+                    auto up_b   = up_b_c   ? (const float *)up_b_c + first_x + ix : nullptr;
+                    auto gate_b = gate_b_c ? (const float *)gate_b_c + first_x + ix : nullptr;
+                    mm.mul_mat_up_gate_NxM(ne00, Xu, Xg, row_size_qx, up_b, gate_b, this_info, this_nrc_x, Ny, unary_op, limit);
+                });
 
             return true;
         }
