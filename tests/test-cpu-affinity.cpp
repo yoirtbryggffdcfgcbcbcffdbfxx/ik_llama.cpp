@@ -1,6 +1,7 @@
 // Unit tests for the CPU affinity argument parsers (common/common.{h,cpp}).
 
 #undef NDEBUG
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <string>
@@ -57,6 +58,16 @@ int main() {
     assert(!cpu_affinity_parse_range("0,,1",            cpus)); // empty item
     assert(!cpu_affinity_parse_range("1024",            cpus)); // >= GGML_MAX_CPU_AFFINITY
     assert(!cpu_affinity_parse_range("0-2000000000",    cpus)); // must not loop/allocate
+
+    // P-core and E-core sets must stay disjoint
+    const cpus_t pcpus = cpu_get_math_cpus();
+    for (const int32_t cpu : cpu_get_efficiency_cpus()) {
+        assert(std::find(pcpus.begin(), pcpus.end(), cpu) == pcpus.end());
+    }
+
+    // without auto-detection, empty lists resolve to no pinning
+    assert(cpu_affinity_resolve({}, false).empty());
+    assert(cpu_affinity_resolve_draft({}, false).empty());
 
     return 0;
 }

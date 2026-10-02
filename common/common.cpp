@@ -481,8 +481,8 @@ struct cpu_affinity_restore {
     }
 };
 
-// P-cores: primaries first, then the extra SMT siblings (for n_threads overflow)
-static std::vector<int32_t> cpu_detect_math_cpus(bool with_siblings) {
+// cores of one class (P/E): primaries first, then SMT siblings (n_threads overflow)
+static std::vector<int32_t> cpu_detect_cores(bool with_siblings, bool efficiency) {
     std::vector<int32_t> primaries;
     std::vector<int32_t> extra;
 
@@ -510,8 +510,9 @@ static std::vector<int32_t> cpu_detect_math_cpus(bool with_siblings) {
             extra.clear();
             break;
         }
-        if (is_running_on_efficiency_core()) {
-            continue; // efficiency cores harm lockstep threading
+        if (is_running_on_efficiency_core() != efficiency) {
+            // E-cores harm lockstep threading
+            continue;
         }
 
         const std::string key = cpu_physical_core_key(cpu);
@@ -530,12 +531,22 @@ static std::vector<int32_t> cpu_detect_math_cpus(bool with_siblings) {
 }
 
 std::vector<int32_t> cpu_get_math_cpus() {
-    static const std::vector<int32_t> cpus = cpu_detect_math_cpus(false);
+    static const std::vector<int32_t> cpus = cpu_detect_cores(false, false);
+    return cpus;
+}
+
+std::vector<int32_t> cpu_get_efficiency_cpus() {
+    static const std::vector<int32_t> cpus = cpu_detect_cores(false, true);
     return cpus;
 }
 
 static std::vector<int32_t> cpu_affinity_auto_cpus() {
-    static const std::vector<int32_t> cpus = cpu_detect_math_cpus(true);
+    static const std::vector<int32_t> cpus = cpu_detect_cores(true, false);
+    return cpus;
+}
+
+static std::vector<int32_t> cpu_affinity_auto_cpus_draft() {
+    static const std::vector<int32_t> cpus = cpu_detect_cores(true, true);
     return cpus;
 }
 
@@ -562,8 +573,10 @@ static std::vector<int32_t> cpu_affinity_filter(const std::vector<int32_t> & cpu
 }
 
 #else
-std::vector<int32_t> cpu_get_math_cpus() { return {}; }
-static std::vector<int32_t> cpu_affinity_auto_cpus() { return {}; }
+std::vector<int32_t> cpu_get_math_cpus()       { return {}; }
+std::vector<int32_t> cpu_get_efficiency_cpus() { return {}; }
+static std::vector<int32_t> cpu_affinity_auto_cpus()       { return {}; }
+static std::vector<int32_t> cpu_affinity_auto_cpus_draft() { return {}; }
 static std::vector<int32_t> cpu_affinity_filter(const std::vector<int32_t> & cpus) { return cpus; }
 #endif // __x86_64__ && __linux__
 
@@ -582,6 +595,11 @@ int32_t cpu_get_num_math() {
 
 std::vector<int32_t> cpu_affinity_resolve(const std::vector<int32_t> & cpus, bool auto_detect) {
     const std::vector<int32_t> resolved = (!cpus.empty() || !auto_detect) ? cpus : cpu_affinity_auto_cpus();
+    return cpu_affinity_filter(resolved);
+}
+
+std::vector<int32_t> cpu_affinity_resolve_draft(const std::vector<int32_t> & cpus, bool auto_detect) {
+    const std::vector<int32_t> resolved = (!cpus.empty() || !auto_detect) ? cpus : cpu_affinity_auto_cpus_draft();
     return cpu_affinity_filter(resolved);
 }
 
@@ -1003,7 +1021,8 @@ bool gpt_params_parse(int argc, char ** argv, gpt_params & params) {
     }
 
     // resolve the CPU affinity once, so the list stays alive until the context is created
-    params.cpu_affinity = cpu_affinity_resolve(params.cpu_affinity, params.cpu_affinity_auto);
+    params.cpu_affinity       = cpu_affinity_resolve      (params.cpu_affinity,       params.cpu_affinity_auto);
+    params.cpu_affinity_draft = cpu_affinity_resolve_draft(params.cpu_affinity_draft, params.cpu_affinity_draft_auto);
 
     return true;
 }
@@ -2386,6 +2405,31 @@ bool gpt_params_find_arg(int argc, char ** argv, const std::string & arg, gpt_pa
         params.cpu_affinity_auto = true;
         return true;
     }
+    if (arg == "--cpu-mask-draft" || arg == "-cmd") {
+        CHECK_ARG;
+        if (!cpu_affinity_parse_mask(argv[i], params.cpu_affinity_draft)) {
+            fprintf(stderr, "error: invalid CPU mask '%s' for %s\n", argv[i], arg.c_str());
+            invalid_param = true;
+            return true;
+        }
+        params.cpu_affinity_draft_auto = false;
+        return true;
+    }
+    if (arg == "--cpu-range-draft" || arg == "-crd") {
+        CHECK_ARG;
+        if (!cpu_affinity_parse_range(argv[i], params.cpu_affinity_draft)) {
+            fprintf(stderr, "error: invalid CPU range '%s' for %s\n", argv[i], arg.c_str());
+            invalid_param = true;
+            return true;
+        }
+        params.cpu_affinity_draft_auto = false;
+        return true;
+    }
+    if (arg == "--cpu-affinity-draft") {
+        params.cpu_affinity_draft.clear();
+        params.cpu_affinity_draft_auto = true;
+        return true;
+    }
     if (arg == "--prefetch-experts") {
         params.prefetch_experts = true;
         return true;
@@ -3533,6 +3577,9 @@ void gpt_params_print_usage(int /*argc*/, char ** argv, const gpt_params & param
     options.push_back({ "*",           "       --cpu-affinity",          "pin CPU workers to the physical P-cores (hybrid CPUs only)"});
     options.push_back({ "*",           "-cm,   --cpu-mask MASK",         "pin CPU workers to the logical CPUs set in MASK (hex or decimal bitmask, e.g. 0x55; 64 CPUs max, use --cpu-range for more)"});
     options.push_back({ "*",           "-cr,   --cpu-range LIST",        "pin CPU workers to the given logical CPUs (e.g. 0-3,8,10-11)"});
+    options.push_back({ "*",           "       --cpu-affinity-draft",    "pin the draft/speculative model to the physical E-cores (hybrid CPUs only)"});
+    options.push_back({ "*",           "-cmd,  --cpu-mask-draft MASK",   "pin the draft/speculative model to the logical CPUs set in MASK"});
+    options.push_back({ "*",           "-crd,  --cpu-range-draft LIST",  "pin the draft/speculative model to the given logical CPUs (e.g. 4-7)"});
     options.push_back({ "*",           "       --fit-margin N",         "safety margin in MiB when auto-fitting model offloading"});
     options.push_back({ "*",           "-gfm,  --gpu-fit-margin N",     "per-layer GPU fit margin as layer_id,margin pairs, comma-separated" });
     options.push_back({ "*",           "-wgt, --worst-graph-tokens N",  "number of tokens to use for worst-case graph"});
