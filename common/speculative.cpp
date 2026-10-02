@@ -13,12 +13,15 @@
 
 #include <algorithm>
 #include <atomic>
+#include <condition_variable>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <limits>
 #include <map>
+#include <mutex>
 #include <sstream>
+#include <thread>
 #include <unordered_map>
 
 #define SPEC_VOCAB_MAX_SIZE_DIFFERENCE  128
@@ -220,6 +223,25 @@ struct common_speculative_state {
     }
 
     virtual void accept(uint16_t n_accepted) = 0;
+
+    // optimistic token the draft model would emit after the last drafted sequence (async pre-drafting)
+    virtual llama_token lookahead_token() const { return LLAMA_TOKEN_NULL; }
+
+    // continue the current draft state one round ahead, for the async pre-draft worker.
+    // prompt/id_last describe the optimistic next-round inputs (stateless stages use them).
+    virtual bool continue_draft(
+            const common_params_speculative & params,
+            const llama_tokens & prompt,
+            llama_token id_last,
+            llama_tokens & result,
+            llama_token & lookahead) {
+        GGML_UNUSED(params);
+        GGML_UNUSED(prompt);
+        GGML_UNUSED(id_last);
+        GGML_UNUSED(result);
+        GGML_UNUSED(lookahead);
+        return false;
+    }
 };
 
 struct common_speculative_state_mtp;
@@ -404,6 +426,9 @@ struct common_speculative_state_draft : public common_speculative_state {
     llama_batch  batch;
     llama_tokens prompt_dft;
 
+    llama_token lookahead = LLAMA_TOKEN_NULL; // optimistic token after the last drafted sequence
+    int n_max_last = 0; // resolved n_max used by the last draft() call
+
     bool vocab_cmpt = true; // whether retokenization is needed
     std::unordered_map<std::string, std::string> vocab_map;
 
@@ -458,6 +483,9 @@ struct common_speculative_state_draft : public common_speculative_state {
             llama_token id_last,
             llama_tokens & result) override {
         auto * spec = this;
+
+        spec->lookahead = LLAMA_TOKEN_NULL;
+        spec->n_max_last = params.n_max;
 
         auto & batch      = spec->batch;
         auto & ctx_tgt    = spec->ctx_tgt;
@@ -636,6 +664,85 @@ struct common_speculative_state_draft : public common_speculative_state {
                 result.resize(params.n_max);
             }
         }
+
+        // optimistic lookahead: decode the last drafted token and sample the one after it
+        if (params.draft_lookahead && spec->vocab_cmpt && !result.empty()) {
+            common_batch_clear(batch);
+            common_batch_add(batch, result.back(), n_past + (llama_pos) result.size(), { 0 }, true);
+            if (llama_decode(ctx_dft, batch) == 0) {
+                prompt_dft.push_back(result.back());
+                common_sampler_sample(smpl, ctx_dft, 0, true);
+                const auto * cur_p = common_sampler_get_candidates(smpl, true);
+                if (cur_p != nullptr && cur_p->size > 0) {
+                    spec->lookahead = cur_p->data[0].id;
+                    common_sampler_accept(smpl, nullptr, spec->lookahead, true);
+                    // keep the draft state decoded through the lookahead for the pre-draft worker
+                    common_batch_clear(batch);
+                    common_batch_add(batch, spec->lookahead, n_past + (llama_pos) result.size() + 1, { 0 }, true);
+                    if (llama_decode(ctx_dft, batch) == 0) {
+                        prompt_dft.push_back(spec->lookahead);
+                    }
+                }
+            }
+        }
+    }
+
+    llama_token lookahead_token() const override {
+        return lookahead;
+    }
+
+    bool continue_draft(
+            const common_params_speculative & params,
+            const llama_tokens & prompt,
+            llama_token id_last,
+            llama_tokens & result,
+            llama_token & next_lookahead) override {
+        GGML_UNUSED(prompt);
+        GGML_UNUSED(id_last);
+        if (prompt_dft.empty()) {
+            return false;
+        }
+
+        result.clear();
+        next_lookahead = LLAMA_TOKEN_NULL;
+
+        auto & batch = this->batch;
+        auto & smpl  = this->smpl;
+
+        const llama_pos n_past = (llama_pos) prompt_dft.size();
+        const int n_gen = n_max_last > 0 ? n_max_last : params.n_max;
+
+        for (int i = 0; i < n_gen; ++i) {
+            common_batch_clear(batch);
+            common_sampler_sample(smpl, ctx_dft, 0, true);
+            const auto * cur_p = common_sampler_get_candidates(smpl, true);
+            if (cur_p == nullptr || cur_p->size == 0) {
+                return false;
+            }
+            const llama_token id = cur_p->data[0].id;
+            common_sampler_accept(smpl, nullptr, id, true);
+            result.push_back(id);
+            common_batch_clear(batch);
+            common_batch_add(batch, id, n_past + i, { 0 }, true);
+            if (llama_decode(ctx_dft, batch) != 0) {
+                return false;
+            }
+            prompt_dft.push_back(id);
+        }
+
+        common_sampler_sample(smpl, ctx_dft, 0, true);
+        const auto * cur_p = common_sampler_get_candidates(smpl, true);
+        if (cur_p != nullptr && cur_p->size > 0) {
+            next_lookahead = cur_p->data[0].id;
+            common_sampler_accept(smpl, nullptr, next_lookahead, true);
+            common_batch_clear(batch);
+            common_batch_add(batch, next_lookahead, n_past + n_gen, { 0 }, true);
+            if (llama_decode(ctx_dft, batch) == 0) {
+                prompt_dft.push_back(next_lookahead);
+            }
+        }
+
+        return true;
     }
 
     void accept(uint16_t n_accepted) override {
@@ -701,6 +808,9 @@ struct common_speculative_state_eagle3 : public common_speculative_state {
 struct common_speculative_state_ngram_simple : public common_speculative_state {
     common_ngram_simple_config config;
 
+    llama_token lookahead = LLAMA_TOKEN_NULL;
+    int n_max_last = 0;
+
     common_speculative_state_ngram_simple(
             enum common_speculative_type type,
             common_ngram_simple_config config)
@@ -716,8 +826,28 @@ struct common_speculative_state_ngram_simple : public common_speculative_state {
             llama_token id_last,
             llama_tokens & result) override {
 
-        result = common_ngram_simple_draft(config, prompt_tgt, id_last);
-        GGML_UNUSED(params);
+        lookahead = LLAMA_TOKEN_NULL;
+        n_max_last = params.n_max;
+        result = common_ngram_simple_draft(config, prompt_tgt, id_last,
+                params.draft_lookahead ? params.n_max : -1,
+                params.draft_lookahead ? &lookahead : nullptr);
+    }
+
+    llama_token lookahead_token() const override {
+        return lookahead;
+    }
+
+    bool continue_draft(
+            const common_params_speculative & params,
+            const llama_tokens & prompt,
+            llama_token id_last,
+            llama_tokens & result,
+            llama_token & next_lookahead) override {
+        const int n_verify = n_max_last > 0 ? n_max_last : params.n_max;
+        next_lookahead = LLAMA_TOKEN_NULL;
+        result = common_ngram_simple_draft(config, prompt, id_last,
+                n_verify, &next_lookahead);
+        return true;
     }
 
     void accept(uint16_t n_accepted) override {
@@ -1105,6 +1235,12 @@ struct common_speculative {
     bool last_step_target_only = false;
     float draft_temperature = 0.0f;
     uint32_t draft_seed = LLAMA_DEFAULT_SEED;
+
+    // async optimistic pre-draft worker (self-speculative DRAFT stage only)
+    std::thread                      prefetch_thread;
+    std::mutex                       prefetch_mutex;
+    bool                             prefetch_running = false;
+    common_speculative_draft_result  prefetch_result;
 };
 
 static bool common_speculative_stage_chain_matches(
@@ -1579,6 +1715,7 @@ void common_speculative_free(common_speculative * spec) {
         return;
     }
 
+    common_speculative_prefetch_abort(spec);
     spec->checkpoint.clear();
     delete spec;
 }
@@ -1601,7 +1738,8 @@ llama_tokens common_speculative_draft(
         const llama_tokens & prompt_tgt, // specified in target model vocab
         llama_token id_last,
         llama_pos draft_base_pos,
-        llama_seq_id draft_seq_id) {
+        llama_seq_id draft_seq_id,
+        bool want_lookahead) {
     llama_tokens result;
 
     spec->t_step_start_us = ggml_time_us();
@@ -1623,6 +1761,7 @@ llama_tokens common_speculative_draft(
         common_params_speculative impl_params = common_speculative_get_runtime_params(spec->configs[i], params, runtime_stage);
         impl_params.draft_temperature = spec->draft_temperature;
         impl_params.draft_seed = spec->draft_seed;
+        impl_params.draft_lookahead = want_lookahead;
         if (spec->tuner && spec->tuner->enabled && impl->type == COMMON_SPECULATIVE_TYPE_DFLASH) {
             impl_params.n_max = params.n_max;
         }
@@ -1949,7 +2088,8 @@ common_speculative_draft_result common_speculative_draft_ex(
         llama_token id_last,
         llama_pos draft_base_pos,
         llama_seq_id draft_seq_id,
-        const common_params_sampling * sampling) {
+        const common_params_sampling * sampling,
+        bool want_lookahead) {
     common_speculative_draft_result result = {};
 
     if (spec != nullptr) {
@@ -1971,11 +2111,15 @@ common_speculative_draft_result common_speculative_draft_ex(
         prompt_tgt,
         id_last,
         draft_base_pos,
-        draft_seq_id);
+        draft_seq_id,
+        want_lookahead);
     result.type = spec != nullptr && spec->curr_impl != nullptr
         ? spec->curr_impl->type
         : COMMON_SPECULATIVE_TYPE_NONE;
     result.target_only = spec != nullptr && spec->last_step_target_only;
+    if (want_lookahead && spec != nullptr && spec->curr_impl != nullptr) {
+        result.lookahead = spec->curr_impl->lookahead_token();
+    }
 
     if (spec != nullptr && spec->curr_impl != nullptr &&
             spec->curr_impl->type == COMMON_SPECULATIVE_TYPE_DFLASH) {
@@ -1992,6 +2136,67 @@ int common_speculative_get_configured_n_max(const common_speculative * spec) {
         return 0;
     }
     return spec->tuner->configured_n_max;
+}
+
+bool common_speculative_prefetch_start(
+        common_speculative * spec,
+        common_params_speculative & params,
+        llama_context * ctx,
+        const llama_tokens & prompt,
+        llama_token id_last) {
+    GGML_UNUSED(ctx);
+    if (spec == nullptr || spec->curr_impl == nullptr ||
+            spec->curr_impl->lookahead_token() == LLAMA_TOKEN_NULL) {
+        return false;
+    }
+    const auto type = spec->curr_impl->type;
+    if (type != COMMON_SPECULATIVE_TYPE_DRAFT && type != COMMON_SPECULATIVE_TYPE_NGRAM_SIMPLE) {
+        return false;
+    }
+
+    common_speculative_prefetch_abort(spec);
+
+    common_speculative_state * impl = spec->curr_impl;
+    common_params_speculative params_copy = params;
+    params_copy.draft_lookahead = true;
+
+    spec->prefetch_result = {};
+    spec->prefetch_thread = std::thread([spec, impl, params_copy, prompt, id_last]() {
+        llama_tokens tokens;
+        llama_token lookahead = LLAMA_TOKEN_NULL;
+        if (impl->continue_draft(params_copy, prompt, id_last, tokens, lookahead)) {
+            spec->prefetch_result.tokens    = std::move(tokens);
+            spec->prefetch_result.lookahead = lookahead;
+            spec->prefetch_result.type      = impl->type;
+        }
+    });
+    return true;
+}
+
+common_speculative_draft_result common_speculative_prefetch_take(common_speculative * spec) {
+    common_speculative_draft_result result = {};
+    if (spec == nullptr) {
+        return result;
+    }
+    if (spec->prefetch_thread.joinable()) {
+        spec->prefetch_thread.join();
+    }
+    result = std::move(spec->prefetch_result);
+    spec->prefetch_result = {};
+    if (!result.tokens.empty()) {
+        LOG_DBG("async pre-draft: %zu tokens, lookahead %d\n", result.tokens.size(), (int) result.lookahead);
+    }
+    return result;
+}
+
+void common_speculative_prefetch_abort(common_speculative * spec) {
+    if (spec == nullptr) {
+        return;
+    }
+    if (spec->prefetch_thread.joinable()) {
+        spec->prefetch_thread.join();
+    }
+    spec->prefetch_result = {};
 }
 
 static bool common_speculative_has_target_features(const common_speculative * spec) {

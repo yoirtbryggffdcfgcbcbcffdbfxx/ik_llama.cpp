@@ -3615,6 +3615,13 @@ void server_context::context_shift() {
 }
 
 void server_context::add_sampled_tokens() {
+    int n_active_slots = 0;
+    for (const auto & s : slots) {
+        if (s.state != SLOT_STATE_IDLE) {
+            ++n_active_slots;
+        }
+    }
+
     for (auto& slot : slots) {
         slot.released = false;
         if (slot.state == SLOT_STATE_IDLE) {
@@ -3641,17 +3648,29 @@ void server_context::add_sampled_tokens() {
 
             auto & params_spec = slot.params.speculative;
             const llama_pos draft_base_pos = slot.uses_mtp() ? slot.cache_tokens.pos_next() : -1;
-            common_speculative_draft_result draft_result = common_speculative_draft_ex(
-                slot.spec,
-                ctx,
-                params_spec,
-                cached_text_tokens,
-                slot.sampled,
-                draft_base_pos,
-                slot.id,
-                &slot.sparams);
+            common_speculative_draft_result draft_result;
+            if (slot.spec_prefetch_ready) {
+                // async pre-draft computed during the previous target verification
+                slot.spec_prefetch_ready = false;
+                draft_result.tokens    = std::move(slot.spec_prefetch_tokens);
+                draft_result.lookahead = slot.spec_prefetch_lookahead;
+                slot.spec_prefetch_tokens.clear();
+                slot.spec_prefetch_lookahead = LLAMA_TOKEN_NULL;
+            } else {
+                draft_result = common_speculative_draft_ex(
+                    slot.spec,
+                    ctx,
+                    params_spec,
+                    cached_text_tokens,
+                    slot.sampled,
+                    draft_base_pos,
+                    slot.id,
+                    &slot.sparams,
+                    true); // request the optimistic lookahead for async pre-drafting
+            }
             llama_tokens & draft = draft_result.tokens;
             auto & proposal_dists = draft_result.proposal_dists;
+            const llama_token draft_lookahead = draft_result.lookahead;
             slot.spec_target_only = draft_result.target_only;
 
             const int n_draft_max = slot.get_n_draft_max();
@@ -3709,6 +3728,15 @@ void server_context::add_sampled_tokens() {
                 }
                 slot.drafted = std::move(draft);
                 slot.draft_proposal_dists = std::move(proposal_dists);
+
+                // async optimistic pre-draft for the next round (self-speculative draft model only)
+                slot.spec_prefetch_active = false;
+                if (draft_lookahead != LLAMA_TOKEN_NULL && n_active_slots == 1 &&
+                        !common_speculative_needs_checkpoint(model)) {
+                    slot.spec_prefetch_expect = draft_lookahead;
+                    slot.spec_prefetch_active = common_speculative_prefetch_start(
+                            slot.spec, params_spec, ctx, slot.cache_tokens.get_text_tokens(), draft_lookahead);
+                }
             }
         }
         else {
@@ -4465,6 +4493,11 @@ void server_context::speculative_decoding_accept() {
             slot.i_batch_dft.clear();
             slot.drafted.clear();
             slot.draft_proposal_dists.clear();
+            if (slot.spec_prefetch_active) {
+                slot.spec_prefetch_active = false;
+                common_speculative_prefetch_abort(slot.spec);
+                slot.spec_prefetch_ready = false;
+            }
             continue;
         }
 
@@ -4503,6 +4536,22 @@ void server_context::speculative_decoding_accept() {
         }
         slot.sampled = ids.back(); // last accepted token
         slot.n_past = slot.cache_tokens.n_tokens();
+
+        // join the async pre-draft worker; keep its result only if the optimistic branch was taken
+        if (slot.spec_prefetch_active) {
+            slot.spec_prefetch_active = false;
+            common_speculative_draft_result prefetch = common_speculative_prefetch_take(slot.spec);
+            const bool full_accept = n_draft > 0 && n_draft_accepted == n_draft;
+            if (full_accept && slot.sampled == slot.spec_prefetch_expect && !prefetch.tokens.empty()) {
+                slot.spec_prefetch_tokens    = std::move(prefetch.tokens);
+                slot.spec_prefetch_lookahead = prefetch.lookahead;
+                slot.spec_prefetch_ready     = true;
+                LOG_DBG("slot %d: async pre-draft accepted (%zu tokens)\n", slot.id, slot.spec_prefetch_tokens.size());
+            } else {
+                slot.spec_prefetch_ready = false;
+            }
+            slot.spec_prefetch_expect = LLAMA_TOKEN_NULL;
+        }
 
         if (!common_speculative_commit(
             slot.spec,
@@ -4972,6 +5021,13 @@ void server_context::process_batch_tokens(int32_t & n_batch) {
                 slot.release();
                 slot.i_batch = -1;
                 continue; // continue loop of slots
+            }
+
+            if (slot.spec_prefetch_active) {
+                // common_speculative_begin below mutates the spec state; join the worker first
+                slot.spec_prefetch_active = false;
+                common_speculative_prefetch_abort(slot.spec);
+                slot.spec_prefetch_ready = false;
             }
 
             if (slot.n_decoded == 0 && slot.can_speculate()) {

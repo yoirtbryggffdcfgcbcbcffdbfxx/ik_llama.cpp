@@ -278,6 +278,9 @@ struct common_params_speculative {
 
     bool autotune = false; // automatically optimize speculative params for max tokens/sec
 
+    // transient: also decode the drafted sequence and emit the draft model's next token (async pre-drafting)
+    bool draft_lookahead = false;
+
     bool has_dft() const {
         return !model.empty() || !params.empty();
         //return !mparams_dft.path.empty() || !mparams_dft.hf_repo.empty();

@@ -48,7 +48,8 @@ static std::string common_tokens_to_str(const llama_tokens & inp, size_t start, 
  */
 llama_tokens common_ngram_simple_draft(
         const common_ngram_simple_config & config,
-        const llama_tokens & tokens, llama_token sampled) {
+        const llama_tokens & tokens, llama_token sampled,
+        int n_draft_verify, llama_token * lookahead) {
 
     // Simple implementation of self-speculative decoding without a draft model.
     //
@@ -108,6 +109,20 @@ llama_tokens common_ngram_simple_draft(
     for (size_t j = 0; j < copy_max; ++j) {
         draft_tokens.push_back(tokens[match_pos + n_draft_min + j]);
     }
+
+    // optimistic lookahead: the matched continuation's token right after the verified prefix
+    if (lookahead != nullptr) {
+        *lookahead = LLAMA_TOKEN_NULL;
+        size_t n_verified = copy_max;
+        if (n_draft_verify > 0 && (size_t) n_draft_verify < n_verified) {
+            n_verified = (size_t) n_draft_verify;
+        }
+        const size_t idx = match_pos + n_draft_min + n_verified;
+        if (idx < cur_len) {
+            *lookahead = tokens[idx];
+        }
+    }
+
     return draft_tokens;
 }
 

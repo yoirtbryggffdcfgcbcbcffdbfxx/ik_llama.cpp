@@ -27,9 +27,12 @@ struct common_ngram_simple_config {
 };
 
 // Searches for a n-gram in the history and checks whether a draft sequence should be generated.
+// n_draft_verify is the number of draft tokens the caller will actually verify; the optional
+// lookahead receives the next token of the matched continuation after those tokens.
 llama_tokens common_ngram_simple_draft(
         const common_ngram_simple_config & config,
-        const llama_tokens & tokens, llama_token sampled);
+        const llama_tokens & tokens, llama_token sampled,
+        int n_draft_verify = -1, llama_token * lookahead = nullptr);
 
 
 // n-gram map

@@ -128,6 +128,13 @@ struct server_slot {
     std::vector<common_speculative_token_dist> draft_proposal_dists;
     bool spec_target_only = false;
 
+    // async optimistic pre-drafting for the self-speculative draft model
+    bool spec_prefetch_active = false;  // background worker running for the next round
+    bool spec_prefetch_ready = false;   // a valid prefetch result is available
+    llama_token spec_prefetch_expect = LLAMA_TOKEN_NULL; // token the prefetch assumed the target would sample
+    llama_tokens spec_prefetch_tokens;
+    llama_token spec_prefetch_lookahead = LLAMA_TOKEN_NULL;
+
     json json_schema;
 
     common_chat_format chat_format = COMMON_CHAT_FORMAT_CONTENT_ONLY;

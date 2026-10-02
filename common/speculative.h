@@ -44,6 +44,9 @@ struct common_speculative_draft_result {
     std::vector<common_speculative_token_dist> proposal_dists; // Sparse proposal distributions populated by stochastic DFlash2
     common_speculative_type type = COMMON_SPECULATIVE_TYPE_NONE;
     bool target_only = false;
+
+    // optimistic token the draft model would emit right after tokens (async pre-drafting)
+    llama_token lookahead = LLAMA_TOKEN_NULL;
 };
 
 struct common_speculative_metrics_stage_snapshot {
@@ -131,7 +134,8 @@ llama_tokens common_speculative_draft(
                      const llama_tokens & prompt,
                             llama_token   id_last,
                             llama_pos     draft_base_pos = -1,
-                            llama_seq_id  draft_seq_id = 0);
+                            llama_seq_id  draft_seq_id = 0,
+                            bool          want_lookahead = false);
 
 common_speculative_draft_result common_speculative_draft_ex(
                      common_speculative * spec,
@@ -141,7 +145,25 @@ common_speculative_draft_result common_speculative_draft_ex(
                             llama_token   id_last,
                             llama_pos     draft_base_pos = -1,
                             llama_seq_id  draft_seq_id = 0,
-                            const common_params_sampling * sampling = nullptr);
+                            const common_params_sampling * sampling = nullptr,
+                            bool          want_lookahead = false);
+
+// --- asynchronous optimistic pre-drafting (self-speculative draft model only) ---
+
+// launch a background worker that continues the active draft state one round ahead using the
+// optimistic token lookahead from the current round; returns false unless the DRAFT stage is active
+bool common_speculative_prefetch_start(
+                     common_speculative * spec,
+                     common_params_speculative & params,
+                     llama_context * ctx,
+                     const llama_tokens & prompt,
+                     llama_token id_last);
+
+// join the worker and return its result; lookahead holds the next optimistic token
+common_speculative_draft_result common_speculative_prefetch_take(common_speculative * spec);
+
+// join the worker and discard its result
+void common_speculative_prefetch_abort(common_speculative * spec);
 
 int common_speculative_get_configured_n_max(const common_speculative * spec);
 
