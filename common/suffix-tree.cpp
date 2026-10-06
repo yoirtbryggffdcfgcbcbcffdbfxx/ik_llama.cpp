@@ -102,16 +102,15 @@ void common_suffix_tree::_extend_suffix(int start_pos, int old_len, int new_len)
     }
 }
 
-std::vector<llama_token> common_suffix_tree::speculate(
+const common_suffix_node * common_suffix_tree::find_best_match_node(
         const llama_token * context, int n_context,
-        int max_spec_tokens,
-        float min_token_prob,
-        int   min_match_count,
-        int   min_match_len) const {
+        int max_spec_tokens, float min_token_prob,
+        int min_match_count, int min_match_len,
+        std::vector<llama_token> * out_draft) const {
 
-    std::vector<llama_token> best_draft;
-
-    if (!_root || n_context <= 0 || max_spec_tokens <= 0) return best_draft;
+    if (!_root || n_context <= 0 || max_spec_tokens <= 0) {
+        return nullptr;
+    }
 
     if (n_context > _max_depth) {
         context += (n_context - _max_depth);
@@ -119,6 +118,7 @@ std::vector<llama_token> common_suffix_tree::speculate(
     }
 
     float best_score = 0.0f;
+    const common_suffix_node * best_node = nullptr;
 
     for (int match_len = std::max(1, min_match_len); match_len <= n_context; ++match_len) {
         const llama_token * ctx = context + (n_context - match_len);
@@ -138,8 +138,7 @@ std::vector<llama_token> common_suffix_tree::speculate(
         if (node->count < min_match_count) continue;
         if (node->children.empty()) continue;
 
-        // Speculate: greedily follow highest-count child
-        // Probability decays multiplicatively: prob *= child_count / parent_count
+        // greedily follow the highest-count child; the probability decays multiplicatively
         const int draft_limit = std::min(max_spec_tokens, match_len + 8);
 
         std::vector<llama_token> draft;
@@ -158,22 +157,131 @@ std::vector<llama_token> common_suffix_tree::speculate(
                     best_tok   = token;
                 }
             }
+            if (best_tok < 0 || cur->count <= 0) {
+                break;
+            }
 
             prob *= (float)best_count / (float)cur->count;
             if (prob < min_token_prob) break;
 
             score += prob;
             draft.push_back(best_tok);
-            cur = cur->children.at(best_tok).get();
+            cur = cur->children.find(best_tok)->second.get();
         }
 
         if (score > best_score && !draft.empty()) {
             best_score = score;
-            best_draft = std::move(draft);
+            best_node  = node;
+            if (out_draft != nullptr) {
+                *out_draft = std::move(draft);
+            }
         }
     }
 
+    return best_node;
+}
+
+std::vector<llama_token> common_suffix_tree::speculate(
+        const llama_token * context, int n_context,
+        int max_spec_tokens,
+        float min_token_prob,
+        int   min_match_count,
+        int   min_match_len) const {
+
+    std::vector<llama_token> best_draft;
+    find_best_match_node(context, n_context, max_spec_tokens, min_token_prob,
+                         min_match_count, min_match_len, &best_draft);
     return best_draft;
+}
+
+std::vector<std::vector<llama_token>> common_suffix_tree::branch_candidates(
+        const llama_token * context, int n_context,
+        int max_branches, int depth,
+        int max_spec_tokens,
+        float min_token_prob,
+        int   min_match_count,
+        int   min_match_len,
+        float competition_ratio) const {
+
+    std::vector<std::vector<llama_token>> out;
+
+    if (max_branches <= 0 || depth <= 0) {
+        return out;
+    }
+
+    // same best-scoring match node that speculate() uses
+    const common_suffix_node * best_node = find_best_match_node(
+        context, n_context, max_spec_tokens, min_token_prob,
+        min_match_count, min_match_len, nullptr);
+
+    if (best_node == nullptr) {
+        return out;
+    }
+
+    // rank the match node's children by frequency (desc)
+    std::vector<std::pair<llama_token, int64_t>> ranked;
+    ranked.reserve(best_node->children.size());
+    for (const auto & [token, child] : best_node->children) {
+        ranked.emplace_back(token, child->count);
+    }
+    std::sort(ranked.begin(), ranked.end(),
+              [](const auto & a, const auto & b) { return a.second > b.second; });
+
+    if (ranked.size() < 2 || ranked.front().second <= 0) {
+        return out;
+    }
+
+    const int64_t top_count = ranked.front().second;
+
+    // ranked[0] is the top child == the spine head; fork on the runners-up
+    for (size_t r = 1; r < ranked.size() && (int) out.size() < max_branches; ++r) {
+        const llama_token tok = ranked[r].first;
+        const int64_t     cnt = ranked[r].second;
+
+        // only branch on genuine competition with the top child
+        if ((float) cnt < competition_ratio * (float) top_count) {
+            break;
+        }
+
+        std::vector<llama_token> branch;
+        branch.reserve(depth);
+        branch.push_back(tok);
+
+        // probability of the branch head relative to the match node
+        float prob = best_node->count > 0 ? (float) cnt / (float) best_node->count : 0.0f;
+        if (prob < min_token_prob) {
+            break; // ranked is sorted descending: every remaining child is even less likely
+        }
+
+        const common_suffix_node * cur = best_node->children.at(tok).get();
+        for (int i = 1; i < depth && !cur->children.empty(); ++i) {
+            llama_token best_tok   = -1;
+            int64_t     best_count = 0;
+            for (const auto & [t, child] : cur->children) {
+                if (child->count > best_count) {
+                    best_count = child->count;
+                    best_tok   = t;
+                }
+            }
+            if (best_tok < 0) {
+                break;
+            }
+            prob *= cur->count > 0 ? (float) best_count / (float) cur->count : 0.0f;
+            if (prob < min_token_prob) {
+                break;
+            }
+            branch.push_back(best_tok);
+            const auto it = cur->children.find(best_tok);
+            if (it == cur->children.end()) {
+                break;
+            }
+            cur = it->second.get();
+        }
+
+        out.push_back(std::move(branch));
+    }
+
+    return out;
 }
 
 static void _extract_texts(const json & node, std::vector<std::string> & out) {

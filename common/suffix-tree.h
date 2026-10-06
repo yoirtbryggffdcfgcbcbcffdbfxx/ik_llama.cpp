@@ -42,6 +42,18 @@ public:
             int   min_match_count = 1,
             int   min_match_len   = 5) const;
 
+    // Alternative continuations at the best-match node (excluding the spine head), each
+    // following its highest-count chain for `depth` tokens. A branch is emitted only when
+    // it competes with the top child (count >= competition_ratio * top_count).
+    std::vector<std::vector<llama_token>> branch_candidates(
+            const llama_token * context, int n_context,
+            int max_branches, int depth,
+            int max_spec_tokens,
+            float min_token_prob,
+            int   min_match_count,
+            int   min_match_len,
+            float competition_ratio) const;
+
     // Load an offline corpus to pre-warm the tree before any request.
     // Supported formats (.json or .bin)
     bool load_corpus(
@@ -56,6 +68,13 @@ private:
     std::unique_ptr<common_suffix_node> _root;
     std::vector<llama_token> _tokens;
     int _n_inserted = 0;
+
+    // best-scoring match node, same rule as speculate(); out_draft receives the top-child draft
+    const common_suffix_node * find_best_match_node(
+            const llama_token * context, int n_context,
+            int max_spec_tokens, float min_token_prob,
+            int min_match_count, int min_match_len,
+            std::vector<llama_token> * out_draft) const;
 
     void _insert_suffix(int start_pos);
     void _extend_suffix(int start_pos, int old_len, int new_len);

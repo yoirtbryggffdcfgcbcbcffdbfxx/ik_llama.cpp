@@ -189,6 +189,9 @@ common_params_speculative common_params_speculative::with_stage_overrides(const 
     if (stage.has_ngram_tree_branch_depth_override()) {
         result.ngram_tree_branch_depth = stage.ngram_tree_branch_depth;
     }
+    if (stage.has_ngram_tree_branch_competition_override()) {
+        result.ngram_tree_branch_competition = stage.ngram_tree_branch_competition;
+    }
     if (stage.has_suffix_min_match_len_override()) {
         result.suffix_min_match_len = stage.suffix_min_match_len;
     }
@@ -224,7 +227,8 @@ bool common_params_speculative::has_ngram_tree_branches() const {
     }
     for (const auto & stage : get_resolved_stages()) {
         if (stage.type != COMMON_SPECULATIVE_TYPE_NGRAM_MAP_K &&
-            stage.type != COMMON_SPECULATIVE_TYPE_NGRAM_MAP_K4V) {
+            stage.type != COMMON_SPECULATIVE_TYPE_NGRAM_MAP_K4V &&
+            stage.type != COMMON_SPECULATIVE_TYPE_SUFFIX) {
             continue;
         }
         if (with_stage_overrides(stage).ngram_tree_max_branches > 0) {
@@ -1209,6 +1213,13 @@ static void common_speculative_stage_apply_kv(
         stage.ngram_tree_branch_depth = std::stoi(value_raw);
         if (stage.ngram_tree_branch_depth < 0) {
             throw std::invalid_argument("speculative stage ngram_tree_branch_depth must be at least 0");
+        }
+        return;
+    }
+    if (key == "ngram_tree_branch_competition") {
+        stage.ngram_tree_branch_competition = std::stof(value_raw);
+        if (stage.ngram_tree_branch_competition < 0.0f || stage.ngram_tree_branch_competition > 1.0f) {
+            throw std::invalid_argument("speculative stage ngram_tree_branch_competition must be within [0, 1]");
         }
         return;
     }

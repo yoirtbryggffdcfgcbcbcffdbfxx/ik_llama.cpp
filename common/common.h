@@ -198,6 +198,7 @@ struct common_speculative_stage_params {
     int32_t  ngram_tree_max_nodes = -1;
     int32_t  ngram_tree_max_branches = -1;
     int32_t  ngram_tree_branch_depth = -1;
+    float    ngram_tree_branch_competition = -1.0f;
 
     int32_t suffix_min_match_len = -1;
     int32_t suffix_max_depth = -1;
@@ -213,6 +214,7 @@ struct common_speculative_stage_params {
     bool has_ngram_tree_max_nodes_override() const { return ngram_tree_max_nodes >= 0; }
     bool has_ngram_tree_max_branches_override() const { return ngram_tree_max_branches >= 0; }
     bool has_ngram_tree_branch_depth_override() const { return ngram_tree_branch_depth >= 0; }
+    bool has_ngram_tree_branch_competition_override() const { return ngram_tree_branch_competition >= 0.0f; }
     bool has_suffix_min_match_len_override() const { return suffix_min_match_len >= 0; }
     bool has_suffix_max_depth_override() const { return suffix_max_depth >= 0; }
     bool has_suffix_corpus_override() const { return !suffix_corpus.empty(); }
@@ -260,6 +262,7 @@ struct common_params_speculative {
     int32_t  ngram_tree_max_nodes    = 8;  // max draft-tree nodes (<= IQK_MAX_NY avoids the 4+5 GEMM split)
     int32_t  ngram_tree_max_branches = 0;  // 0 = disabled (linear path)
     int32_t  ngram_tree_branch_depth = 0;  // 0 = half the spine length
+    float    ngram_tree_branch_competition = 0.0f; // min 2nd-child/top-child count ratio to fork (0 = no gate)
 
     std::shared_ptr<common_ngram_mod> ngram_mod;
 

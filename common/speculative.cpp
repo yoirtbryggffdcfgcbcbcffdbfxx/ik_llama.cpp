@@ -844,11 +844,17 @@ struct common_speculative_state_ngram_map_k : public common_speculative_state {
             std::sort(succ, succ + n_succ, [](const auto & a, const auto & b) { return a.second > b.second; });
             const int depth_override = (int) resolved_params.ngram_tree_branch_depth;
             const int branch_len = depth_override > 0 ? depth_override : std::max(1, n_max / 2);
+            const int64_t top_count = n_succ > 0 ? succ[0].second : 0;
+            const float competition = resolved_params.ngram_tree_branch_competition;
             int added = 0;
             for (int si = 0; si < n_succ; ++si) {
                 const auto & s0 = succ[si];
                 if (s0.first == on_path) {
                     continue;
+                }
+                // only fork on genuine competition with the most frequent successor
+                if ((float) s0.second < competition * (float) top_count) {
+                    break;
                 }
                 if (added >= max_branches || tree.n_paths >= COMMON_SPECULATIVE_TREE_MAX_PATHS ||
                     (int) tree.nodes.size() >= max_nodes) {
@@ -1199,14 +1205,19 @@ struct common_speculative_state_suffix : public common_speculative_state {
     float  base_p_min    = 0.1f;
     float  eff_p_min     = 0.1f;
 
+    // resolved stage params (per-stage --spec-type overrides are not seen by draft_tree)
+    common_params_speculative resolved_params;
+
     common_speculative_state_suffix(
             enum common_speculative_type type,
             int max_depth,
             const std::string & corpus_path,
-            const llama_model * model)
+            const llama_model * model,
+            common_params_speculative resolved_params)
         : common_speculative_state(type)
         , tree(max_depth)
         , corpus_tree(max_depth)
+        , resolved_params(std::move(resolved_params))
     {
         if (!corpus_path.empty()) {
             std::function<std::vector<llama_token>(const std::string &)> tokenize_fn;
@@ -1284,6 +1295,94 @@ struct common_speculative_state_suffix : public common_speculative_state {
         }
 
         n_draft_last = result.size();
+    }
+
+    void draft_tree(
+            const common_params_speculative & params,
+            const llama_tokens & prompt_tgt,
+            llama_token id_last,
+            const llama_tokens & spine,
+            common_speculative_tree & tree_out) override {
+        GGML_UNUSED(params);
+
+        tree_out.nodes.clear();
+        tree_out.n_paths = 0;
+
+        const int max_branches = std::max(0, (int) resolved_params.ngram_tree_max_branches);
+        if (max_branches <= 0 || spine.empty()) {
+            return; // no linear trunk to branch off -> fall back to the plain draft
+        }
+
+        const int max_nodes     = std::max(1, (int) resolved_params.ngram_tree_max_nodes);
+        const int depth         = resolved_params.ngram_tree_branch_depth > 0
+                                    ? (int) resolved_params.ngram_tree_branch_depth : 1;
+        const int min_match_len = std::max(1, (int) resolved_params.suffix_min_match_len);
+        const float competition_ratio = resolved_params.ngram_tree_branch_competition;
+
+        // rebuild the context draft() uses (history tail + id_last): no cross-call state
+        const int ctx_len = std::min((int) (prompt_tgt.size() + 1), tree.max_depth());
+        llama_tokens context;
+        context.reserve(ctx_len);
+        const int ctx_start = (int) prompt_tgt.size() + 1 - ctx_len;
+        for (int j = ctx_start; j < (int) prompt_tgt.size(); ++j) {
+            context.push_back(prompt_tgt[j]);
+        }
+        context.push_back(id_last);
+
+        // alternatives at the match node; branch from whichever tree produced the spine
+        auto branches = tree.branch_candidates(
+            context.data(), (int) context.size(),
+            max_branches, depth, (int) resolved_params.n_max,
+            eff_p_min, 1, min_match_len, competition_ratio);
+        if (branches.empty() && has_corpus) {
+            branches = corpus_tree.branch_candidates(
+                context.data(), (int) context.size(),
+                max_branches, depth, (int) resolved_params.n_max,
+                eff_p_min, 1, min_match_len, competition_ratio);
+        }
+
+        if (branches.empty()) {
+            return; // no genuine ambiguity -> linear path
+        }
+
+        // root = last accepted token, depth 0
+        tree_out.nodes.push_back({ id_last, -1, -1, 0, 0.0f });
+
+        // the spine is the high-acceptance path: it takes the budget, branches the rest
+        const int max_spine = std::min((int) spine.size(), std::max(0, max_nodes - 1));
+        int parent = 0;
+        for (int i = 0; i < max_spine; ++i) {
+            tree_out.nodes.push_back({ spine[i], parent, 0, i + 1, 1.0f });
+            parent = (int) tree_out.nodes.size() - 1;
+        }
+        tree_out.n_paths = 1;
+
+        // branches: alternative continuations from the suffix tree (paths 1..)
+        for (const auto & br : branches) {
+            if (tree_out.n_paths >= COMMON_SPECULATIVE_TREE_MAX_PATHS ||
+                (int) tree_out.nodes.size() >= max_nodes) {
+                break;
+            }
+            // only claim a path id once a node is actually inserted (no phantom empty paths)
+            int pid = -1;
+            int bparent = 0; // fork at the root
+            for (size_t k = 0; k < br.size(); ++k) {
+                if ((int) tree_out.nodes.size() >= max_nodes) {
+                    break;
+                }
+                if (pid < 0) {
+                    pid = tree_out.n_paths++;
+                }
+                tree_out.nodes.push_back({ br[k], bparent, pid, 1 + (int) k, 1.0f });
+                bparent = (int) tree_out.nodes.size() - 1;
+            }
+        }
+
+        // no real branch -> linear path
+        if (tree_out.n_paths < 2) {
+            tree_out.nodes.clear();
+            tree_out.n_paths = 0;
+        }
     }
 
     void accept(uint16_t n_accepted) override {
@@ -1762,7 +1861,7 @@ common_speculative * common_speculative_init(
                 int depth = config.params.suffix_max_depth > 0 ? config.params.suffix_max_depth : 64;
                 const llama_model * model = llama_get_model(ctx_tgt);
                 impls.push_back(std::make_unique<common_speculative_state_suffix>(
-                    config.type, depth, config.params.suffix_corpus, model));
+                    config.type, depth, config.params.suffix_corpus, model, config.params));
                 break;
             }
             default:
